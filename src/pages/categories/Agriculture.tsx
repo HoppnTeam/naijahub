@@ -17,18 +17,23 @@ const Agriculture = () => {
         .from("posts")
         .select(`
           *,
-          profiles:profiles(username, avatar_url),
-          categories:categories(name),
-          _count {
-            likes: likes_count,
-            comments: comments_count
-          }
+          profiles (username, avatar_url),
+          categories (name),
+          likes (count),
+          comments (count)
         `)
         .eq("categories.name", "Agriculture")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Post[];
+      
+      return data?.map(post => ({
+        ...post,
+        _count: {
+          likes: post.likes?.[0]?.count || 0,
+          comments: post.comments?.[0]?.count || 0
+        }
+      })) as Post[];
     },
   });
 
