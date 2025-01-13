@@ -38,6 +38,14 @@ const Technology = () => {
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", "technology", selectedTab, searchQuery],
     queryFn: async () => {
+      const { data: parentCategory } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Technology")
+        .single();
+
+      if (!parentCategory) return [];
+
       let query = supabase
         .from("posts")
         .select(`
@@ -47,11 +55,7 @@ const Technology = () => {
           likes (count),
           comments (count)
         `)
-        .eq("category_id", (await supabase
-          .from("categories")
-          .select("id")
-          .eq("name", "Technology")
-          .single()).data?.id);
+        .eq("category_id", parentCategory.id);
 
       if (searchQuery) {
         query = query.ilike("title", `%${searchQuery}%`);
@@ -75,7 +79,7 @@ const Technology = () => {
           likes: post.likes?.length || 0,
           comments: post.comments?.length || 0
         }
-      }));
+      })) as Post[];
     },
   });
 
