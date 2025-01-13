@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Navigation } from "@/components/Navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlusCircle } from "lucide-react";
 import { CategoryTabs } from "@/components/CategoryTabs";
@@ -86,7 +85,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-poppins">
-      <Navigation />
       <main className="container py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Welcome to NaijaHub</h1>
