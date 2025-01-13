@@ -47,7 +47,7 @@ const Index = () => {
     },
   });
 
-  const { data: posts } = useQuery({
+  const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", selectedCategory],
     queryFn: async () => {
       let query = supabase
