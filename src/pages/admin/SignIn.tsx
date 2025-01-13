@@ -20,7 +20,6 @@ const AdminSignIn = () => {
 
   const checkAdminSession = async () => {
     try {
-      console.log("Checking admin session...");
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
@@ -28,20 +27,13 @@ const AdminSignIn = () => {
         return;
       }
 
-      if (session) {
-        console.log("Session found:", session.user.id);
-        const { data: roles, error: rolesError } = await supabase
+      if (session?.user) {
+        const { data: roles } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .maybeSingle();
+          .single();
 
-        if (rolesError) {
-          console.error("Roles error:", rolesError);
-          return;
-        }
-
-        console.log("User role:", roles?.role);
         if (roles?.role === 'admin') {
           navigate('/admin/dashboard');
         }
@@ -51,67 +43,35 @@ const AdminSignIn = () => {
     }
   };
 
-  const getErrorMessage = (error: AuthError) => {
-    console.error("Auth error details:", error);
-    
-    if (error instanceof AuthApiError) {
-      switch (error.status) {
-        case 400:
-          if (error.message.includes('Invalid login credentials')) {
-            return "Invalid email or password. Please check your admin credentials and try again.";
-          }
-          if (error.message.includes('Email not confirmed')) {
-            return "Please verify your email address before signing in.";
-          }
-          return "Invalid credentials. Please check your admin email and password.";
-        case 422:
-          return "Invalid email format. Please enter a valid email address.";
-        case 429:
-          return "Too many login attempts. Please try again later.";
-        default:
-          return error.message;
-      }
-    }
-    return "An unexpected error occurred. Please try again.";
-  };
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      console.log("Attempting sign in...");
-      const { data: { session }, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
-        console.error("Sign in error:", signInError);
         throw signInError;
       }
 
-      if (!session?.user) {
-        console.error("No user found in session");
-        throw new Error('No user found');
+      if (!data.session?.user) {
+        throw new Error('No user found in session');
       }
 
-      console.log("Checking admin role for user:", session.user.id);
-      // Check if the user has admin role
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+        .eq('user_id', data.session.user.id)
+        .single();
 
       if (rolesError) {
-        console.error("Role check error:", rolesError);
         throw rolesError;
       }
 
-      console.log("User roles:", roles);
       if (!roles || roles.role !== 'admin') {
-        // If not an admin, sign them out and show error
         await supabase.auth.signOut();
         throw new Error('Unauthorized access: Admin privileges required');
       }
@@ -123,11 +83,30 @@ const AdminSignIn = () => {
 
       navigate('/admin/dashboard');
     } catch (error: any) {
-      console.error("Final error:", error);
+      let message = "An unexpected error occurred";
+      
+      if (error instanceof AuthApiError) {
+        switch (error.status) {
+          case 400:
+            message = "Invalid email or password. Please check your admin credentials.";
+            break;
+          case 422:
+            message = "Invalid email format. Please enter a valid email address.";
+            break;
+          case 429:
+            message = "Too many login attempts. Please try again later.";
+            break;
+          default:
+            message = error.message;
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof AuthError ? getErrorMessage(error) : error.message,
+        description: message,
       });
     } finally {
       setLoading(false);
