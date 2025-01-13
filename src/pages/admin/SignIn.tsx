@@ -32,7 +32,7 @@ const AdminSignIn = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (roles?.role === 'admin') {
           navigate('/admin/dashboard');
@@ -65,7 +65,7 @@ const AdminSignIn = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', data.session.user.id)
-        .single();
+        .maybeSingle();
 
       if (rolesError) {
         throw rolesError;
