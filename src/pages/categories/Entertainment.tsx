@@ -44,8 +44,8 @@ const Entertainment = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          likes (count),
-          comments (count)
+          likes: likes(count),
+          comments: comments(count)
         `)
         .eq("category_id", (await supabase
           .from("categories")
@@ -57,15 +57,19 @@ const Entertainment = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
+      // Modified the ordering logic to work correctly with Supabase
       switch (selectedTab) {
         case "trending":
-          query = query.order("likes.count", { ascending: false });
+          // First get the posts ordered by created_at as a base order
+          query = query.order("created_at", { ascending: false });
           break;
         case "media":
-          query = query.not("image_url", "is", null);
+          query = query.not("image_url", "is", null)
+            .order("created_at", { ascending: false });
           break;
         case "celebrities":
-          // Add celebrity-specific filtering logic here
+          // For celebrity content, we'll still order by recent first
+          query = query.order("created_at", { ascending: false });
           break;
         default:
           query = query.order("created_at", { ascending: false });
@@ -73,6 +77,20 @@ const Entertainment = () => {
 
       const { data, error } = await query;
       if (error) throw error;
+
+      // If we're in trending tab, sort by likes count in memory
+      // This is a workaround since we can't order by the count directly in the query
+      if (selectedTab === "trending" && data) {
+        return data
+          .map(post => ({
+            ...post,
+            _count: {
+              likes: post.likes?.length || 0,
+              comments: post.comments?.length || 0
+            }
+          }))
+          .sort((a, b) => (b._count?.likes || 0) - (a._count?.likes || 0));
+      }
 
       return data.map(post => ({
         ...post,
