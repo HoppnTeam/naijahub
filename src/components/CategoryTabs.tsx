@@ -40,13 +40,20 @@ export const CategoryTabs = ({
   selectedCategory,
   onCategoryChange,
 }: CategoryTabsProps) => {
+  // Filter to show only main categories
+  const mainCategories = categories?.filter(category => 
+    ["News & Politics", "Entertainment", "Technology", "Sports", 
+     "Business", "Health", "Agriculture", "Travel", 
+     "Culture & Personals", "Automotive & Auto"].includes(category.name)
+  );
+
   return (
     <Tabs defaultValue="all" className="w-full">
       <TabsList className="w-full overflow-x-auto flex space-x-2 mb-6">
         <TabsTrigger value="all" onClick={() => onCategoryChange("all")}>
           All Posts
         </TabsTrigger>
-        {categories?.map((category) => (
+        {mainCategories?.map((category) => (
           <TabsTrigger
             key={category.id}
             value={category.id}
