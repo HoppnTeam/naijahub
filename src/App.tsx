@@ -11,6 +11,7 @@ import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import Entertainment from "@/pages/categories/Entertainment";
 import Technology from "@/pages/categories/Technology";
 import Sports from "@/pages/categories/Sports";
+import Business from "@/pages/categories/Business";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Create a client
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/categories/entertainment" element={<Entertainment />} />
                 <Route path="/categories/technology" element={<Technology />} />
                 <Route path="/categories/sports" element={<Sports />} />
+                <Route path="/categories/business" element={<Business />} />
               </Routes>
             </main>
             <Toaster />

@@ -39,6 +39,8 @@ export const CategoryTabs = ({
       navigate("/categories/technology");
     } else if (categoryName === "Sports") {
       navigate("/categories/sports");
+    } else if (categoryName === "Business") {
+      navigate("/categories/business");
     }
   };
 
