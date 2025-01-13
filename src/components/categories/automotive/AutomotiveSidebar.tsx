@@ -30,33 +30,14 @@ export const AutomotiveSidebar = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Popular Workshops</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 bg-muted rounded-lg">
-            <h3 className="font-medium mb-1">AutoFix Lagos</h3>
-            <p className="text-sm text-muted-foreground">
-              Specialized in Japanese cars
-            </p>
-          </div>
-          <div className="p-4 bg-muted rounded-lg">
-            <h3 className="font-medium mb-1">Mechanic Plus</h3>
-            <p className="text-sm text-muted-foreground">
-              All brands, 24/7 service
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <CardTitle>Safety Tips</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-sm">• Always verify seller credentials</p>
-          <p className="text-sm">• Meet in public places</p>
-          <p className="text-sm">• Inspect before purchase</p>
-          <p className="text-sm">• Document all transactions</p>
+        <CardContent>
+          <ul className="list-disc pl-4 space-y-2">
+            <li>Regular maintenance is key</li>
+            <li>Check tire pressure monthly</li>
+            <li>Keep emergency contacts handy</li>
+          </ul>
         </CardContent>
       </Card>
     </div>

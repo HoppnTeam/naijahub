@@ -52,21 +52,21 @@ export const AutomotiveContent = ({ searchQuery }: AutomotiveContentProps) => {
       </TabsContent>
 
       <TabsContent value="marketplace" className="space-y-6">
-        {posts?.filter(post => post.title.toLowerCase().includes("sale"))
+        {posts?.filter(post => post.title.toLowerCase().includes('sale'))
           .map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
       </TabsContent>
 
       <TabsContent value="workshops" className="space-y-6">
-        {posts?.filter(post => post.title.toLowerCase().includes("workshop"))
+        {posts?.filter(post => post.title.toLowerCase().includes('workshop'))
           .map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
       </TabsContent>
 
       <TabsContent value="reviews" className="space-y-6">
-        {posts?.filter(post => post.title.toLowerCase().includes("review"))
+        {posts?.filter(post => post.title.toLowerCase().includes('review'))
           .map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
