@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Camera, Plane } from "lucide-react";
+import { MapPin, Globe, Camera, Plane, UtensilsCrossed } from "lucide-react";
 
 interface TravelSidebarProps {
   subcategories?: {
@@ -49,6 +49,10 @@ export const TravelSidebar = ({ subcategories }: TravelSidebarProps) => {
           <Button variant="ghost" className="w-full justify-start">
             <Camera className="w-4 h-4 mr-2" />
             Photography Tips
+          </Button>
+          <Button variant="ghost" className="w-full justify-start">
+            <UtensilsCrossed className="w-4 h-4 mr-2" />
+            Food Guide
           </Button>
         </CardContent>
       </Card>

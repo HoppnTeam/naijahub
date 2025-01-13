@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plane, MapPin, Globe, Camera } from "lucide-react";
+import { Plane, MapPin, Globe, Camera, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
@@ -94,7 +94,7 @@ const Travel = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="w-full justify-start mb-6">
+            <TabsList className="w-full justify-start mb-6 overflow-x-auto">
               <TabsTrigger value="latest">
                 <Plane className="w-4 h-4 mr-2" />
                 Latest
@@ -110,6 +110,10 @@ const Travel = () => {
               <TabsTrigger value="overseas-travel">
                 <Globe className="w-4 h-4 mr-2" />
                 Overseas Travel
+              </TabsTrigger>
+              <TabsTrigger value="street-foods">
+                <UtensilsCrossed className="w-4 h-4 mr-2" />
+                Street Foods
               </TabsTrigger>
             </TabsList>
 
