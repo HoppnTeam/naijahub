@@ -1,31 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
+import { Post } from "@/types/post";
 
 interface Category {
   id: string;
   name: string;
-}
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  image_url?: string | null;
-  created_at: string;
-  user_id: string;
-  category_id: string | null;
-  profiles: {
-    username: string;
-    avatar_url?: string | null;
-  } | null;
-  categories: {
-    name: string;
-  } | null;
-  _count?: {
-    comments: number;
-    likes: number;
-  };
 }
 
 interface CategoryTabsProps {

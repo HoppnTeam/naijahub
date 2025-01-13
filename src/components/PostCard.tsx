@@ -2,23 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageCircle, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Post } from "@/types/post";
 
 interface PostCardProps {
-  post: {
-    id: string;
-    title: string;
-    content: string;
-    image_url?: string | null;
-    created_at: string;
-    profiles?: {
-      username: string;
-      avatar_url?: string | null;
-    } | null;
-    _count?: {
-      comments: number;
-      likes: number;
-    };
-  };
+  post: Post;
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
