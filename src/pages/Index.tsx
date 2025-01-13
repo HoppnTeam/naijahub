@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Navigation } from "@/components/Navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { PlusCircle, TrendingUp, MessageCircle } from "lucide-react";
 
 interface Post {
   id: string;
@@ -23,6 +25,10 @@ interface Post {
   categories: {
     name: string;
   } | null;
+  _count?: {
+    comments: number;
+    likes: number;
+  };
 }
 
 const Index = () => {
@@ -55,7 +61,9 @@ const Index = () => {
         .select(`
           *,
           profiles!posts_user_id_profiles_fkey (username, avatar_url),
-          categories (name)
+          categories (name),
+          likes (count),
+          comments (count)
         `)
         .order("created_at", { ascending: false });
 
@@ -66,7 +74,13 @@ const Index = () => {
       const { data, error } = await query;
       if (error) throw error;
       
-      return data as Post[];
+      return data.map(post => ({
+        ...post,
+        _count: {
+          likes: post.likes?.length || 0,
+          comments: post.comments?.length || 0
+        }
+      })) as Post[];
     },
   });
 
@@ -76,6 +90,14 @@ const Index = () => {
     <div className="min-h-screen bg-background font-poppins">
       <Navigation />
       <main className="container py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Welcome to NaijaHub</h1>
+          <Button onClick={() => navigate("/create-post")} className="gap-2">
+            <PlusCircle className="w-5 h-5" />
+            Create Post
+          </Button>
+        </div>
+
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="w-full overflow-x-auto flex space-x-2 mb-6">
             <TabsTrigger value="all" onClick={() => setSelectedCategory("all")}>
@@ -127,9 +149,19 @@ const Index = () => {
                     <CardTitle className="line-clamp-2">{post.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground line-clamp-3">
+                    <p className="text-muted-foreground line-clamp-3 mb-4">
                       {post.content}
                     </p>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <MessageCircle className="w-4 h-4" />
+                        <span>{post._count?.comments || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="w-4 h-4" />
+                        <span>{post._count?.likes || 0}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
