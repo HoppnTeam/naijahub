@@ -5,11 +5,11 @@ export const Navigation = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="bg-primary py-4">
-      <div className="container flex items-center justify-between">
+    <nav className="bg-primary py-4 shadow-md">
+      <div className="container mx-auto px-4 flex items-center justify-between">
         <h1 
           onClick={() => navigate("/")} 
-          className="text-2xl font-bold text-white cursor-pointer"
+          className="text-2xl font-bold text-white cursor-pointer font-poppins"
         >
           NaijaHub
         </h1>

@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
@@ -28,6 +29,7 @@ type Profile = {
 export const UserMenu = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -57,8 +59,20 @@ export const UserMenu = () => {
   });
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    try {
+      await supabase.auth.signOut();
+      navigate("/auth");
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out of your account.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error signing out",
+        description: "There was a problem signing you out. Please try again.",
+      });
+    }
   };
 
   if (!user) {
@@ -79,7 +93,7 @@ export const UserMenu = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem onClick={() => navigate(`/profile/${user.id}`)}>
           Profile
         </DropdownMenuItem>
@@ -88,7 +102,10 @@ export const UserMenu = () => {
             Admin Dashboard
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem 
+          onClick={handleSignOut}
+          className="text-red-600 focus:text-red-600"
+        >
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
