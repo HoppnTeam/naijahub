@@ -30,8 +30,12 @@ const Profile = () => {
         .eq("user_id", id)
         .single();
 
-      if (profileError) throw profileError;
-      console.log("Profile data:", profileData); // Debug log
+      if (profileError) {
+        console.error("Profile error:", profileError);
+        throw profileError;
+      }
+      
+      console.log("Profile data:", profileData);
       return profileData;
     },
   });
@@ -50,7 +54,16 @@ const Profile = () => {
     );
   }
 
-  if (!profile) return <div className="container py-8">Profile not found</div>;
+  if (!profile) {
+    return (
+      <div className="container py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">Profile not found</h2>
+          <p className="text-muted-foreground">The requested profile could not be found.</p>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     {
@@ -82,7 +95,7 @@ const Profile = () => {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={profile.avatar_url ?? undefined} />
+              <AvatarImage src={profile.avatar_url ?? undefined} alt={profile.username} />
               <AvatarFallback>
                 {profile.username?.substring(0, 2).toUpperCase() ?? "U"}
               </AvatarFallback>
@@ -141,17 +154,13 @@ const Profile = () => {
                   <p className="text-muted-foreground">{profile.community_intent}</p>
                 </div>
               )}
-
-              <p className="text-sm text-muted-foreground mt-4">
-                Joined {formatDistanceToNow(new Date(profile.created_at), { addSuffix: true })}
-              </p>
             </div>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat) => (
-              <Card key={stat.label} className="bg-muted/50">
+              <Card key={stat.label}>
                 <CardContent className="flex items-center p-4">
                   <stat.icon className="h-5 w-5 text-muted-foreground mr-2" />
                   <div>
@@ -172,41 +181,49 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="posts" className="space-y-6">
-            {profile.posts?.map((post) => (
-              <Card key={post.id} className="hover:bg-muted/50 transition-colors">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold hover:text-primary">
-                      <a href={`/posts/${post.id}`}>{post.title}</a>
-                    </h3>
-                    {post.categories?.name && (
-                      <span className="inline-block bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
-                        {post.categories.name}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    {post.content.substring(0, 200)}
-                    {post.content.length > 200 ? "..." : ""}
-                  </p>
-                  <div className="flex gap-4">
-                    <Button variant="ghost" size="sm">
-                      <ThumbsUp className="mr-2 h-4 w-4" />
-                      {post.likes?.length ?? 0}
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      {post.comments?.length ?? 0}
-                    </Button>
-                  </div>
+            {profile.posts?.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-muted-foreground">No posts yet</p>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              profile.posts?.map((post) => (
+                <Card key={post.id} className="hover:bg-muted/50 transition-colors">
+                  <CardHeader>
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-semibold hover:text-primary">
+                        <a href={`/posts/${post.id}`}>{post.title}</a>
+                      </h3>
+                      {post.categories?.name && (
+                        <Badge variant="secondary">
+                          {post.categories.name}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      {post.content.substring(0, 200)}
+                      {post.content.length > 200 ? "..." : ""}
+                    </p>
+                    <div className="flex gap-4">
+                      <Button variant="ghost" size="sm">
+                        <ThumbsUp className="mr-2 h-4 w-4" />
+                        {post.likes?.length ?? 0}
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        {post.comments?.length ?? 0}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="activity">
