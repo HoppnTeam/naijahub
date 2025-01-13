@@ -10,6 +10,7 @@ import CreatePost from "@/pages/CreatePost";
 import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import Entertainment from "@/pages/categories/Entertainment";
 import Technology from "@/pages/categories/Technology";
+import Sports from "@/pages/categories/Sports";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Create a client
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/categories/news-politics" element={<NewsAndPolitics />} />
                 <Route path="/categories/entertainment" element={<Entertainment />} />
                 <Route path="/categories/technology" element={<Technology />} />
+                <Route path="/categories/sports" element={<Sports />} />
               </Routes>
             </main>
             <Toaster />
