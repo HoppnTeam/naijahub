@@ -22,7 +22,7 @@ const PostDetails = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          categories (name),
+          categories!posts_category_id_fkey (name),
           likes (user_id),
           comments (
             id,

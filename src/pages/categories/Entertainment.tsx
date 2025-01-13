@@ -44,9 +44,9 @@ const Entertainment = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          categories (name),
-          likes:likes(count),
-          comments:comments(count)
+          categories!posts_category_id_fkey (name),
+          likes (count),
+          comments (count)
         `)
         .eq("category_id", (await supabase
           .from("categories")
