@@ -26,7 +26,7 @@ export const CategoryTabs = ({
   const mainCategories = categories?.filter(category => 
     ["News & Politics", "Entertainment", "Technology", "Sports", 
      "Business", "Health", "Agriculture", "Travel", 
-     "Culture", "Automotive"].includes(category.name)
+     "Culture & Personals", "Automotive"].includes(category.name)
   );
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
@@ -47,6 +47,8 @@ export const CategoryTabs = ({
       navigate("/categories/agriculture");
     } else if (categoryName === "Travel") {
       navigate("/categories/travel");
+    } else if (categoryName === "Culture & Personals") {
+      navigate("/categories/culture");
     }
   };
 
