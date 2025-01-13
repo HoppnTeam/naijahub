@@ -16,18 +16,7 @@ export interface Post {
   categories?: {
     name: string;
   } | null;
-  likes?: { user_id: string }[];
-  comments?: {
-    id: string;
-    content: string;
-    created_at: string;
-    user_id: string;
-    profiles?: {
-      username: string;
-      avatar_url?: string | null;
-    } | null;
-  }[];
-  _count?: {
+  _count: {
     comments: number;
     likes: number;
   };
