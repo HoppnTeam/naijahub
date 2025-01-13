@@ -16,6 +16,28 @@ interface CultureContentProps {
   } | undefined;
 }
 
+interface PostResponse {
+  id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  created_at: string;
+  user_id: string;
+  category_id: string | null;
+  subcategory_id: string | null;
+  pinned: boolean | null;
+  is_live: boolean | null;
+  profiles: {
+    username: string;
+    avatar_url: string | null;
+  } | null;
+  categories: {
+    name: string;
+  } | null;
+  likes: { id: string }[];
+  comments: { id: string }[];
+}
+
 export const CultureContent = ({ categories }: CultureContentProps) => {
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["culture-posts", categories?.mainCategory?.id],
@@ -28,16 +50,18 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
           *,
           profiles (username, avatar_url),
           categories (name),
-          likes (count),
-          comments (count)
+          likes (id),
+          comments (id)
         `)
         .eq("category_id", categories.mainCategory.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       
-      return (data || []).map(post => ({
+      return (data as PostResponse[] || []).map(post => ({
         ...post,
+        profiles: post.profiles || undefined,
+        categories: post.categories || undefined,
         _count: {
           likes: post.likes?.length || 0,
           comments: post.comments?.length || 0
