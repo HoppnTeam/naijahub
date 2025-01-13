@@ -35,7 +35,7 @@ export const Navigation = () => {
       if (!user?.id) return null;
       const { data, error } = await supabase
         .from("profiles")
-        .select("*, user_roles(role)")
+        .select("*, user_roles!user_roles_user_id_fkey(role)")
         .eq("user_id", user.id)
         .single();
       if (error) throw error;
