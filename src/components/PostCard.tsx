@@ -27,7 +27,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   return (
     <Card
       className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate(`/post/${post.id}`)}
+      onClick={() => navigate(`/posts/${post.id}`)}
     >
       {post.image_url && (
         <div className="aspect-video w-full overflow-hidden">
