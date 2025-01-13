@@ -25,8 +25,8 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#008000', // Green
-          foreground: '#FFFFFF'
+          DEFAULT: '#F2FCE2', // Softer, more pastel green
+          foreground: '#000000' // Changed to black for better contrast on light green
         },
         secondary: {
           DEFAULT: '#E2725B', // Terracotta
