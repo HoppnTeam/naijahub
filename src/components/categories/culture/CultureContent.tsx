@@ -4,15 +4,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { Post } from "@/types/post";
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface CultureContentProps {
   categories: {
-    mainCategory: { id: string; name: string };
-    subcategories: Array<{ id: string; name: string }>;
+    mainCategory: Category;
+    subcategories: Category[];
   } | undefined;
 }
 
 export const CultureContent = ({ categories }: CultureContentProps) => {
-  const { data: posts } = useQuery({
+  const { data: posts } = useQuery<Post[]>({
     queryKey: ["culture-posts", categories?.mainCategory?.id],
     queryFn: async () => {
       if (!categories?.mainCategory?.id) return [];
@@ -23,10 +28,8 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
           *,
           profiles (username, avatar_url),
           categories (name),
-          _count {
-            likes,
-            comments
-          }
+          likes (count),
+          comments (count)
         `)
         .eq("category_id", categories.mainCategory.id)
         .order("created_at", { ascending: false });
@@ -36,8 +39,8 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
       return (data || []).map(post => ({
         ...post,
         _count: {
-          likes: post._count?.likes || 0,
-          comments: post._count?.comments || 0
+          likes: post.likes?.length || 0,
+          comments: post.comments?.length || 0
         }
       })) as Post[];
     },
