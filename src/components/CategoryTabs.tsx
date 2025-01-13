@@ -55,6 +55,8 @@ export const CategoryTabs = ({
       navigate("/categories/news-politics");
     } else if (categoryName === "Entertainment") {
       navigate("/categories/entertainment");
+    } else if (categoryName === "Technology") {
+      navigate("/categories/technology");
     }
   };
 
