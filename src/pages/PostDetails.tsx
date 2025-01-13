@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatDistanceToNow } from "date-fns";
-import { MessageSquare, ThumbsUp } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { PostHeader } from "@/components/PostHeader";
+import { PostActions } from "@/components/PostActions";
+import { CommentsList } from "@/components/CommentsList";
+import { PostSkeleton } from "@/components/PostSkeleton";
 
 const PostDetails = () => {
   const { id } = useParams();
@@ -87,18 +86,7 @@ const PostDetails = () => {
   if (isLoadingPost) {
     return (
       <div className="container max-w-4xl py-8">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-8 w-3/4" />
-            <div className="flex items-center gap-2 mt-2">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-32" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-40 w-full" />
-          </CardContent>
-        </Card>
+        <PostSkeleton />
       </div>
     );
   }
@@ -117,28 +105,12 @@ const PostDetails = () => {
     <div className="container max-w-4xl py-8">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4 mb-4">
-            <Avatar>
-              <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
-              <AvatarFallback>
-                {post.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold">{post.profiles?.username}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(post.created_at), {
-                  addSuffix: true,
-                })}
-              </p>
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-          {post.categories?.name && (
-            <span className="inline-block bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
-              {post.categories.name}
-            </span>
-          )}
+          <PostHeader
+            profile={post.profiles}
+            title={post.title}
+            created_at={post.created_at}
+            category={post.categories}
+          />
         </CardHeader>
         <CardContent>
           {post.image_url && (
@@ -150,60 +122,17 @@ const PostDetails = () => {
           )}
           <p className="whitespace-pre-wrap">{post.content}</p>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLike}
-            className={isLiked ? "text-primary" : ""}
-          >
-            <ThumbsUp className="mr-2 h-4 w-4" />
-            {post.likes?.length ?? 0}
-          </Button>
-          <Button variant="ghost" size="sm">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            {post.comments?.length ?? 0}
-          </Button>
+        <CardFooter>
+          <PostActions
+            likesCount={post.likes?.length ?? 0}
+            commentsCount={post.comments?.length ?? 0}
+            isLiked={isLiked}
+            onLike={handleLike}
+          />
         </CardFooter>
       </Card>
 
-      {/* Comments Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Comments</h2>
-        <div className="space-y-4">
-          {post.comments?.map((comment) => (
-            <Card key={comment.id}>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Avatar>
-                    <AvatarImage
-                      src={comment.profiles?.avatar_url ?? undefined}
-                    />
-                    <AvatarFallback>
-                      {comment.profiles?.username
-                        ?.substring(0, 2)
-                        .toUpperCase() ?? "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">
-                      {comment.profiles?.username}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(comment.created_at), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p>{comment.content}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <CommentsList comments={post.comments} />
     </div>
   );
 };
