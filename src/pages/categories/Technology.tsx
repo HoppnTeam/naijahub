@@ -43,6 +43,7 @@ const Technology = () => {
         .select(`
           *,
           profiles (username, avatar_url),
+          categories (name),
           likes (count),
           comments (count)
         `)
@@ -56,18 +57,13 @@ const Technology = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      switch (selectedTab) {
-        case "reviews":
-          query = query.eq("subcategory", "Product Reviews");
-          break;
-        case "jobs":
-          query = query.eq("subcategory", "Tech Jobs");
-          break;
-        case "marketplace":
-          query = query.eq("subcategory", "Tech Marketplace");
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
+      if (selectedTab !== "latest") {
+        const subcategory = subcategories?.find(
+          (sub) => sub.name.toLowerCase().replace(/\s+/g, "-") === selectedTab
+        );
+        if (subcategory) {
+          query = query.eq("subcategory_id", subcategory.id);
+        }
       }
 
       const { data, error } = await query;
@@ -98,15 +94,15 @@ const Technology = () => {
                 <Laptop className="w-4 h-4 mr-2" />
                 Latest
               </TabsTrigger>
-              <TabsTrigger value="reviews">
+              <TabsTrigger value="product-reviews">
                 <Code className="w-4 h-4 mr-2" />
                 Product Reviews
               </TabsTrigger>
-              <TabsTrigger value="jobs">
+              <TabsTrigger value="tech-jobs">
                 <Cpu className="w-4 h-4 mr-2" />
                 Tech Jobs
               </TabsTrigger>
-              <TabsTrigger value="marketplace">
+              <TabsTrigger value="tech-marketplace">
                 <Rocket className="w-4 h-4 mr-2" />
                 Marketplace
               </TabsTrigger>

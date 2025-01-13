@@ -156,6 +156,7 @@ export type Database = {
           image_url: string | null
           is_live: boolean | null
           pinned: boolean | null
+          subcategory_id: string | null
           title: string
           updated_at: string
           user_id: string
@@ -168,6 +169,7 @@ export type Database = {
           image_url?: string | null
           is_live?: boolean | null
           pinned?: boolean | null
+          subcategory_id?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -180,6 +182,7 @@ export type Database = {
           image_url?: string | null
           is_live?: boolean | null
           pinned?: boolean | null
+          subcategory_id?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -188,6 +191,13 @@ export type Database = {
           {
             foreignKeyName: "posts_category_id_fkey"
             columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_subcategory_id_fkey"
+            columns: ["subcategory_id"]
             isOneToOne: false
             referencedRelation: "categories"
             referencedColumns: ["id"]
