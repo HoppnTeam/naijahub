@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
+import AdminSignIn from "@/pages/admin/SignIn";
 import { Navigation } from "@/components/Navigation";
 import Profile from "@/pages/Profile";
 import CreatePost from "@/pages/CreatePost";
@@ -32,6 +33,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/admin/sign-in" element={<AdminSignIn />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-post" element={<CreatePost />} />
