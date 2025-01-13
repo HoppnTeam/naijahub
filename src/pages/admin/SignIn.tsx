@@ -37,9 +37,17 @@ const AdminSignIn = () => {
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
-          return "Invalid email or password. Please check your credentials and try again.";
+          if (error.message.includes('Email not confirmed')) {
+            return "Please verify your email address before signing in.";
+          }
+          if (error.message.includes('Invalid login credentials')) {
+            return "Invalid email or password. Please check your admin credentials and try again.";
+          }
+          return "Invalid credentials. Please check your admin email and password.";
         case 422:
           return "Invalid email format. Please enter a valid email address.";
+        case 429:
+          return "Too many login attempts. Please try again later.";
         default:
           return error.message;
       }
