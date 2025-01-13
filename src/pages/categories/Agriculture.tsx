@@ -5,7 +5,7 @@ import { PostCard } from "@/components/PostCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wheat, Tractor, Sprout, Package, Users, BookOpen } from "lucide-react";
+import { Wheat, Package, Users, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Agriculture = () => {
@@ -16,24 +16,41 @@ const Agriculture = () => {
       const { data, error } = await supabase
         .from("posts")
         .select(`
-          *,
-          profiles (username, avatar_url),
-          categories (name),
-          likes (count),
-          comments (count)
+          id,
+          title,
+          content,
+          image_url,
+          created_at,
+          updated_at,
+          user_id,
+          category_id,
+          subcategory_id,
+          pinned,
+          is_live,
+          profiles (
+            username,
+            avatar_url
+          ),
+          categories (
+            name
+          ),
+          likes:likes(count),
+          comments:comments(count)
         `)
         .eq("categories.name", "Agriculture")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       
-      return data?.map(post => ({
+      return (data?.map(post => ({
         ...post,
+        profiles: post.profiles || { username: '', avatar_url: null },
+        categories: post.categories || { name: '' },
         _count: {
           likes: post.likes?.[0]?.count || 0,
           comments: post.comments?.[0]?.count || 0
         }
-      })) as Post[];
+      })) || []) as Post[];
     },
   });
 
