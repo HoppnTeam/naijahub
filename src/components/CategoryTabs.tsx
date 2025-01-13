@@ -44,7 +44,7 @@ export const CategoryTabs = ({
   const mainCategories = categories?.filter(category => 
     ["News & Politics", "Entertainment", "Technology", "Sports", 
      "Business", "Health", "Agriculture", "Travel", 
-     "Culture & Personals", "Automotive & Auto"].includes(category.name)
+     "Culture", "Automotive"].includes(category.name)
   );
 
   return (
