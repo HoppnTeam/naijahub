@@ -9,6 +9,10 @@ import { BasicInfoFields } from "./profile-form/BasicInfoFields"
 import { ContactFields } from "./profile-form/ContactFields"
 import { CommunityFields } from "./profile-form/CommunityFields"
 import { profileFormSchema, type ProfileFormValues } from "./profile-form/types"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { Label } from "./ui/label"
+import { Input } from "./ui/input"
+import { useState } from "react"
 
 interface ProfileEditFormProps {
   initialData?: {
@@ -19,6 +23,7 @@ interface ProfileEditFormProps {
     phone_number?: string | null;
     community_intent?: string | null;
     interests?: string[] | null;
+    avatar_url?: string | null;
   };
   userId: string;
   onSuccess?: () => void;
@@ -27,6 +32,7 @@ interface ProfileEditFormProps {
 export function ProfileEditForm({ initialData, userId, onSuccess }: ProfileEditFormProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const [isUploading, setIsUploading] = useState(false)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -40,6 +46,53 @@ export function ProfileEditForm({ initialData, userId, onSuccess }: ProfileEditF
       interests: initialData?.interests?.join(", ") || "",
     },
   })
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      setIsUploading(true)
+      
+      // Upload image to Supabase Storage
+      const fileExt = file.name.split('.').pop()
+      const filePath = `${userId}.${fileExt}`
+      
+      const { error: uploadError, data } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', userId)
+
+      if (updateError) throw updateError
+
+      queryClient.invalidateQueries({ queryKey: ["profile", userId] })
+      toast({
+        title: "Success",
+        description: "Profile picture updated successfully.",
+      })
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update profile picture. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   async function onSubmit(data: ProfileFormValues) {
     try {
@@ -75,11 +128,31 @@ export function ProfileEditForm({ initialData, userId, onSuccess }: ProfileEditF
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
+          <div className="flex flex-col items-center space-y-4">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={initialData?.avatar_url ?? undefined} alt={initialData?.username} />
+              <AvatarFallback>
+                {initialData?.username?.substring(0, 2).toUpperCase() ?? "U"}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="space-y-2">
+              <Label htmlFor="avatar">Profile Picture</Label>
+              <Input 
+                id="avatar" 
+                type="file" 
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isUploading}
+              />
+            </div>
+          </div>
+
           <BasicInfoFields form={form} />
           <ContactFields form={form} />
           <CommunityFields form={form} />
         </div>
-        <Button type="submit">Save Changes</Button>
+        <Button type="submit" disabled={isUploading}>Save Changes</Button>
       </form>
     </Form>
   )
