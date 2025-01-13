@@ -299,23 +299,23 @@ export type Database = {
       }
       user_roles: {
         Row: {
-          Admin: Database["public"]["Enums"]["user_role"] | null
           created_at: string
           id: string
+          role: Database["public"]["Enums"]["user_role"] | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
-          Admin?: Database["public"]["Enums"]["user_role"] | null
           created_at?: string
           id?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
-          Admin?: Database["public"]["Enums"]["user_role"] | null
           created_at?: string
           id?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string
           user_id?: string | null
         }

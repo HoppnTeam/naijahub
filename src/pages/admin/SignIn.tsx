@@ -21,13 +21,13 @@ const AdminSignIn = () => {
   const checkAdminSession = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const { data: roles, error: rolesError } = await supabase
+      const { data: roles } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id)
         .maybeSingle();
 
-      if (!rolesError && roles?.role === 'admin') {
+      if (roles?.role === 'admin') {
         navigate('/admin/dashboard');
       }
     }
@@ -61,7 +61,6 @@ const AdminSignIn = () => {
 
       if (!session?.user) throw new Error('No user found');
 
-      // Check if user has admin role
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('role')
