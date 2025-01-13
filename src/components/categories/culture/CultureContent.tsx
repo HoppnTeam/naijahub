@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
+import { Post } from "@/types/post";
 
 interface CultureContentProps {
   categories: {
@@ -20,18 +21,25 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
         .from("posts")
         .select(`
           *,
-          profiles:profiles(username, avatar_url),
-          categories:categories(name),
+          profiles (username, avatar_url),
+          categories (name),
           _count {
-            likes: likes_count,
-            comments: comments_count
+            likes,
+            comments
           }
         `)
         .eq("category_id", categories.mainCategory.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      
+      return (data || []).map(post => ({
+        ...post,
+        _count: {
+          likes: post._count?.likes || 0,
+          comments: post._count?.comments || 0
+        }
+      })) as Post[];
     },
     enabled: !!categories?.mainCategory?.id,
   });
