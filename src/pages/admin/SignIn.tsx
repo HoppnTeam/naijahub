@@ -20,13 +20,8 @@ const AdminSignIn = () => {
 
   const checkAdminSession = async () => {
     try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        return;
-      }
-
       if (session?.user) {
         const { data: roles } = await supabase
           .from('user_roles')
@@ -48,23 +43,16 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
-      console.log("Attempting sign in with:", { email }); // Debug log
-
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) {
-        console.error("Sign in error:", signInError); // Debug log
-        throw signInError;
-      }
+      if (error) throw error;
 
       if (!data.session?.user) {
         throw new Error('No user found in session');
       }
-
-      console.log("User signed in:", data.session.user); // Debug log
 
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
@@ -72,12 +60,7 @@ const AdminSignIn = () => {
         .eq('user_id', data.session.user.id)
         .maybeSingle();
 
-      console.log("User roles:", roles); // Debug log
-
-      if (rolesError) {
-        console.error("Roles error:", rolesError); // Debug log
-        throw rolesError;
-      }
+      if (rolesError) throw rolesError;
 
       if (!roles || roles.role !== 'admin') {
         await supabase.auth.signOut();
@@ -90,8 +73,8 @@ const AdminSignIn = () => {
       });
 
       navigate('/admin/dashboard');
-    } catch (error: any) {
-      console.error("Full error object:", error); // Debug log
+    } catch (error) {
+      console.error("Sign in error:", error);
       
       let message = "An unexpected error occurred";
       
