@@ -37,11 +37,11 @@ const AdminSignIn = () => {
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
-          if (error.message.includes('Email not confirmed')) {
-            return "Please verify your email address before signing in.";
-          }
           if (error.message.includes('Invalid login credentials')) {
             return "Invalid email or password. Please check your admin credentials and try again.";
+          }
+          if (error.message.includes('Email not confirmed')) {
+            return "Please verify your email address before signing in.";
           }
           return "Invalid credentials. Please check your admin email and password.";
         case 422:
@@ -69,6 +69,7 @@ const AdminSignIn = () => {
 
       if (!session?.user) throw new Error('No user found');
 
+      // Check if the user has admin role
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('role')
@@ -78,6 +79,7 @@ const AdminSignIn = () => {
       if (rolesError) throw rolesError;
 
       if (!roles || roles.role !== 'admin') {
+        // If not an admin, sign them out and show error
         await supabase.auth.signOut();
         throw new Error('Unauthorized access: Admin privileges required');
       }
