@@ -19,21 +19,41 @@ const AdminSignIn = () => {
   }, []);
 
   const checkAdminSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (roles?.role === 'admin') {
-        navigate('/admin/dashboard');
+    try {
+      console.log("Checking admin session...");
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        return;
       }
+
+      if (session) {
+        console.log("Session found:", session.user.id);
+        const { data: roles, error: rolesError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (rolesError) {
+          console.error("Roles error:", rolesError);
+          return;
+        }
+
+        console.log("User role:", roles?.role);
+        if (roles?.role === 'admin') {
+          navigate('/admin/dashboard');
+        }
+      }
+    } catch (error) {
+      console.error("Session check error:", error);
     }
   };
 
   const getErrorMessage = (error: AuthError) => {
+    console.error("Auth error details:", error);
+    
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
@@ -60,15 +80,23 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
+      console.log("Attempting sign in...");
       const { data: { session }, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        console.error("Sign in error:", signInError);
+        throw signInError;
+      }
 
-      if (!session?.user) throw new Error('No user found');
+      if (!session?.user) {
+        console.error("No user found in session");
+        throw new Error('No user found');
+      }
 
+      console.log("Checking admin role for user:", session.user.id);
       // Check if the user has admin role
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
@@ -76,8 +104,12 @@ const AdminSignIn = () => {
         .eq('user_id', session.user.id)
         .maybeSingle();
 
-      if (rolesError) throw rolesError;
+      if (rolesError) {
+        console.error("Role check error:", rolesError);
+        throw rolesError;
+      }
 
+      console.log("User roles:", roles);
       if (!roles || roles.role !== 'admin') {
         // If not an admin, sign them out and show error
         await supabase.auth.signOut();
@@ -91,6 +123,7 @@ const AdminSignIn = () => {
 
       navigate('/admin/dashboard');
     } catch (error: any) {
+      console.error("Final error:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -134,7 +167,7 @@ const AdminSignIn = () => {
             </div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-[#32a852] hover:bg-[#2a8f45]"
               disabled={loading}
             >
               {loading ? "Signing in..." : "Sign In"}
