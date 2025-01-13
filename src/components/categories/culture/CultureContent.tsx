@@ -58,7 +58,8 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
 
       if (error) throw error;
       
-      return (data as PostResponse[] || []).map(post => ({
+      const typedData = data as unknown as PostResponse[];
+      return typedData.map(post => ({
         ...post,
         profiles: post.profiles || undefined,
         categories: post.categories || undefined,
