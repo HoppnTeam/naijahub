@@ -20,14 +20,11 @@ const Auth = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_UPDATED') {
+      if (event === 'USER_UPDATED' || event === 'SIGNED_OUT' || event === 'SIGNED_IN') {
         setError(null);
       }
-      if (event === 'SIGNED_OUT') {
-        setError(null);
-      }
-      if (event === 'SIGNED_IN') {
-        setError(null);
+      if (event === 'PASSWORD_RECOVERY') {
+        setError('Please check your email for password reset instructions.');
       }
     });
 
@@ -38,9 +35,14 @@ const Auth = () => {
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
+          if (error.message.includes('Email not confirmed')) {
+            return "Please verify your email address before signing in.";
+          }
           return "Invalid email or password. Please check your credentials and try again.";
         case 422:
           return "Invalid email format. Please enter a valid email address.";
+        case 429:
+          return "Too many login attempts. Please try again later.";
         default:
           return error.message;
       }
