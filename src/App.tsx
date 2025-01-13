@@ -7,6 +7,7 @@ import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import PostDetails from "@/pages/PostDetails";
 import CreatePost from "@/pages/CreatePost";
+import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Create a client
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/posts/:id" element={<PostDetails />} />
                 <Route path="/create-post" element={<CreatePost />} />
+                <Route path="/categories/news-politics" element={<NewsAndPolitics />} />
               </Routes>
             </main>
             <Toaster />
