@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState("");
@@ -30,6 +31,20 @@ const AdminSignIn = () => {
         navigate('/admin/dashboard');
       }
     }
+  };
+
+  const getErrorMessage = (error: AuthError) => {
+    if (error instanceof AuthApiError) {
+      switch (error.status) {
+        case 400:
+          return "Invalid email or password. Please check your credentials and try again.";
+        case 422:
+          return "Invalid email format. Please enter a valid email address.";
+        default:
+          return error.message;
+      }
+    }
+    return "An unexpected error occurred. Please try again.";
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -70,7 +85,7 @@ const AdminSignIn = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "An error occurred during sign in",
+        description: error instanceof AuthError ? getErrorMessage(error) : error.message,
       });
     } finally {
       setLoading(false);
