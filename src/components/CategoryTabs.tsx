@@ -45,6 +45,8 @@ export const CategoryTabs = ({
       navigate("/categories/health");
     } else if (categoryName === "Agriculture") {
       navigate("/categories/agriculture");
+    } else if (categoryName === "Travel") {
+      navigate("/categories/travel");
     }
   };
 
