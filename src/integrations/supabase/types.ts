@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_activity_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_admin_profiles"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -115,6 +147,9 @@ export type Database = {
           id: string
           post_id: string
           reason: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
           status: string | null
           updated_at: string
           user_id: string
@@ -124,6 +159,9 @@ export type Database = {
           id?: string
           post_id: string
           reason: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           status?: string | null
           updated_at?: string
           user_id: string
@@ -133,6 +171,9 @@ export type Database = {
           id?: string
           post_id?: string
           reason?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           status?: string | null
           updated_at?: string
           user_id?: string
