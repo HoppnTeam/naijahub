@@ -53,6 +53,8 @@ export const CategoryTabs = ({
     onCategoryChange(categoryId);
     if (categoryName === "News & Politics") {
       navigate("/categories/news-politics");
+    } else if (categoryName === "Entertainment") {
+      navigate("/categories/entertainment");
     }
   };
 
