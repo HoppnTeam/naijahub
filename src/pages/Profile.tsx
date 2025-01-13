@@ -31,6 +31,7 @@ const Profile = () => {
         .single();
 
       if (profileError) throw profileError;
+      console.log("Profile data:", profileData); // Debug log
       return profileData;
     },
   });
