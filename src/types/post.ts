@@ -13,7 +13,7 @@ export interface Post {
     username: string;
     avatar_url?: string | null;
   } | null;
-  categories: {
+  categories?: {
     name: string;
   } | null;
   _count: {

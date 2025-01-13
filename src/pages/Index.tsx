@@ -38,9 +38,9 @@ const Index = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          categories (name),
-          likes:likes(count),
-          comments:comments(count)
+          categories!posts_category_id_fkey (name),
+          likes (count),
+          comments (count)
         `)
         .order("created_at", { ascending: false });
 
@@ -54,8 +54,8 @@ const Index = () => {
       return data.map(post => ({
         ...post,
         _count: {
-          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
-          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
+          likes: post.likes?.[0]?.count || 0,
+          comments: post.comments?.[0]?.count || 0
         }
       })) as Post[];
     },
