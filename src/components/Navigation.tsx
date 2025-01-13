@@ -37,7 +37,7 @@ export const Navigation = () => {
         .from("profiles")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
       
       if (profileError) throw profileError;
 
@@ -48,10 +48,10 @@ export const Navigation = () => {
 
       if (rolesError) throw rolesError;
 
-      return {
+      return profileData ? {
         ...profileData,
         user_roles: rolesData
-      } as Profile;
+      } as Profile : null;
     },
     enabled: !!user?.id,
   });
