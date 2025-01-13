@@ -9,6 +9,29 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 
+interface Profile {
+  username: string;
+  avatar_url: string | null;
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  profiles: Profile;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
+  profiles: Profile;
+  categories: { name: string } | null;
+  comments: Comment[];
+  likes: { user_id: string }[];
+}
+
 const PostDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
@@ -24,7 +47,9 @@ const PostDetails = () => {
           profiles (username, avatar_url),
           categories (name),
           comments (
-            *,
+            id,
+            content,
+            created_at,
             profiles (username, avatar_url)
           ),
           likes (user_id)
@@ -33,7 +58,7 @@ const PostDetails = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Post;
     },
   });
 
