@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CultureHeader } from "@/components/categories/culture/CultureHeader";
 import { CultureContent } from "@/components/categories/culture/CultureContent";
 import { CultureSidebar } from "@/components/categories/culture/CultureSidebar";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const Culture = () => {
   const { data: categories } = useQuery({
@@ -29,6 +30,7 @@ const Culture = () => {
 
   return (
     <div className="container py-6">
+      <BackNavigation />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-9">
           <CultureHeader />

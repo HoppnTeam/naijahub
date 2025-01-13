@@ -6,6 +6,7 @@ import { Heart, Leaf, Brain, Apple, AlertCircle } from "lucide-react";
 import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const Health = () => {
   const { toast } = useToast();
@@ -45,6 +46,7 @@ const Health = () => {
 
   return (
     <div className="container py-8">
+      <BackNavigation />
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Health Hub</h1>

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { TechnologyHeader } from "@/components/categories/technology/TechnologyHeader";
 import { TechnologySidebar } from "@/components/categories/technology/TechnologySidebar";
+import { BackNavigation } from "@/components/BackNavigation";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Post } from "@/types/post";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
 import { Laptop, Code, Cpu, Rocket } from "lucide-react";
-import { Post } from "@/types/post";
 
 const Technology = () => {
   const navigate = useNavigate();
@@ -84,14 +85,11 @@ const Technology = () => {
   });
 
   return (
-    <div className="container mx-auto py-8">
-      <TechnologyHeader
-        onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post")}
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
+    <div className="container py-6">
+      <BackNavigation />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-9">
+          <TechnologyHeader onSearch={setSearchQuery} onCreatePost={() => navigate("/create-post")} />
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
             <TabsList className="w-full justify-start mb-6">
               <TabsTrigger value="latest">
@@ -119,8 +117,9 @@ const Technology = () => {
             </TabsContent>
           </Tabs>
         </div>
-
-        <TechnologySidebar subcategories={subcategories} />
+        <div className="lg:col-span-3">
+          <TechnologySidebar subcategories={subcategories} />
+        </div>
       </div>
     </div>
   );

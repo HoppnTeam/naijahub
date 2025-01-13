@@ -9,6 +9,7 @@ import { PostCard } from "@/components/PostCard";
 import { TravelHeader } from "@/components/categories/travel/TravelHeader";
 import { TravelSidebar } from "@/components/categories/travel/TravelSidebar";
 import { Post } from "@/types/post";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const Travel = () => {
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ const Travel = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <BackNavigation />
       <TravelHeader
         onSearch={setSearchQuery}
         onCreatePost={() => navigate("/create-post")}

@@ -4,6 +4,7 @@ import { PostCard } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { Briefcase, ShoppingBag, Award, BookOpen } from "lucide-react";
 import { Post } from "@/types/post";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const Business = () => {
   const { data: posts } = useQuery({
@@ -35,6 +36,7 @@ const Business = () => {
 
   return (
     <div className="container py-8">
+      <BackNavigation />
       <div className="flex items-center gap-3 mb-8">
         <Briefcase className="w-8 h-8" />
         <h1 className="text-3xl font-bold">Business Hub</h1>

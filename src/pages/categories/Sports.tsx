@@ -10,6 +10,7 @@ import { SportsHeader } from "@/components/categories/sports/SportsHeader";
 import { SportsSidebar } from "@/components/categories/sports/SportsSidebar";
 import { LiveScoresWidget } from "@/components/categories/sports/LiveScoresWidget";
 import { Post } from "@/types/post";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const Sports = () => {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ const Sports = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <BackNavigation />
       <SportsHeader
         onSearch={setSearchQuery}
         onCreatePost={() => navigate("/create-post")}
