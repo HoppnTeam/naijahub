@@ -17,7 +17,7 @@ export const AutomotiveContent = ({ searchQuery }: AutomotiveContentProps) => {
         .select(`
           *,
           profiles (username, avatar_url),
-          categories (name),
+          categories!category_id (name),
           likes (count),
           comments (count)
         `)
