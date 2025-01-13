@@ -29,29 +29,26 @@ export const CategoryTabs = ({
      "Culture & Personals", "Automotive"].includes(category.name)
   );
 
+  const getCategoryPath = (categoryName: string) => {
+    const paths: { [key: string]: string } = {
+      "News & Politics": "/categories/news-politics",
+      "Entertainment": "/categories/entertainment",
+      "Technology": "/categories/technology",
+      "Sports": "/categories/sports",
+      "Business": "/categories/business",
+      "Health": "/categories/health",
+      "Agriculture": "/categories/agriculture",
+      "Travel": "/categories/travel",
+      "Culture & Personals": "/categories/culture",
+      "Automotive": "/categories/automotive"
+    };
+    return paths[categoryName] || "/";
+  };
+
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
     onCategoryChange(categoryId);
-    if (categoryName === "News & Politics") {
-      navigate("/categories/news-politics");
-    } else if (categoryName === "Entertainment") {
-      navigate("/categories/entertainment");
-    } else if (categoryName === "Technology") {
-      navigate("/categories/technology");
-    } else if (categoryName === "Sports") {
-      navigate("/categories/sports");
-    } else if (categoryName === "Business") {
-      navigate("/categories/business");
-    } else if (categoryName === "Health") {
-      navigate("/categories/health");
-    } else if (categoryName === "Agriculture") {
-      navigate("/categories/agriculture");
-    } else if (categoryName === "Travel") {
-      navigate("/categories/travel");
-    } else if (categoryName === "Culture & Personals") {
-      navigate("/categories/culture");
-    } else if (categoryName === "Automotive") {
-      navigate("/categories/automotive");
-    }
+    const path = getCategoryPath(categoryName);
+    navigate(path);
   };
 
   return (
