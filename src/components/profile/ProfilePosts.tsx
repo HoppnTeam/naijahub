@@ -47,11 +47,11 @@ export const ProfilePosts = ({ posts }: ProfilePostsProps) => {
             <div className="flex gap-4">
               <Button variant="ghost" size="sm">
                 <ThumbsUp className="mr-2 h-4 w-4" />
-                {post.likes?.length ?? 0}
+                {post._count?.likes || 0}
               </Button>
               <Button variant="ghost" size="sm">
                 <MessageSquare className="mr-2 h-4 w-4" />
-                {post.comments?.length ?? 0}
+                {post._count?.comments || 0}
               </Button>
             </div>
           </CardContent>

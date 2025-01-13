@@ -6,27 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlusCircle } from "lucide-react";
 import { CategoryTabs } from "@/components/CategoryTabs";
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  image_url?: string | null;
-  created_at: string;
-  user_id: string;
-  category_id: string | null;
-  profiles: {
-    username: string;
-    avatar_url?: string | null;
-  } | null;
-  categories: {
-    name: string;
-  } | null;
-  _count?: {
-    comments: number;
-    likes: number;
-  };
-}
+import { Post } from "@/types/post";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -57,7 +37,7 @@ const Index = () => {
         .from("posts")
         .select(`
           *,
-          profiles!posts_user_id_profiles_fkey (username, avatar_url),
+          profiles (username, avatar_url),
           categories (name),
           likes (count),
           comments (count)
