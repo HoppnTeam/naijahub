@@ -9,15 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ProfileEditForm } from "@/components/ProfileEditForm";
+import { useToast } from "@/components/ui/use-toast";
 
 const Profile = () => {
   const { id } = useParams();
-  console.log("Profile ID from route:", id); // Debug log
+  const { toast } = useToast();
+  console.log("Profile ID from route:", id);
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["profile", id],
     queryFn: async () => {
-      console.log("Fetching profile data for ID:", id); // Debug log
+      console.log("Fetching profile data for ID:", id);
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select(`
@@ -37,7 +41,7 @@ const Profile = () => {
         throw profileError;
       }
       
-      console.log("Fetched profile data:", profileData); // Debug log
+      console.log("Fetched profile data:", profileData);
       return profileData;
     },
   });
@@ -79,6 +83,8 @@ const Profile = () => {
     );
   }
 
+  const isProfileEmpty = !profile.bio && !profile.location && !profile.interests?.length && !profile.community_intent;
+
   const stats = [
     {
       label: "Posts",
@@ -115,7 +121,26 @@ const Profile = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h1 className="text-4xl font-bold mb-2">{profile.username}</h1>
+              <div className="flex justify-between items-start mb-4">
+                <h1 className="text-4xl font-bold">{profile.username}</h1>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      {isProfileEmpty ? "Update Profile" : "Edit Profile"}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                      <DialogTitle>{isProfileEmpty ? "Complete Your Profile" : "Edit Profile"}</DialogTitle>
+                    </DialogHeader>
+                    <ProfileEditForm 
+                      initialData={profile}
+                      userId={id!}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              
               {profile.bio && (
                 <p className="text-muted-foreground max-w-md mb-4">{profile.bio}</p>
               )}
@@ -166,6 +191,14 @@ const Profile = () => {
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <h3 className="font-medium mb-2">Community Goals</h3>
                   <p className="text-muted-foreground">{profile.community_intent}</p>
+                </div>
+              )}
+
+              {isProfileEmpty && (
+                <div className="bg-muted/50 p-4 rounded-lg mt-4">
+                  <p className="text-muted-foreground">
+                    Your profile is empty. Click "Update Profile" to add more information about yourself.
+                  </p>
                 </div>
               )}
             </div>
