@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
-import { MessageSquare, ThumbsUp, Calendar, ScrollText } from "lucide-react";
+import { MessageSquare, ThumbsUp, Calendar, ScrollText, Mail, Phone, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 const Profile = () => {
   const { id } = useParams();
@@ -78,19 +79,69 @@ const Profile = () => {
       <div className="container py-8">
         {/* Profile Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex items-center gap-6 mb-6">
+          <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
             <Avatar className="h-24 w-24">
               <AvatarImage src={profile.avatar_url ?? undefined} />
               <AvatarFallback>
                 {profile.username?.substring(0, 2).toUpperCase() ?? "U"}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <h1 className="text-4xl font-bold mb-2">{profile.username}</h1>
               {profile.bio && (
-                <p className="text-muted-foreground max-w-md mb-2">{profile.bio}</p>
+                <p className="text-muted-foreground max-w-md mb-4">{profile.bio}</p>
               )}
-              <p className="text-sm text-muted-foreground">
+              
+              {/* Contact Information */}
+              <div className="space-y-2 mb-4">
+                {profile.location && (
+                  <div className="flex items-center text-muted-foreground">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <span>{profile.location}</span>
+                  </div>
+                )}
+                {profile.contact_email && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Mail className="h-4 w-4 mr-2" />
+                    <a href={`mailto:${profile.contact_email}`} className="hover:text-primary">
+                      {profile.contact_email}
+                    </a>
+                  </div>
+                )}
+                {profile.phone_number && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Phone className="h-4 w-4 mr-2" />
+                    <span>{profile.phone_number}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Interests */}
+              {profile.interests && profile.interests.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex items-center mb-2">
+                    <Heart className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span className="text-sm font-medium">Interests</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.interests.map((interest, index) => (
+                      <Badge key={index} variant="secondary">
+                        {interest}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Community Intent */}
+              {profile.community_intent && (
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h3 className="font-medium mb-2">Community Goals</h3>
+                  <p className="text-muted-foreground">{profile.community_intent}</p>
+                </div>
+              )}
+
+              <p className="text-sm text-muted-foreground mt-4">
                 Joined {formatDistanceToNow(new Date(profile.created_at), { addSuffix: true })}
               </p>
             </div>

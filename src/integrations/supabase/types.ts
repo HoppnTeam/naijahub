@@ -188,8 +188,13 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          community_intent: string | null
+          contact_email: string | null
           created_at: string
           id: string
+          interests: string[] | null
+          location: string | null
+          phone_number: string | null
           updated_at: string
           user_id: string
           username: string
@@ -197,8 +202,13 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          community_intent?: string | null
+          contact_email?: string | null
           created_at?: string
           id?: string
+          interests?: string[] | null
+          location?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id: string
           username: string
@@ -206,8 +216,13 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          community_intent?: string | null
+          contact_email?: string | null
           created_at?: string
           id?: string
+          interests?: string[] | null
+          location?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id?: string
           username?: string
