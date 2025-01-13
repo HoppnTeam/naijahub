@@ -16,6 +16,7 @@ import Health from "@/pages/categories/Health";
 import Agriculture from "@/pages/categories/Agriculture";
 import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
+import Automotive from "@/pages/categories/Automotive";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Create a client
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/categories/agriculture" element={<Agriculture />} />
                 <Route path="/categories/travel" element={<Travel />} />
                 <Route path="/categories/culture" element={<Culture />} />
+                <Route path="/categories/automotive" element={<Automotive />} />
               </Routes>
             </main>
             <Toaster />

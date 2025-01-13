@@ -49,6 +49,8 @@ export const CategoryTabs = ({
       navigate("/categories/travel");
     } else if (categoryName === "Culture & Personals") {
       navigate("/categories/culture");
+    } else if (categoryName === "Automotive") {
+      navigate("/categories/automotive");
     }
   };
 
