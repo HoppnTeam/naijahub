@@ -60,8 +60,8 @@ const Auth = () => {
               }
             }
           }}
-          providers={["google"]}
-          onlyThirdPartyProviders
+          providers={[]}
+          view="magic_link"
         />
       </div>
 
