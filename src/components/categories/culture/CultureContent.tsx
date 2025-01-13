@@ -1,8 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { PostCard } from "@/components/PostCard";
-import { Post } from "@/types/post";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { CultureTabsList } from "./CultureTabsList";
+import { CulturePostGrid } from "./CulturePostGrid";
+import { useCulturePosts } from "@/hooks/use-culture-posts";
 
 interface Category {
   id: string;
@@ -16,90 +15,22 @@ interface CultureContentProps {
   } | undefined;
 }
 
-interface PostResponse {
-  id: string;
-  title: string;
-  content: string;
-  image_url: string | null;
-  created_at: string;
-  user_id: string;
-  category_id: string | null;
-  subcategory_id: string | null;
-  pinned: boolean | null;
-  is_live: boolean | null;
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
-  categories: {
-    name: string;
-  } | null;
-  likes: { id: string }[];
-  comments: { id: string }[];
-}
-
 export const CultureContent = ({ categories }: CultureContentProps) => {
-  const { data: posts } = useQuery<Post[]>({
-    queryKey: ["culture-posts", categories?.mainCategory?.id],
-    queryFn: async () => {
-      if (!categories?.mainCategory?.id) return [];
-      
-      const { data, error } = await supabase
-        .from("posts")
-        .select(`
-          *,
-          profiles (username, avatar_url),
-          categories (name),
-          likes (id),
-          comments (id)
-        `)
-        .eq("category_id", categories.mainCategory.id)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      
-      const typedData = data as unknown as PostResponse[];
-      return typedData.map(post => ({
-        ...post,
-        profiles: post.profiles || undefined,
-        categories: post.categories || undefined,
-        _count: {
-          likes: post.likes?.length || 0,
-          comments: post.comments?.length || 0
-        }
-      })) as Post[];
-    },
-    enabled: !!categories?.mainCategory?.id,
-  });
+  const { data: posts } = useCulturePosts(categories?.mainCategory);
 
   return (
     <Tabs defaultValue="all" className="w-full">
-      <TabsList className="w-full overflow-x-auto flex space-x-2 mb-6">
-        <TabsTrigger value="all">All Posts</TabsTrigger>
-        {categories?.subcategories?.map((category) => (
-          <TabsTrigger key={category.id} value={category.id}>
-            {category.name}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      <CultureTabsList subcategories={categories?.subcategories} />
 
       <TabsContent value="all" className="mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts?.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        <CulturePostGrid posts={posts} />
       </TabsContent>
 
       {categories?.subcategories?.map((category) => (
         <TabsContent key={category.id} value={category.id} className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts
-              ?.filter((post) => post.subcategory_id === category.id)
-              .map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-          </div>
+          <CulturePostGrid 
+            posts={posts?.filter((post) => post.subcategory_id === category.id)} 
+          />
         </TabsContent>
       ))}
     </Tabs>
