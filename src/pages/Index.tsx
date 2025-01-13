@@ -10,15 +10,17 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  image_url?: string;
+  image_url?: string | null;
   created_at: string;
+  user_id: string;
+  category_id: string | null;
   profiles: {
     username: string;
-    avatar_url?: string;
+    avatar_url?: string | null;
   };
   categories: {
     name: string;
-  };
+  } | null;
 }
 
 const Index = () => {
@@ -43,8 +45,8 @@ const Index = () => {
         .from("posts")
         .select(`
           *,
-          profiles!posts_user_id_fkey (username, avatar_url),
-          categories (name)
+          profiles:user_id(username, avatar_url),
+          categories(name)
         `)
         .order("created_at", { ascending: false });
 
@@ -54,7 +56,13 @@ const Index = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Post[];
+      
+      // Transform the data to match our Post interface
+      return (data as any[]).map(post => ({
+        ...post,
+        profiles: post.profiles[0], // Flatten the profiles array to a single object
+        categories: post.categories[0], // Flatten the categories array to a single object
+      })) as Post[];
     },
   });
 
@@ -104,7 +112,7 @@ const Index = () => {
                   <CardHeader>
                     <div className="flex items-center space-x-4 mb-4">
                       <Avatar>
-                        <AvatarImage src={post.profiles.avatar_url} />
+                        <AvatarImage src={post.profiles.avatar_url ?? undefined} />
                         <AvatarFallback>
                           {post.profiles.username.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
