@@ -18,10 +18,8 @@ export const AutomotiveContent = ({ searchQuery }: AutomotiveContentProps) => {
           *,
           profiles (username, avatar_url),
           categories (name),
-          _count {
-            likes: count(likes(*)),
-            comments: count(comments(*))
-          }
+          likes (count),
+          comments (count)
         `)
         .eq("categories.name", "Automotive");
 
@@ -32,7 +30,16 @@ export const AutomotiveContent = ({ searchQuery }: AutomotiveContentProps) => {
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data as unknown as Post[]) || [];
+      // Transform the data to match the Post type
+      const transformedPosts = data?.map(post => ({
+        ...post,
+        _count: {
+          likes: post.likes?.length || 0,
+          comments: post.comments?.length || 0
+        }
+      })) as Post[];
+
+      return transformedPosts || [];
     },
   });
 
