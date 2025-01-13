@@ -12,10 +12,12 @@ import { Badge } from "@/components/ui/badge";
 
 const Profile = () => {
   const { id } = useParams();
+  console.log("Profile ID from route:", id); // Debug log
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, error } = useQuery({
     queryKey: ["profile", id],
     queryFn: async () => {
+      console.log("Fetching profile data for ID:", id); // Debug log
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select(`
@@ -31,14 +33,26 @@ const Profile = () => {
         .single();
 
       if (profileError) {
-        console.error("Profile error:", profileError);
+        console.error("Profile fetch error:", profileError);
         throw profileError;
       }
       
-      console.log("Profile data:", profileData);
+      console.log("Fetched profile data:", profileData); // Debug log
       return profileData;
     },
   });
+
+  if (error) {
+    console.error("Query error:", error);
+    return (
+      <div className="container py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600">Error loading profile</h2>
+          <p className="text-muted-foreground">Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -181,14 +195,14 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="posts" className="space-y-6">
-            {profile.posts?.length === 0 ? (
+            {!profile.posts || profile.posts.length === 0 ? (
               <Card>
                 <CardContent className="p-6 text-center">
                   <p className="text-muted-foreground">No posts yet</p>
                 </CardContent>
               </Card>
             ) : (
-              profile.posts?.map((post) => (
+              profile.posts.map((post) => (
                 <Card key={post.id} className="hover:bg-muted/50 transition-colors">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
