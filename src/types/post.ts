@@ -12,10 +12,10 @@ export interface Post {
   profiles?: {
     username: string;
     avatar_url?: string | null;
-  } | null;
+  };
   categories?: {
     name: string;
-  } | null;
+  };
   _count: {
     likes: number;
     comments: number;

@@ -13,8 +13,8 @@ const Business = () => {
         .from("posts")
         .select(`
           *,
-          profiles (username, avatar_url),
-          categories (name),
+          profiles:profiles!posts_user_id_profiles_fkey (username, avatar_url),
+          categories:categories!posts_category_id_fkey (name),
           likes (count),
           comments (count)
         `)
@@ -23,7 +23,7 @@ const Business = () => {
 
       if (error) throw error;
       
-      return data.map(post => ({
+      return data?.map(post => ({
         ...post,
         _count: {
           likes: post.likes?.[0]?.count || 0,
