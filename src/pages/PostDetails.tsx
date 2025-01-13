@@ -18,6 +18,7 @@ interface Comment {
   id: string;
   content: string;
   created_at: string;
+  user_id: string;
   profiles: Profile;
 }
 
@@ -50,6 +51,7 @@ const PostDetails = () => {
             id,
             content,
             created_at,
+            user_id,
             profiles (username, avatar_url)
           ),
           likes (user_id)
