@@ -14,6 +14,17 @@ import type { Database } from "@/integrations/supabase/types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
 
+type Profile = {
+  id: string;
+  user_id: string;
+  username: string;
+  avatar_url: string | null;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+  user_roles: { role: UserRole }[];
+};
+
 export const Navigation = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -28,7 +39,7 @@ export const Navigation = () => {
         .eq("user_id", user.id)
         .single();
       if (error) throw error;
-      return data;
+      return data as Profile;
     },
     enabled: !!user?.id,
   });
