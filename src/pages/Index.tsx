@@ -45,8 +45,8 @@ const Index = () => {
         .from("posts")
         .select(`
           *,
-          profiles:user_id(username, avatar_url),
-          categories(name)
+          profiles (username, avatar_url),
+          categories (name)
         `)
         .order("created_at", { ascending: false });
 
