@@ -7,26 +7,32 @@ import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import PostDetails from "@/pages/PostDetails";
 import CreatePost from "@/pages/CreatePost";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a client
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Navigation />
-          <main>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/posts/:id" element={<PostDetails />} />
-              <Route path="/create-post" element={<CreatePost />} />
-            </Routes>
-          </main>
-          <Toaster />
-        </div>
-      </Router>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            <Navigation />
+            <main>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/posts/:id" element={<PostDetails />} />
+                <Route path="/create-post" element={<CreatePost />} />
+              </Routes>
+            </main>
+            <Toaster />
+          </div>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
