@@ -33,6 +33,8 @@ export const AutomotiveContent = ({ searchQuery }: AutomotiveContentProps) => {
       // Transform the data to match the Post type
       const transformedPosts = data?.map(post => ({
         ...post,
+        profiles: post.profiles || undefined,
+        categories: post.categories || undefined,
         _count: {
           likes: post.likes?.length || 0,
           comments: post.comments?.length || 0
