@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { Navigation } from "@/components/Navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Post {
   id: string;
@@ -25,7 +27,14 @@ interface Post {
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -57,24 +66,15 @@ const Index = () => {
       const { data, error } = await query;
       if (error) throw error;
       
-      // Transform the data to match our Post interface
-      return (data as any[]).map(post => ({
-        ...post,
-        profiles: post.profiles[0], // Flatten the profiles array to a single object
-        categories: post.categories[0], // Flatten the categories array to a single object
-      })) as Post[];
+      return data as Post[];
     },
   });
 
+  if (!user) return null;
+
   return (
     <div className="min-h-screen bg-background font-poppins">
-      <header className="bg-primary py-6">
-        <div className="container">
-          <h1 className="text-4xl font-bold text-white">NaijaHub</h1>
-          <p className="text-white/80 mt-2">The Pulse of Nigeria</p>
-        </div>
-      </header>
-
+      <Navigation />
       <main className="container py-8">
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="w-full overflow-x-auto flex space-x-2 mb-6">
@@ -112,13 +112,13 @@ const Index = () => {
                   <CardHeader>
                     <div className="flex items-center space-x-4 mb-4">
                       <Avatar>
-                        <AvatarImage src={post.profiles.avatar_url ?? undefined} />
+                        <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
                         <AvatarFallback>
-                          {post.profiles.username.substring(0, 2).toUpperCase()}
+                          {post.profiles?.username?.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-medium">{post.profiles.username}</p>
+                        <p className="text-sm font-medium">{post.profiles?.username}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(post.created_at).toLocaleDateString()}
                         </p>
