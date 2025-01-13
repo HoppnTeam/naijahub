@@ -9,11 +9,11 @@ export interface Post {
   subcategory_id?: string | null;
   pinned?: boolean | null;
   is_live?: boolean | null;
-  profiles?: {
+  profiles: {
     username: string;
     avatar_url?: string | null;
   } | null;
-  categories?: {
+  categories: {
     name: string;
   } | null;
   _count: {
