@@ -48,12 +48,15 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
+      console.log("Attempting sign in with:", { email }); // Debug log
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
+        console.error("Sign in error:", signInError); // Debug log
         throw signInError;
       }
 
@@ -61,13 +64,18 @@ const AdminSignIn = () => {
         throw new Error('No user found in session');
       }
 
+      console.log("User signed in:", data.session.user); // Debug log
+
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', data.session.user.id)
         .maybeSingle();
 
+      console.log("User roles:", roles); // Debug log
+
       if (rolesError) {
+        console.error("Roles error:", rolesError); // Debug log
         throw rolesError;
       }
 
@@ -83,6 +91,8 @@ const AdminSignIn = () => {
 
       navigate('/admin/dashboard');
     } catch (error: any) {
+      console.error("Full error object:", error); // Debug log
+      
       let message = "An unexpected error occurred";
       
       if (error instanceof AuthApiError) {
