@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Car, Tool, Shield, MapPin } from "lucide-react";
+import { Car, Wrench, Shield, MapPin } from "lucide-react";
 
 export const AutomotiveSidebar = () => {
   return (
@@ -14,7 +14,7 @@ export const AutomotiveSidebar = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button variant="ghost" className="w-full justify-start">
-            <Tool className="w-4 h-4 mr-2" />
+            <Wrench className="w-4 h-4 mr-2" />
             Find Mechanics
           </Button>
           <Button variant="ghost" className="w-full justify-start">
