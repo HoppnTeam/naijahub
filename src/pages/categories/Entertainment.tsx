@@ -44,8 +44,9 @@ const Entertainment = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          likes: likes(count),
-          comments: comments(count)
+          categories (name),
+          likes:likes(count),
+          comments:comments(count)
         `)
         .eq("category_id", (await supabase
           .from("categories")
@@ -57,10 +58,8 @@ const Entertainment = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      // Modified the ordering logic to work correctly with Supabase
       switch (selectedTab) {
         case "trending":
-          // First get the posts ordered by created_at as a base order
           query = query.order("created_at", { ascending: false });
           break;
         case "media":
@@ -68,7 +67,6 @@ const Entertainment = () => {
             .order("created_at", { ascending: false });
           break;
         case "celebrities":
-          // For celebrity content, we'll still order by recent first
           query = query.order("created_at", { ascending: false });
           break;
         default:
@@ -78,27 +76,13 @@ const Entertainment = () => {
       const { data, error } = await query;
       if (error) throw error;
 
-      // If we're in trending tab, sort by likes count in memory
-      // This is a workaround since we can't order by the count directly in the query
-      if (selectedTab === "trending" && data) {
-        return data
-          .map(post => ({
-            ...post,
-            _count: {
-              likes: post.likes?.length || 0,
-              comments: post.comments?.length || 0
-            }
-          }))
-          .sort((a, b) => (b._count?.likes || 0) - (a._count?.likes || 0));
-      }
-
       return data.map(post => ({
         ...post,
         _count: {
-          likes: post.likes?.length || 0,
-          comments: post.comments?.length || 0
+          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
+          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
         }
-      }));
+      })) as Post[];
     },
   });
 

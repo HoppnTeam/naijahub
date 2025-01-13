@@ -44,8 +44,9 @@ const NewsAndPolitics = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          likes (count),
-          comments (count)
+          categories (name),
+          likes:likes(count),
+          comments:comments(count)
         `)
         .eq("category_id", (await supabase
           .from("categories")
@@ -59,7 +60,7 @@ const NewsAndPolitics = () => {
 
       switch (selectedTab) {
         case "trending":
-          query = query.order("likes.count", { ascending: false });
+          query = query.order("created_at", { ascending: false });
           break;
         case "pinned":
           query = query.eq("pinned", true);
@@ -77,10 +78,10 @@ const NewsAndPolitics = () => {
       return data.map(post => ({
         ...post,
         _count: {
-          likes: post.likes?.length || 0,
-          comments: post.comments?.length || 0
+          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
+          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
         }
-      }));
+      })) as Post[];
     },
   });
 

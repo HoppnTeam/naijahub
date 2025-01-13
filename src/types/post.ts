@@ -17,7 +17,7 @@ export interface Post {
     name: string;
   } | null;
   _count: {
-    comments: number;
     likes: number;
+    comments: number;
   };
 }

@@ -52,8 +52,8 @@ const Technology = () => {
           *,
           profiles (username, avatar_url),
           categories (name),
-          likes (count),
-          comments (count)
+          likes:likes(count),
+          comments:comments(count)
         `)
         .eq("category_id", parentCategory.id);
 
@@ -76,8 +76,8 @@ const Technology = () => {
       return data.map(post => ({
         ...post,
         _count: {
-          likes: post.likes || 0,
-          comments: post.comments || 0
+          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
+          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
         }
       })) as Post[];
     },
