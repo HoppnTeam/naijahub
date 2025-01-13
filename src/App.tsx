@@ -3,7 +3,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
-import AdminDashboard from "@/pages/admin/Dashboard";
+import { AdminDashboard } from "@/pages/admin/Dashboard";
 import { Navigation } from "@/components/Navigation";
 import Profile from "@/pages/Profile";
 import CreatePost from "@/pages/CreatePost";
