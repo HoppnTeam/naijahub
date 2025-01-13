@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Trophy, Medal, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PostCard } from "@/components/PostCard";
 import { SportsHeader } from "@/components/categories/sports/SportsHeader";
 import { SportsSidebar } from "@/components/categories/sports/SportsSidebar";
 import { LiveScoresWidget } from "@/components/categories/sports/LiveScoresWidget";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostCard } from "@/components/PostCard";
-import { Trophy, Football, Basketball, Running } from "lucide-react";
 import { Post } from "@/types/post";
 
 const Sports = () => {
@@ -58,24 +59,6 @@ const Sports = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      switch (selectedTab) {
-        case "trending":
-          query = query.order("created_at", { ascending: false });
-          break;
-        case "football":
-          query = query.eq("subcategory_id", subcategories?.find(
-            (sub) => sub.name === "Football"
-          )?.id);
-          break;
-        case "basketball":
-          query = query.eq("subcategory_id", subcategories?.find(
-            (sub) => sub.name === "Basketball"
-          )?.id);
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
-      }
-
       const { data, error } = await query;
       if (error) throw error;
 
@@ -100,23 +83,19 @@ const Sports = () => {
         <div className="lg:col-span-3">
           <LiveScoresWidget />
           
-          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mt-8">
             <TabsList className="w-full justify-start mb-6">
               <TabsTrigger value="latest">
                 <Trophy className="w-4 h-4 mr-2" />
                 Latest
               </TabsTrigger>
-              <TabsTrigger value="football">
-                <Football className="w-4 h-4 mr-2" />
-                Football
+              <TabsTrigger value="leagues">
+                <Medal className="w-4 h-4 mr-2" />
+                Leagues
               </TabsTrigger>
-              <TabsTrigger value="basketball">
-                <Basketball className="w-4 h-4 mr-2" />
-                Basketball
-              </TabsTrigger>
-              <TabsTrigger value="other">
-                <Running className="w-4 h-4 mr-2" />
-                Other Sports
+              <TabsTrigger value="fan-zone">
+                <Users className="w-4 h-4 mr-2" />
+                Fan Zone
               </TabsTrigger>
             </TabsList>
 
