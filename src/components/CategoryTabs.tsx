@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: string;
@@ -40,12 +41,20 @@ export const CategoryTabs = ({
   selectedCategory,
   onCategoryChange,
 }: CategoryTabsProps) => {
-  // Filter to show only main categories
+  const navigate = useNavigate();
+
   const mainCategories = categories?.filter(category => 
     ["News & Politics", "Entertainment", "Technology", "Sports", 
      "Business", "Health", "Agriculture", "Travel", 
      "Culture", "Automotive"].includes(category.name)
   );
+
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
+    onCategoryChange(categoryId);
+    if (categoryName === "News & Politics") {
+      navigate("/categories/news-politics");
+    }
+  };
 
   return (
     <Tabs defaultValue="all" className="w-full">
@@ -57,7 +66,7 @@ export const CategoryTabs = ({
           <TabsTrigger
             key={category.id}
             value={category.id}
-            onClick={() => onCategoryChange(category.id)}
+            onClick={() => handleCategoryClick(category.id, category.name)}
           >
             {category.name}
           </TabsTrigger>
