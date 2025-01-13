@@ -19,7 +19,7 @@ interface Post {
   profiles: {
     username: string;
     avatar_url?: string | null;
-  };
+  } | null;
   categories: {
     name: string;
   } | null;
@@ -54,7 +54,7 @@ const Index = () => {
         .from("posts")
         .select(`
           *,
-          profiles (username, avatar_url),
+          profiles!posts_user_id_profiles_fkey (username, avatar_url),
           categories (name)
         `)
         .order("created_at", { ascending: false });
@@ -114,7 +114,7 @@ const Index = () => {
                       <Avatar>
                         <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
                         <AvatarFallback>
-                          {post.profiles?.username?.substring(0, 2).toUpperCase()}
+                          {post.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div>
