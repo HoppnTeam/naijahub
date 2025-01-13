@@ -33,13 +33,25 @@ export const Navigation = () => {
     queryKey: ["profile", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data, error } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("*, user_roles!user_roles_user_id_fkey(role)")
+        .select("*")
         .eq("user_id", user.id)
         .single();
-      if (error) throw error;
-      return data as Profile;
+      
+      if (profileError) throw profileError;
+
+      const { data: rolesData, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+
+      if (rolesError) throw rolesError;
+
+      return {
+        ...profileData,
+        user_roles: rolesData
+      } as Profile;
     },
     enabled: !!user?.id,
   });
