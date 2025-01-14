@@ -28,10 +28,7 @@ const AdminSignIn = () => {
           .eq('user_id', session.user.id)
           .maybeSingle();
 
-        if (roleError) {
-          console.error("Role check error:", roleError);
-          return;
-        }
+        if (roleError) throw roleError;
 
         if (roleData?.role === 'admin') {
           navigate('/admin/dashboard');
@@ -47,17 +44,17 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
+      const trimmedEmail = email.trim();
+      
       // First attempt to sign in
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
         password,
       });
 
-      if (signInError) {
-        throw signInError;
-      }
+      if (signInError) throw signInError;
 
-      if (!data.session?.user) {
+      if (!authData.session?.user) {
         throw new Error('No user found in session');
       }
 
@@ -65,13 +62,10 @@ const AdminSignIn = () => {
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', data.session.user.id)
+        .eq('user_id', authData.session.user.id)
         .maybeSingle();
 
-      if (roleError) {
-        console.error("Role check error:", roleError);
-        throw new Error('Error checking admin privileges');
-      }
+      if (roleError) throw roleError;
 
       if (!roleData || roleData.role !== 'admin') {
         // If not admin, sign them out and show error
@@ -81,7 +75,7 @@ const AdminSignIn = () => {
 
       // Log successful admin sign in
       await supabase.from('admin_activity_logs').insert({
-        admin_id: data.session.user.id,
+        admin_id: authData.session.user.id,
         action: 'SIGN_IN',
         details: { timestamp: new Date().toISOString() }
       });
