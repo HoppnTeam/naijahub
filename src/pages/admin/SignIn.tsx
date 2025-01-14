@@ -23,13 +23,18 @@ const AdminSignIn = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        // Check if user has admin role
         const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .maybeSingle();
+          .eq('role', 'admin')
+          .single();
 
-        if (roleError) throw roleError;
+        if (roleError) {
+          console.error("Role check error:", roleError);
+          return;
+        }
 
         if (roleData?.role === 'admin') {
           navigate('/admin/dashboard');
@@ -59,7 +64,7 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
-      const trimmedEmail = email.trim();
+      const trimmedEmail = email.trim().toLowerCase(); // Normalize email
       
       // First attempt to sign in
       const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -78,9 +83,13 @@ const AdminSignIn = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', authData.session.user.id)
-        .maybeSingle();
+        .eq('role', 'admin')
+        .single();
 
-      if (roleError) throw roleError;
+      if (roleError) {
+        console.error("Role check error:", roleError);
+        throw new Error('Error verifying admin privileges');
+      }
 
       if (!roleData || roleData.role !== 'admin') {
         // If not admin, sign them out and show error
