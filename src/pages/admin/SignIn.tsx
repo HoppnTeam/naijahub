@@ -26,7 +26,7 @@ const AdminSignIn = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (roleError) {
           console.error("Role check error:", roleError);
@@ -66,7 +66,7 @@ const AdminSignIn = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', data.session.user.id)
-        .single();
+        .maybeSingle();
 
       if (roleError) {
         console.error("Role check error:", roleError);
