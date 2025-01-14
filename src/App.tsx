@@ -20,6 +20,7 @@ import Agriculture from "@/pages/categories/Agriculture";
 import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
+import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -34,7 +35,14 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin/sign-in" element={<AdminSignIn />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              } 
+            />
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts/:id" element={<PostDetails />} />
