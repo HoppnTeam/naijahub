@@ -16,12 +16,10 @@ const AdminSignIn = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    checkAdminSession();
-  }, []);
-
-  const checkAdminSession = async () => {
-    try {
+    // Only check session on mount
+    const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
       if (session?.user) {
         // Check if user has admin role
         const { data: roleData, error: roleError } = await supabase
@@ -31,19 +29,14 @@ const AdminSignIn = () => {
           .eq('role', 'admin')
           .single();
 
-        if (roleError) {
-          console.error("Role check error:", roleError);
-          return;
-        }
-
-        if (roleData?.role === 'admin') {
+        if (!roleError && roleData?.role === 'admin') {
           navigate('/admin/dashboard');
         }
       }
-    } catch (error) {
-      console.error("Session check error:", error);
-    }
-  };
+    };
+
+    checkSession();
+  }, [navigate]);
 
   const getErrorMessage = (error: AuthError) => {
     if (error instanceof AuthApiError) {
@@ -64,7 +57,7 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
-      const trimmedEmail = email.trim().toLowerCase(); // Normalize email
+      const trimmedEmail = email.trim().toLowerCase();
       
       // First attempt to sign in
       const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -88,6 +81,7 @@ const AdminSignIn = () => {
 
       if (roleError) {
         console.error("Role check error:", roleError);
+        await supabase.auth.signOut();
         throw new Error('Error verifying admin privileges');
       }
 
