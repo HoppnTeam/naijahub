@@ -21,29 +21,20 @@ const AdminSignIn = () => {
   const checkAdminSession = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (session?.user) {
-        // Check if user has admin role
         const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .maybeSingle();
+          .single();
 
         if (roleError) {
-          throw roleError;
+          console.error("Role check error:", roleError);
+          return;
         }
 
         if (roleData?.role === 'admin') {
           navigate('/admin/dashboard');
-        } else {
-          // If user is logged in but not admin, show error
-          toast({
-            variant: "destructive",
-            title: "Unauthorized",
-            description: "You do not have admin privileges.",
-          });
-          await supabase.auth.signOut();
         }
       }
     } catch (error) {
@@ -56,13 +47,15 @@ const AdminSignIn = () => {
     setLoading(true);
 
     try {
-      // First sign in the user
+      // First attempt to sign in
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        throw signInError;
+      }
 
       if (!data.session?.user) {
         throw new Error('No user found in session');
@@ -73,9 +66,12 @@ const AdminSignIn = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', data.session.user.id)
-        .maybeSingle();
+        .single();
 
-      if (roleError) throw roleError;
+      if (roleError) {
+        console.error("Role check error:", roleError);
+        throw new Error('Error checking admin privileges');
+      }
 
       if (!roleData || roleData.role !== 'admin') {
         // If not admin, sign them out and show error
@@ -83,7 +79,7 @@ const AdminSignIn = () => {
         throw new Error('Unauthorized access: Admin privileges required');
       }
 
-      // Log admin activity
+      // Log successful admin sign in
       await supabase.from('admin_activity_logs').insert({
         admin_id: data.session.user.id,
         action: 'SIGN_IN',
@@ -102,14 +98,11 @@ const AdminSignIn = () => {
       let message = "An unexpected error occurred";
       
       if (error instanceof Error) {
-        if (error.message.includes('Email not confirmed')) {
-          message = "Please verify your email address before signing in.";
-        } else if (error.message.includes('Invalid login credentials')) {
-          message = "Invalid email or password.";
+        message = error.message;
+        if (error.message.includes('Invalid login credentials')) {
+          message = "Invalid email or password. Please try again.";
         } else if (error.message.includes('Admin privileges required')) {
           message = "This account does not have admin privileges.";
-        } else {
-          message = error.message;
         }
       }
 
