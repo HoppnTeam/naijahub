@@ -24,13 +24,17 @@ const AdminSignIn = () => {
       
       if (session?.user) {
         // Check if user has admin role
-        const { data: roles } = await supabase
+        const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (roles?.role === 'admin') {
+        if (roleError) {
+          throw roleError;
+        }
+
+        if (roleData?.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
           // If user is logged in but not admin, show error
@@ -65,15 +69,15 @@ const AdminSignIn = () => {
       }
 
       // Then check if they have admin role
-      const { data: roles, error: rolesError } = await supabase
+      const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', data.session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (rolesError) throw rolesError;
+      if (roleError) throw roleError;
 
-      if (!roles || roles.role !== 'admin') {
+      if (!roleData || roleData.role !== 'admin') {
         // If not admin, sign them out and show error
         await supabase.auth.signOut();
         throw new Error('Unauthorized access: Admin privileges required');
