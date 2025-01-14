@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState("");
@@ -39,6 +40,20 @@ const AdminSignIn = () => {
     }
   };
 
+  const getErrorMessage = (error: AuthError) => {
+    if (error instanceof AuthApiError) {
+      switch (error.message) {
+        case "Invalid login credentials":
+          return "Invalid email or password. Please check your credentials and try again.";
+        case "Email not confirmed":
+          return "Please verify your email address before signing in.";
+        default:
+          return error.message;
+      }
+    }
+    return "An unexpected error occurred. Please try again.";
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -54,7 +69,7 @@ const AdminSignIn = () => {
 
       if (signInError) throw signInError;
 
-      if (!authData.session?.user) {
+      if (!authData?.session?.user) {
         throw new Error('No user found in session');
       }
 
@@ -92,12 +107,7 @@ const AdminSignIn = () => {
       let message = "An unexpected error occurred";
       
       if (error instanceof Error) {
-        message = error.message;
-        if (message.includes('Invalid login credentials')) {
-          message = "Invalid email or password. Please try again.";
-        } else if (message.includes('Admin privileges required')) {
-          message = "This account does not have admin privileges.";
-        }
+        message = getErrorMessage(error as AuthError);
       }
 
       toast({
