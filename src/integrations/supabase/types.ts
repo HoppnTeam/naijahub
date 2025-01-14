@@ -263,6 +263,7 @@ export type Database = {
           interests: string[] | null
           location: string | null
           phone_number: string | null
+          status: string | null
           updated_at: string
           user_id: string
           username: string
@@ -277,6 +278,7 @@ export type Database = {
           interests?: string[] | null
           location?: string | null
           phone_number?: string | null
+          status?: string | null
           updated_at?: string
           user_id: string
           username: string
@@ -291,9 +293,34 @@ export type Database = {
           interests?: string[] | null
           location?: string | null
           phone_number?: string | null
+          status?: string | null
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      user_activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

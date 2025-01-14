@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChartBar, Users, FileText, Flag } from "lucide-react";
+import { UserManagementTable } from "@/components/admin/users/UserManagementTable";
 
 export const AdminDashboard = () => {
   const { user } = useAuth();
@@ -52,7 +53,7 @@ export const AdminDashboard = () => {
     <AdminLayout>
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Dashboard Overview</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {metrics.map((metric) => (
             <Card key={metric.title}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -67,6 +68,15 @@ export const AdminDashboard = () => {
             </Card>
           ))}
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>User Management</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <UserManagementTable />
+          </CardContent>
+        </Card>
       </div>
     </AdminLayout>
   );
