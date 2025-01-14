@@ -14,10 +14,22 @@ import {
 import { UserProfileModal } from "./UserProfileModal";
 import { format } from "date-fns";
 import { Search } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type UserRole = Database["public"]["Enums"]["user_role"];
+
+type Profile = {
+  id: string;
+  user_id: string;
+  username: string;
+  status: string;
+  created_at: string;
+  user_roles: { role: UserRole }[];
+};
 
 export function UserManagementTable() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
@@ -35,7 +47,7 @@ export function UserManagementTable() {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data as Profile[];
     },
   });
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +17,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Database } from "@/integrations/supabase/types";
+
+type UserRole = Database["public"]["Enums"]["user_role"];
+
+type Profile = {
+  id: string;
+  user_id: string;
+  username: string;
+  status: string;
+  created_at: string;
+  user_roles: { role: UserRole }[];
+};
 
 interface UserProfileModalProps {
-  user: any;
+  user: Profile;
   onClose: () => void;
 }
 
@@ -61,12 +73,15 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
     }
   };
 
-  const handleRoleChange = async (newRole: string) => {
+  const handleRoleChange = async (newRole: UserRole) => {
     try {
       setIsUpdating(true);
       const { error } = await supabase
         .from("user_roles")
-        .upsert({ user_id: user.user_id, role: newRole });
+        .upsert({ 
+          user_id: user.user_id, 
+          role: newRole 
+        });
 
       if (error) throw error;
 
@@ -92,6 +107,20 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
       setIsUpdating(false);
     }
   };
+
+  const { data: activities, isLoading } = useQuery({
+    queryKey: ["user-activities", user.user_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_activity_logs")
+        .select("*")
+        .eq("user_id", user.user_id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <Dialog open onOpenChange={() => onClose()}>
@@ -146,46 +175,28 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
           </TabsContent>
 
           <TabsContent value="activity">
-            <ActivityLog userId={user.user_id} />
+            {isLoading ? (
+              <div>Loading activity log...</div>
+            ) : (
+              <div className="space-y-4">
+                {activities?.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center justify-between border-b pb-2"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{activity.action}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(activity.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function ActivityLog({ userId }: { userId: string }) {
-  const { data: activities, isLoading } = useQuery({
-    queryKey: ["user-activities", userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_activity_logs")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  if (isLoading) return <div>Loading activity log...</div>;
-
-  return (
-    <div className="space-y-4">
-      {activities?.map((activity) => (
-        <div
-          key={activity.id}
-          className="flex items-center justify-between border-b pb-2"
-        >
-          <div>
-            <p className="text-sm font-medium">{activity.action}</p>
-            <p className="text-xs text-muted-foreground">
-              {new Date(activity.created_at).toLocaleString()}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
