@@ -16,12 +16,11 @@ const AdminSignIn = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Only check session on mount
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
+      console.log("Current session:", session);
+
       if (session?.user) {
-        // Check if user has admin role
         const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
@@ -29,8 +28,13 @@ const AdminSignIn = () => {
           .eq('role', 'admin')
           .single();
 
+        console.log("Role check result:", { roleData, roleError });
+
         if (!roleError && roleData?.role === 'admin') {
           navigate('/admin/dashboard');
+        } else {
+          // If not admin, sign them out
+          await supabase.auth.signOut();
         }
       }
     };
@@ -55,6 +59,7 @@ const AdminSignIn = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Attempting admin sign in with email:", email);
 
     try {
       const trimmedEmail = email.trim().toLowerCase();
@@ -65,7 +70,12 @@ const AdminSignIn = () => {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        console.error("Sign in error:", signInError);
+        throw signInError;
+      }
+
+      console.log("Auth successful:", authData);
 
       if (!authData?.session?.user) {
         throw new Error('No user found in session');
@@ -78,6 +88,8 @@ const AdminSignIn = () => {
         .eq('user_id', authData.session.user.id)
         .eq('role', 'admin')
         .single();
+
+      console.log("Role check result:", { roleData, roleError });
 
       if (roleError) {
         console.error("Role check error:", roleError);

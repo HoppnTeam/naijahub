@@ -13,6 +13,7 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("Current user state:", user);
     if (user) {
       navigate("/");
     }
@@ -20,6 +21,7 @@ const Auth = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state change:", event, session);
       if (event === 'USER_UPDATED' || event === 'SIGNED_OUT' || event === 'SIGNED_IN') {
         setError(null);
       }
@@ -32,6 +34,7 @@ const Auth = () => {
   }, []);
 
   const getErrorMessage = (error: AuthError) => {
+    console.log("Auth error:", error);
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
