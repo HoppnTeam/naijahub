@@ -49,7 +49,7 @@ const AdminSignIn = () => {
     try {
       // First attempt to sign in
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       });
 
@@ -99,9 +99,9 @@ const AdminSignIn = () => {
       
       if (error instanceof Error) {
         message = error.message;
-        if (error.message.includes('Invalid login credentials')) {
+        if (message.includes('Invalid login credentials')) {
           message = "Invalid email or password. Please try again.";
-        } else if (error.message.includes('Admin privileges required')) {
+        } else if (message.includes('Admin privileges required')) {
           message = "This account does not have admin privileges.";
         }
       }
