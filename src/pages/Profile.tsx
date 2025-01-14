@@ -8,7 +8,6 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
 import { Profile as ProfileType } from "@/types/profile";
-import { Post } from "@/types/post";
 
 const Profile = () => {
   const { id } = useParams();
@@ -22,7 +21,6 @@ const Profile = () => {
         .from("profiles")
         .select(`
           *,
-          user_roles (role),
           posts (
             *,
             categories (name),
@@ -39,20 +37,7 @@ const Profile = () => {
       }
       
       console.log("Fetched profile data:", profileData);
-
-      // Transform posts to match the Post type
-      const transformedProfileData = {
-        ...profileData,
-        posts: profileData.posts?.map((post: any) => ({
-          ...post,
-          _count: {
-            likes: post.likes?.length || 0,
-            comments: post.comments?.length || 0
-          }
-        }))
-      };
-
-      return transformedProfileData as unknown as ProfileType;
+      return profileData as ProfileType;
     },
   });
 
@@ -108,7 +93,7 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="posts">
-            <ProfilePosts posts={profile.posts as Post[] || []} />
+            <ProfilePosts posts={profile.posts || []} />
           </TabsContent>
 
           <TabsContent value="activity">

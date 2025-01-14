@@ -11,15 +11,5 @@ export interface Profile {
   interests?: string[] | null;
   community_intent?: string | null;
   location?: string | null;
-  status: string;
-  user_roles: { role: 'user' | 'moderator' | 'admin' }[];
-  posts?: {
-    id: string;
-    title: string;
-    content: string;
-    created_at: string;
-    likes?: { user_id: string }[];
-    comments?: { id: string }[];
-    categories?: { name: string };
-  }[];
+  posts?: any[];
 }
