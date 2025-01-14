@@ -11,5 +11,6 @@ export interface Profile {
   interests?: string[] | null;
   community_intent?: string | null;
   location?: string | null;
-  posts?: any[];
+  status: string;
+  user_roles: { role: 'user' | 'moderator' | 'admin' }[];
 }

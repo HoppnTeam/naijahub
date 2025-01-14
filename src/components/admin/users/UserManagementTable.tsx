@@ -14,18 +14,7 @@ import {
 import { UserProfileModal } from "./UserProfileModal";
 import { format } from "date-fns";
 import { Search } from "lucide-react";
-import type { Database } from "@/integrations/supabase/types";
-
-type UserRole = Database["public"]["Enums"]["user_role"];
-
-type Profile = {
-  id: string;
-  user_id: string;
-  username: string;
-  status: string;
-  created_at: string;
-  user_roles: { role: UserRole }[];
-};
+import type { Profile } from "@/types/profile";
 
 export function UserManagementTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +36,7 @@ export function UserManagementTable() {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Profile[];
+      return data as unknown as Profile[];
     },
   });
 

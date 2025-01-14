@@ -6,6 +6,7 @@ import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 import AdminSignIn from "@/pages/admin/SignIn";
+import Users from "@/pages/admin/Users";
 import { Navigation } from "@/components/Navigation";
 import Profile from "@/pages/Profile";
 import CreatePost from "@/pages/CreatePost";
@@ -40,6 +41,14 @@ function App() {
               element={
                 <ProtectedAdminRoute>
                   <AdminDashboard />
+                </ProtectedAdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <ProtectedAdminRoute>
+                  <Users />
                 </ProtectedAdminRoute>
               } 
             />
