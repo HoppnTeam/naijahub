@@ -21,6 +21,7 @@ const Profile = () => {
         .from("profiles")
         .select(`
           *,
+          user_roles (role),
           posts (
             *,
             categories (name),
@@ -37,7 +38,7 @@ const Profile = () => {
       }
       
       console.log("Fetched profile data:", profileData);
-      return profileData as ProfileType;
+      return profileData as unknown as ProfileType;
     },
   });
 
