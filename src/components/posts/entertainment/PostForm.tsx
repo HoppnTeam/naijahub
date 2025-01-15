@@ -1,81 +1,75 @@
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ImageUpload } from "../ImageUpload";
-import { LiveDiscussionToggle } from "../LiveDiscussionToggle";
-import { CategorySelect } from "../CategorySelect";
+import { ImageUpload } from "@/components/posts/ImageUpload";
+import { CategorySelect } from "@/components/posts/CategorySelect";
 
 interface PostFormProps {
-  onSubmit: (formData: {
-    title: string;
-    content: string;
-    subcategoryId: string;
-    isLive: boolean;
-    selectedFiles: File[];
-  }) => void;
-  isLoading: boolean;
+  onSubmit: (data: { title: string; content: string; image_url?: string }) => void;
+  categoryName: string;
+  selectedSubcategoryId: string;
+  onSubcategoryChange: (id: string) => void;
 }
 
-export const PostForm = ({ onSubmit, isLoading }: PostFormProps) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
-  const [isLive, setIsLive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+export const PostForm = ({
+  onSubmit,
+  categoryName,
+  selectedSubcategoryId,
+  onSubcategoryChange,
+}: PostFormProps) => {
+  const [imageUrl, setImageUrl] = useState<string>();
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onFormSubmit = (data: any) => {
     onSubmit({
-      title,
-      content,
-      subcategoryId,
-      isLive,
-      selectedFiles,
+      ...data,
+      image_url: imageUrl,
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <CategorySelect
-        selectedSubcategoryId={subcategoryId}
-        onSubcategoryChange={setSubcategoryId}
-        categoryName="Entertainment"
-      />
-      
-      <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+      <div>
         <Input
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter your post title"
-          required
+          {...register("title", { required: "Title is required" })}
+          placeholder="Post title"
+          className="text-lg"
         />
+        {errors.title && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.title.message as string}
+          </p>
+        )}
       </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="content">Content</Label>
+
+      <CategorySelect
+        selectedSubcategoryId={selectedSubcategoryId}
+        onSubcategoryChange={onSubcategoryChange}
+        categoryName={categoryName}
+      />
+
+      <div>
         <Textarea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          {...register("content", { required: "Content is required" })}
           placeholder="Write your post content here..."
           className="min-h-[200px]"
-          required
         />
+        {errors.content && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.content.message as string}
+          </p>
+        )}
       </div>
 
-      <ImageUpload onImagesChange={setSelectedFiles} />
-
-      <LiveDiscussionToggle
-        isLive={isLive}
-        onLiveChange={setIsLive}
+      <ImageUpload
+        onImageUploaded={setImageUrl}
+        className="w-full aspect-video"
       />
-      
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Creating..." : "Create Post"}
+
+      <Button type="submit" className="w-full">
+        Create Post
       </Button>
     </form>
   );
