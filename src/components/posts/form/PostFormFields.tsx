@@ -7,6 +7,7 @@ interface PostFormFieldsProps {
   content: string;
   onTitleChange: (value: string) => void;
   onContentChange: (value: string) => void;
+  showHeadline?: boolean;
 }
 
 export const PostFormFields = ({
@@ -14,16 +15,17 @@ export const PostFormFields = ({
   content,
   onTitleChange,
   onContentChange,
+  showHeadline = false,
 }: PostFormFieldsProps) => {
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{showHeadline ? "Headline" : "Title"}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          placeholder="Enter your post title"
+          placeholder={showHeadline ? "Enter your headline" : "Enter your post title"}
           required
         />
       </div>

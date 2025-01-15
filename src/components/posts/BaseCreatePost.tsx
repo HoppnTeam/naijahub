@@ -19,6 +19,7 @@ interface BaseCreatePostProps {
   redirectPath: string;
   showSubcategories?: boolean;
   showLiveDiscussion?: boolean;
+  showHeadline?: boolean;
 }
 
 export const BaseCreatePost = ({
@@ -26,6 +27,7 @@ export const BaseCreatePost = ({
   redirectPath,
   showSubcategories = true,
   showLiveDiscussion = true,
+  showHeadline = false,
 }: BaseCreatePostProps) => {
   const {
     title,
@@ -104,6 +106,7 @@ export const BaseCreatePost = ({
           content={content}
           onTitleChange={setTitle}
           onContentChange={setContent}
+          showHeadline={showHeadline}
         />
 
         <ImageUpload onImagesChange={setSelectedFiles} />

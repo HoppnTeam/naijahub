@@ -7,6 +7,7 @@ export const NewsAndPoliticsCreatePost = () => {
       redirectPath="/categories/news-politics"
       showLiveDiscussion={true}
       showSubcategories={true}
+      showHeadline={true}
     />
   );
 };
