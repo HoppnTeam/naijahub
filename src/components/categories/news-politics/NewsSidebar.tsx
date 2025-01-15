@@ -1,167 +1,97 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TrendingUp } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Category {
   id: string;
   name: string;
-}
-
-interface TopContributor {
-  username: string;
-  avatar_url: string | null;
-  post_count: number;
+  parent_id: string | null;
 }
 
 interface NewsSidebarProps {
   subcategories?: Category[];
-  onSubcategorySelect?: (subcategoryId: string | null) => void;
+  onSubcategorySelect: (subcategoryId: string | null) => void;
 }
 
-export const NewsSidebar = ({ subcategories, onSubcategorySelect }: NewsSidebarProps) => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const currentSubcategory = searchParams.get('subcategory');
-
-  // Fetch top contributors (users with most posts in News & Politics category)
+export const NewsSidebar = ({ 
+  subcategories,
+  onSubcategorySelect 
+}: NewsSidebarProps) => {
+  // Fetch top contributors
   const { data: topContributors } = useQuery({
     queryKey: ["top-contributors", "news-politics"],
     queryFn: async () => {
-      const { data: categoryId } = await supabase
+      const { data: categoryData } = await supabase
         .from("categories")
         .select("id")
         .eq("name", "News & Politics")
         .single();
 
-      if (!categoryId) return [];
+      if (!categoryData) return [];
 
-      const { data } = await supabase
+      const { data: contributors, error } = await supabase
         .from("profiles")
         .select(`
           username,
           avatar_url,
-          posts:posts(count)
+          posts!inner (id)
         `)
-        .eq("posts.category_id", categoryId.id)
-        .order("posts.count", { ascending: false })
+        .eq("posts.category_id", categoryData.id)
+        .order("posts", { ascending: false, foreignTable: "posts" })
         .limit(5);
 
-      return (data || []).map(user => ({
-        username: user.username,
-        avatar_url: user.avatar_url,
-        post_count: user.posts?.[0]?.count || 0
-      })) as TopContributor[];
-    }
+      if (error) {
+        console.error("Error fetching top contributors:", error);
+        return [];
+      }
+
+      return contributors;
+    },
   });
-
-  // Fetch related categories
-  const { data: relatedCategories } = useQuery({
-    queryKey: ["related-categories"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("categories")
-        .select("id, name")
-        .in("name", ["Technology", "Business", "International"])
-        .limit(3);
-      return data || [];
-    }
-  });
-
-  const handleContributorClick = (username: string) => {
-    // Navigate to the user's profile page
-    navigate(`/profile?username=${username}`);
-  };
-
-  const handleRelatedCategoryClick = (categoryName: string) => {
-    const categoryPaths: { [key: string]: string } = {
-      "Technology": "/categories/technology",
-      "Business": "/categories/business",
-      "International": "/categories/news-politics?subcategory=international"
-    };
-    navigate(categoryPaths[categoryName] || "/");
-  };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Categories</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <Button
-            key="all"
-            variant={!currentSubcategory ? "secondary" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => onSubcategorySelect?.(null)}
-          >
-            All News
-          </Button>
-          {subcategories?.map((subcategory) => (
+    <aside className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Categories</h3>
+        <ScrollArea className="h-[300px]">
+          <div className="space-y-2">
             <Button
-              key={subcategory.id}
-              variant={currentSubcategory === subcategory.id ? "secondary" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => onSubcategorySelect?.(subcategory.id)}
-            >
-              {subcategory.name}
-            </Button>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Top Contributors</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {topContributors?.map((contributor) => (
-            <Button
-              key={contributor.username}
               variant="ghost"
-              className="w-full flex items-center justify-between p-2 hover:bg-accent"
-              onClick={() => handleContributorClick(contributor.username)}
+              className="w-full justify-start"
+              onClick={() => onSubcategorySelect(null)}
             >
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={contributor.avatar_url ?? undefined} />
-                  <AvatarFallback>
-                    {contributor.username.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span>{contributor.username}</span>
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span>{contributor.post_count} posts</span>
-              </div>
+              All News
             </Button>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Related Categories</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {relatedCategories?.map((category) => (
+            {subcategories?.map((subcategory) => (
               <Button
-                key={category.id}
-                variant="outline"
-                size="sm"
-                onClick={() => handleRelatedCategoryClick(category.name)}
+                key={subcategory.id}
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => onSubcategorySelect(subcategory.id)}
               >
-                {category.name}
+                {subcategory.name}
               </Button>
             ))}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </ScrollArea>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Top Contributors</h3>
+        <div className="space-y-4">
+          {topContributors?.map((contributor) => (
+            <div key={contributor.username} className="flex items-center space-x-3">
+              <img
+                src={contributor.avatar_url || "/placeholder.svg"}
+                alt={contributor.username}
+                className="w-8 h-8 rounded-full"
+              />
+              <span className="text-sm font-medium">{contributor.username}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </aside>
   );
 };
