@@ -12,16 +12,27 @@ import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
 import { Badge } from "@/components/ui/badge";
 
+interface CategoryData {
+  mainCategory: {
+    id: string;
+  };
+  subcategories: Array<{
+    id: string;
+    name: string;
+    description: string;
+    created_at: string;
+    parent_id: string;
+  }>;
+}
+
 const NewsAndPolitics = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
-
-  // Get the current subcategory from URL params
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
 
-  // Fetch subcategories
-  const { data: categories } = useQuery({
+  // Fetch subcategories with proper type annotation
+  const { data: categories } = useQuery<CategoryData>({
     queryKey: ["subcategories", "news-politics"],
     queryFn: async () => {
       const { data: parentCategory } = await supabase
@@ -30,19 +41,23 @@ const NewsAndPolitics = () => {
         .eq("name", "News & Politics")
         .single();
 
-      if (!parentCategory) return [];
+      if (!parentCategory) throw new Error("Parent category not found");
 
-      const { data, error } = await supabase
+      const { data: subcategories, error } = await supabase
         .from("categories")
         .select("*")
         .eq("parent_id", parentCategory.id);
 
       if (error) throw error;
-      return { mainCategory: parentCategory, subcategories: data };
+
+      return {
+        mainCategory: parentCategory,
+        subcategories: subcategories
+      };
     },
   });
 
-  // Fetch posts with subcategory filter
+  // Fetch posts with proper null check for category_id
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", "news-politics", selectedTab, searchQuery, selectedSubcategoryId],
     queryFn: async () => {
@@ -54,8 +69,12 @@ const NewsAndPolitics = () => {
           categories!posts_category_id_fkey (name),
           likes (count),
           comments (count)
-        `)
-        .eq("category_id", categories?.mainCategory?.id);
+        `);
+
+      // Only add category filter if we have the category ID
+      if (categories?.mainCategory?.id) {
+        query = query.eq("category_id", categories.mainCategory.id);
+      }
 
       if (selectedSubcategoryId) {
         query = query.eq("subcategory_id", selectedSubcategoryId);
@@ -91,16 +110,19 @@ const NewsAndPolitics = () => {
         }
       })) as Post[];
     },
+    enabled: !!categories?.mainCategory?.id,
   });
 
   const handleCreatePost = () => {
-    navigate("/create-post", { 
-      state: { 
-        category: "News & Politics",
-        categoryId: categories?.mainCategory?.id,
-        subcategories: categories?.subcategories 
-      } 
-    });
+    if (categories?.mainCategory?.id) {
+      navigate("/create-post", { 
+        state: { 
+          category: "News & Politics",
+          categoryId: categories.mainCategory.id,
+          subcategories: categories.subcategories 
+        } 
+      });
+    }
   };
 
   return (
