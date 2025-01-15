@@ -1,6 +1,18 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { marketplaceRoutes } from "@/routes/marketplace";
+import { Home } from "@/pages/Index";
+import { About } from "@/pages/About";
+import { Contact } from "@/pages/Contact";
+import { Profile } from "@/pages/Profile";
+import { Settings } from "@/pages/Settings";
+import { Login } from "@/pages/Login";
+import { Register } from "@/pages/Register";
+import { ForgotPassword } from "@/pages/ForgotPassword";
+import { ResetPassword } from "@/pages/ResetPassword";
+import { Dashboard } from "@/pages/Dashboard";
+import { Categories } from "@/pages/Categories";
+import { Technology } from "@/pages/Technology";
 
 export const App = () => {
   return (
