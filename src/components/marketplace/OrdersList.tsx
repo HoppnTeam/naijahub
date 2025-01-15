@@ -43,14 +43,24 @@ export const OrdersList = () => {
   }
 
   return (
-    <div>
-      {orders.map(order => (
-        <div key={order.id} className="order-item">
-          <h3>{order.listing.title}</h3>
-          <p>Price: {order.listing.price}</p>
-          <p>Buyer: {order.buyer.username}</p>
-          <p>Seller: {order.seller.username}</p>
-          <img src={order.listing.images[0]} alt={order.listing.title} />
+    <div className="space-y-4">
+      {orders.map((order) => (
+        <div key={order.id} className="border rounded-lg p-4 shadow-sm">
+          <h3 className="text-lg font-semibold">{order.listing.title}</h3>
+          <p className="text-gray-600">Price: ₦{order.listing.price}</p>
+          <p className="text-sm text-gray-500">Buyer: {order.buyer.username}</p>
+          <p className="text-sm text-gray-500">Seller: {order.seller.username}</p>
+          {order.listing.images?.[0] && (
+            <img 
+              src={order.listing.images[0]} 
+              alt={order.listing.title} 
+              className="mt-2 w-32 h-32 object-cover rounded-md"
+            />
+          )}
+          <div className="mt-2">
+            <p className="text-sm">Payment Status: <span className="font-medium">{order.payment_status}</span></p>
+            <p className="text-sm">Delivery Status: <span className="font-medium">{order.delivery_status}</span></p>
+          </div>
         </div>
       ))}
     </div>
