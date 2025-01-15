@@ -411,7 +411,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tech_marketplace_listings_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       tech_marketplace_orders: {
         Row: {
@@ -461,11 +469,25 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "tech_marketplace_orders_buyer_id_profiles_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "tech_marketplace_orders_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
             referencedRelation: "tech_marketplace_listings"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tech_marketplace_orders_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }

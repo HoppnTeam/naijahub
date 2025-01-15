@@ -32,7 +32,7 @@ export const ListingDetails = () => {
         .from("tech_marketplace_listings")
         .select(`
           *,
-          profiles:seller_id (
+          seller:seller_id (
             username,
             avatar_url
           )
@@ -189,7 +189,7 @@ export const ListingDetails = () => {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <User className="w-4 h-4" />
-                  <span>{listing.profiles.username}</span>
+                  <span>{listing.seller?.username}</span>
                 </div>
               </div>
               <div className="prose max-w-none">

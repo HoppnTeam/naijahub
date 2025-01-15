@@ -79,7 +79,7 @@ export const OrdersList = () => {
                   {user?.id === order.buyer_id ? "Seller" : "Buyer"}
                 </div>
                 <div className="font-semibold">
-                  {user?.id === order.buyer_id ? order.seller.username : order.buyer.username}
+                  {user?.id === order.buyer_id ? order.seller?.username : order.buyer?.username}
                 </div>
               </div>
               <div>
