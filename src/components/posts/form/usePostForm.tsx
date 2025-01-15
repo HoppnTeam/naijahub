@@ -11,7 +11,6 @@ interface UsePostFormProps {
 }
 
 export const usePostForm = ({
-  categoryName,
   redirectPath,
   showLiveDiscussion,
 }: UsePostFormProps) => {
@@ -21,7 +20,6 @@ export const usePostForm = ({
   
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [categoryId, setCategoryId] = useState<string>("");
   const [subcategoryId, setSubcategoryId] = useState<string>("");
   const [isLive, setIsLive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +84,6 @@ export const usePostForm = ({
             title,
             content,
             user_id: user.id,
-            category_id: categoryId,
             subcategory_id: subcategoryId || null,
             is_live: showLiveDiscussion ? isLive : false,
             image_urls: uploadedImageUrls,
@@ -118,8 +115,6 @@ export const usePostForm = ({
     setTitle,
     content,
     setContent,
-    categoryId,
-    setCategoryId,
     subcategoryId,
     setSubcategoryId,
     isLive,
