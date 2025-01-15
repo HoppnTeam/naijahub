@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,8 +18,8 @@ export const PostForm = ({
   selectedSubcategoryId,
   onSubcategoryChange,
 }: PostFormProps) => {
-  const [imageUrl, setImageUrl] = useState<string>();
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const onFormSubmit = (data: any) => {
     onSubmit({
@@ -64,7 +63,7 @@ export const PostForm = ({
       </div>
 
       <ImageUpload
-        onImageUploaded={setImageUrl}
+        onImagesChange={setSelectedFiles}
         className="w-full aspect-video"
       />
 

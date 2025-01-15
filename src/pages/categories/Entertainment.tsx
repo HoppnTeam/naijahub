@@ -52,7 +52,13 @@ const Entertainment = () => {
       <BackNavigation />
       <EntertainmentHeader
         onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post")}
+        onCreatePost={() => navigate("/create-post", { 
+          state: { 
+            category: "Entertainment",
+            categoryId: categories?.mainCategory?.id,
+            subcategories: categories?.subcategories 
+          }
+        })}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
