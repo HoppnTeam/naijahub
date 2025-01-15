@@ -22,6 +22,7 @@ import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
+import { TechnologyCreatePost } from "@/components/posts/technology/TechnologyCreatePost";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ function App() {
             <Route path="/categories/entertainment" element={<Entertainment />} />
             <Route path="/categories/entertainment/create" element={<EntertainmentCreatePost />} />
             <Route path="/categories/technology" element={<Technology />} />
+            <Route path="/categories/technology/create" element={<TechnologyCreatePost />} />
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/business" element={<Business />} />
             <Route path="/categories/health" element={<Health />} />
