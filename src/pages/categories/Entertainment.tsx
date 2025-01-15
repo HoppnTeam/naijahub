@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
 import { EntertainmentHeader } from "@/components/categories/entertainment/EntertainmentHeader";
 import { EntertainmentSidebar } from "@/components/categories/entertainment/EntertainmentSidebar";
+import { CelebrityCorner } from "@/components/categories/entertainment/CelebrityCorner";
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
 
@@ -33,7 +34,7 @@ const Entertainment = () => {
         .from("categories")
         .select("*")
         .eq("parent_id", parentCategory.id)
-        .neq("name", "Arts & Culture"); // Exclude Arts & Culture subcategory
+        .neq("name", "Arts & Culture");
 
       if (subError) throw subError;
 
@@ -106,33 +107,36 @@ const Entertainment = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
-          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="w-full justify-start mb-6 overflow-x-auto flex space-x-2">
-              <TabsTrigger value="latest">Latest</TabsTrigger>
-              <TabsTrigger value="trending">Trending</TabsTrigger>
-              {categories?.subcategories?.map((subcategory) => (
-                <TabsTrigger
-                  key={subcategory.id}
-                  value={subcategory.id}
-                  className="whitespace-nowrap"
-                >
-                  {subcategory.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <CelebrityCorner />
+          <div className="mt-8">
+            <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+              <TabsList className="w-full justify-start mb-6 overflow-x-auto flex space-x-2">
+                <TabsTrigger value="latest">Latest</TabsTrigger>
+                <TabsTrigger value="trending">Trending</TabsTrigger>
+                {categories?.subcategories?.map((subcategory) => (
+                  <TabsTrigger
+                    key={subcategory.id}
+                    value={subcategory.id}
+                    className="whitespace-nowrap"
+                  >
+                    {subcategory.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-            <TabsContent value={selectedTab} className="space-y-6">
-              {isLoading ? (
-                <div className="text-center py-8">Loading posts...</div>
-              ) : posts && posts.length > 0 ? (
-                posts.map((post) => <PostCard key={post.id} post={post} />)
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No posts found in this category
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+              <TabsContent value={selectedTab} className="space-y-6">
+                {isLoading ? (
+                  <div className="text-center py-8">Loading posts...</div>
+                ) : posts && posts.length > 0 ? (
+                  posts.map((post) => <PostCard key={post.id} post={post} />)
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No posts found in this category
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
 
         <EntertainmentSidebar 
