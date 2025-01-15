@@ -1,25 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/utils";
 
 export const OrdersList = () => {
   const { user } = useAuth();
 
-  const { data: buyerOrders, isLoading: isLoadingBuyer } = useQuery({
-    queryKey: ["buyer-orders", user?.id],
+  const { data: orders, isLoading } = useQuery({
+    queryKey: ["orders", user?.id],
     queryFn: async () => {
+      if (!user) return [];
+
       const { data, error } = await supabase
         .from("tech_marketplace_orders")
         .select(`
           *,
-          listing:tech_marketplace_listings(*),
-          buyer:profiles!tech_marketplace_orders_buyer_id_profiles_fkey(username),
-          seller:profiles!tech_marketplace_orders_seller_id_profiles_fkey(username)
+          listing:listing_id (
+            title,
+            images
+          ),
+          buyer:buyer_id (
+            username
+          ),
+          seller:seller_id (
+            username
+          )
         `)
-        .eq("buyer_id", user?.id);
+        .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
@@ -27,113 +37,59 @@ export const OrdersList = () => {
     enabled: !!user,
   });
 
-  const { data: sellerOrders, isLoading: isLoadingSeller } = useQuery({
-    queryKey: ["seller-orders", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("tech_marketplace_orders")
-        .select(`
-          *,
-          listing:tech_marketplace_listings(*),
-          buyer:profiles!tech_marketplace_orders_buyer_id_profiles_fkey(username),
-          seller:profiles!tech_marketplace_orders_seller_id_profiles_fkey(username)
-        `)
-        .eq("seller_id", user?.id);
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  if (isLoadingBuyer || isLoadingSeller) {
+  if (isLoading) {
     return <div>Loading orders...</div>;
   }
 
-  const getPaymentStatusBadge = (status: string) => {
-    switch (status) {
-      case "paid":
-        return <Badge variant="default">Paid</Badge>;
-      case "pending":
-        return <Badge variant="secondary">Pending</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const getDeliveryStatusBadge = (status: string) => {
-    switch (status) {
-      case "delivered":
-        return <Badge variant="default">Delivered</Badge>;
-      case "in_transit":
-        return <Badge variant="secondary">In Transit</Badge>;
-      case "pending":
-        return <Badge variant="outline">Pending</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  if (!orders?.length) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No orders found
+      </div>
+    );
+  }
 
   return (
-    <Tabs defaultValue="buying" className="w-full">
-      <TabsList>
-        <TabsTrigger value="buying">Buying</TabsTrigger>
-        <TabsTrigger value="selling">Selling</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="buying">
-        <div className="space-y-4">
-          {buyerOrders?.map((order) => (
-            <Card key={order.id}>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {order.listing.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p>Seller: {order.seller.username}</p>
-                  <p>Amount: ₦{order.amount}</p>
-                  <div className="flex gap-2">
-                    {getPaymentStatusBadge(order.payment_status)}
-                    {getDeliveryStatusBadge(order.delivery_status)}
-                  </div>
+    <div className="space-y-4">
+      {orders.map((order) => (
+        <Card key={order.id}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">{order.listing.title}</CardTitle>
+              <Badge variant={order.payment_status === "paid" ? "default" : "secondary"}>
+                {order.payment_status}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="aspect-square w-24 rounded-lg overflow-hidden">
+                <img
+                  src={order.listing.images[0]}
+                  alt={order.listing.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Amount</div>
+                <div className="font-semibold">{formatCurrency(order.amount)}</div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">
+                  {user?.id === order.buyer_id ? "Seller" : "Buyer"}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-          {buyerOrders?.length === 0 && (
-            <p className="text-center text-muted-foreground">No orders found</p>
-          )}
-        </div>
-      </TabsContent>
-
-      <TabsContent value="selling">
-        <div className="space-y-4">
-          {sellerOrders?.map((order) => (
-            <Card key={order.id}>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {order.listing.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p>Buyer: {order.buyer.username}</p>
-                  <p>Amount: ₦{order.amount}</p>
-                  <div className="flex gap-2">
-                    {getPaymentStatusBadge(order.payment_status)}
-                    {getDeliveryStatusBadge(order.delivery_status)}
-                  </div>
+                <div className="font-semibold">
+                  {user?.id === order.buyer_id ? order.seller?.username : order.buyer?.username}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-          {sellerOrders?.length === 0 && (
-            <p className="text-center text-muted-foreground">No orders found</p>
-          )}
-        </div>
-      </TabsContent>
-    </Tabs>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Status</div>
+                <div className="font-semibold">{order.delivery_status}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
