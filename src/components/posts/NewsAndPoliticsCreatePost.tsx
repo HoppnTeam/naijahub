@@ -67,12 +67,31 @@ export const NewsAndPoliticsCreatePost = () => {
       return;
     }
 
+    if (!subcategoryId) {
+      toast({
+        title: "Select a subcategory",
+        description: "Please select a subcategory for your post",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
       let uploadedImageUrls: string[] = [];
       if (selectedFiles.length > 0) {
         uploadedImageUrls = await uploadImages();
+      }
+
+      const { data: categoryData } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "News & Politics")
+        .single();
+
+      if (!categoryData) {
+        throw new Error("Category not found");
       }
 
       const { error } = await supabase
@@ -82,12 +101,8 @@ export const NewsAndPoliticsCreatePost = () => {
             title,
             content,
             user_id: user.id,
-            category_id: (await supabase
-              .from("categories")
-              .select("id")
-              .eq("name", "News & Politics")
-              .single()).data?.id,
-            subcategory_id: subcategoryId || null,
+            category_id: categoryData.id,
+            subcategory_id: subcategoryId,
             is_live: isLive,
             image_urls: uploadedImageUrls,
           },
@@ -100,7 +115,7 @@ export const NewsAndPoliticsCreatePost = () => {
         description: "Your post has been created",
       });
       
-      navigate("/news-and-politics");
+      navigate("/categories/news-politics");
     } catch (error) {
       console.error("Error creating post:", error);
       toast({

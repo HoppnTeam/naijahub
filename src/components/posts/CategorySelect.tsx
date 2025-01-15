@@ -28,37 +28,49 @@ export const CategorySelect = ({
   categoryName,
 }: CategorySelectProps) => {
   const [subcategories, setSubcategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSubcategories = async () => {
-      // First fetch the main category
-      const { data: category } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("name", categoryName)
-        .single();
-
-      if (category) {
-        // Then fetch its subcategories
-        const { data: subcategoriesData } = await supabase
+      try {
+        // First fetch the main category
+        const { data: category, error: categoryError } = await supabase
           .from("categories")
-          .select("*")
-          .eq("parent_id", category.id);
+          .select("id")
+          .eq("name", categoryName)
+          .single();
 
-        if (subcategoriesData) {
-          setSubcategories(subcategoriesData);
+        if (categoryError) throw categoryError;
+
+        if (category) {
+          // Then fetch its subcategories
+          const { data: subcategoriesData, error: subcategoriesError } = await supabase
+            .from("categories")
+            .select("*")
+            .eq("parent_id", category.id);
+
+          if (subcategoriesError) throw subcategoriesError;
+
+          if (subcategoriesData) {
+            setSubcategories(subcategoriesData);
+          }
         }
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchSubcategories();
   }, [categoryName]);
 
+  if (isLoading) return null;
   if (subcategories.length === 0) return null;
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="subcategory">{categoryName} Category</Label>
+      <Label htmlFor="subcategory">Select Subcategory</Label>
       <Select value={selectedSubcategoryId} onValueChange={onSubcategoryChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select a subcategory" />
