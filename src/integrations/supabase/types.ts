@@ -73,6 +73,60 @@ export type Database = {
           },
         ]
       }
+      celebrity_follows: {
+        Row: {
+          celebrity_name: string
+          created_at: string
+          id: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          celebrity_name: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          celebrity_name?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      celebrity_posts: {
+        Row: {
+          celebrity_name: string
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          post_type: string | null
+          user_id: string
+        }
+        Insert: {
+          celebrity_name: string
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          post_type?: string | null
+          user_id: string
+        }
+        Update: {
+          celebrity_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          post_type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string

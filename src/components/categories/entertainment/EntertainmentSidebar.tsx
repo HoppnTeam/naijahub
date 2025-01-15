@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Youtube, Music, Star, Clapperboard, Video } from "lucide-react";
+import { CelebrityCorner } from "./CelebrityCorner";
 
 interface Subcategory {
   id: string;
@@ -42,23 +43,7 @@ export const EntertainmentSidebar = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Celebrity Corner</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => onSubcategorySelect?.("celebrity")}
-            >
-              <Star className="mr-2 h-4 w-4" />
-              Top Celebrities
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <CelebrityCorner />
     </div>
   );
 };
