@@ -4,17 +4,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BasicJobInfo } from "./form/BasicJobInfo";
+import { JobTypeLocation } from "./form/JobTypeLocation";
+import { JobDetails } from "./form/JobDetails";
 
 export const TechJobForm = () => {
   const { user } = useAuth();
@@ -33,6 +26,10 @@ export const TechJobForm = () => {
     skills: [] as string[],
     application_url: "",
   });
+
+  const handleFieldChange = (field: string, value: string | string[]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,11 +72,6 @@ export const TechJobForm = () => {
     }
   };
 
-  const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const skillsArray = e.target.value.split(",").map(skill => skill.trim());
-    setFormData(prev => ({ ...prev, skills: skillsArray }));
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -87,132 +79,27 @@ export const TechJobForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Job Title</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="e.g. Senior React Developer"
-              required
-            />
-          </div>
+          <BasicJobInfo
+            title={formData.title}
+            companyName={formData.company_name}
+            description={formData.description}
+            requirements={formData.requirements}
+            onFieldChange={handleFieldChange}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="company_name">Company Name</Label>
-            <Input
-              id="company_name"
-              value={formData.company_name}
-              onChange={(e) => setFormData(prev => ({ ...prev, company_name: e.target.value }))}
-              placeholder="Enter company name"
-              required
-            />
-          </div>
+          <JobTypeLocation
+            jobType={formData.job_type}
+            locationType={formData.location_type}
+            location={formData.location}
+            onFieldChange={handleFieldChange}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Job Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe the role and responsibilities"
-              className="min-h-[100px]"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="requirements">Requirements</Label>
-            <Textarea
-              id="requirements"
-              value={formData.requirements}
-              onChange={(e) => setFormData(prev => ({ ...prev, requirements: e.target.value }))}
-              placeholder="List the job requirements"
-              className="min-h-[100px]"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="job_type">Job Type</Label>
-              <Select
-                value={formData.job_type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, job_type: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select job type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="full_time">Full Time</SelectItem>
-                  <SelectItem value="part_time">Part Time</SelectItem>
-                  <SelectItem value="contract">Contract</SelectItem>
-                  <SelectItem value="internship">Internship</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="location_type">Location Type</Label>
-              <Select
-                value={formData.location_type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, location_type: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select location type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="remote">Remote</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
-                  <SelectItem value="onsite">On-site</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="e.g. Lagos, Nigeria or Worldwide"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="salary_range">Salary Range</Label>
-            <Input
-              id="salary_range"
-              value={formData.salary_range}
-              onChange={(e) => setFormData(prev => ({ ...prev, salary_range: e.target.value }))}
-              placeholder="e.g. ₦500,000 - ₦800,000 per month"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="skills">Required Skills (comma-separated)</Label>
-            <Input
-              id="skills"
-              value={formData.skills.join(", ")}
-              onChange={handleSkillsChange}
-              placeholder="e.g. React, TypeScript, Node.js"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="application_url">Application URL</Label>
-            <Input
-              id="application_url"
-              type="url"
-              value={formData.application_url}
-              onChange={(e) => setFormData(prev => ({ ...prev, application_url: e.target.value }))}
-              placeholder="https://..."
-              required
-            />
-          </div>
+          <JobDetails
+            salaryRange={formData.salary_range}
+            skills={formData.skills}
+            applicationUrl={formData.application_url}
+            onFieldChange={handleFieldChange}
+          />
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Posting..." : "Post Job"}
