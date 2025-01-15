@@ -4,12 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostCard } from "@/components/PostCard";
 import { EntertainmentHeader } from "@/components/categories/entertainment/EntertainmentHeader";
 import { EntertainmentSidebar } from "@/components/categories/entertainment/EntertainmentSidebar";
 import { CelebrityCorner } from "@/components/categories/entertainment/CelebrityCorner";
-import { Post } from "@/types/post";
+import { EntertainmentPosts } from "@/components/categories/entertainment/EntertainmentPosts";
 import { BackNavigation } from "@/components/BackNavigation";
 
 const Entertainment = () => {
@@ -18,7 +16,7 @@ const Entertainment = () => {
   const [selectedTab, setSelectedTab] = useState("latest");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | undefined>();
 
-  const { data: categories, isLoading: isCategoriesLoading } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ["categories", "entertainment"],
     queryFn: async () => {
       const { data: parentCategory, error: parentError } = await supabase
@@ -45,54 +43,6 @@ const Entertainment = () => {
     },
   });
 
-  const { data: posts, isLoading: isPostsLoading } = useQuery<Post[]>({
-    queryKey: ["posts", "entertainment", selectedTab, searchQuery, categories?.mainCategory?.id, selectedSubcategoryId],
-    queryFn: async () => {
-      if (!categories?.mainCategory?.id) {
-        return [];
-      }
-
-      let query = supabase
-        .from("posts")
-        .select(`
-          *,
-          profiles (username, avatar_url),
-          categories!posts_category_id_fkey (name),
-          likes (count),
-          comments (count)
-        `)
-        .eq("category_id", categories.mainCategory.id);
-
-      if (searchQuery) {
-        query = query.ilike("title", `%${searchQuery}%`);
-      }
-
-      if (selectedSubcategoryId) {
-        query = query.eq("subcategory_id", selectedSubcategoryId);
-      }
-
-      if (selectedTab === "trending") {
-        query = query.order("created_at", { ascending: false });
-      } else {
-        query = query.order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      return data.map(post => ({
-        ...post,
-        _count: {
-          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
-          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
-        }
-      })) as Post[];
-    },
-    enabled: !!categories?.mainCategory?.id,
-  });
-
-  const isLoading = isCategoriesLoading || isPostsLoading;
-
   const handleSubcategorySelect = (subcategoryId: string) => {
     setSelectedSubcategoryId(subcategoryId === selectedSubcategoryId ? undefined : subcategoryId);
   };
@@ -109,33 +59,12 @@ const Entertainment = () => {
         <div className="lg:col-span-3">
           <CelebrityCorner />
           <div className="mt-8">
-            <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-              <TabsList className="w-full justify-start mb-6 overflow-x-auto flex space-x-2">
-                <TabsTrigger value="latest">Latest</TabsTrigger>
-                <TabsTrigger value="trending">Trending</TabsTrigger>
-                {categories?.subcategories?.map((subcategory) => (
-                  <TabsTrigger
-                    key={subcategory.id}
-                    value={subcategory.id}
-                    className="whitespace-nowrap"
-                  >
-                    {subcategory.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              <TabsContent value={selectedTab} className="space-y-6">
-                {isLoading ? (
-                  <div className="text-center py-8">Loading posts...</div>
-                ) : posts && posts.length > 0 ? (
-                  posts.map((post) => <PostCard key={post.id} post={post} />)
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No posts found in this category
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
+            <EntertainmentPosts
+              categoryId={categories?.mainCategory?.id}
+              subcategories={categories?.subcategories}
+              selectedTab={selectedTab}
+              onTabChange={setSelectedTab}
+            />
           </div>
         </div>
 
