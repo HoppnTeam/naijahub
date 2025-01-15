@@ -13,8 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 const CATEGORIES = ["Phones & Tablets", "Computers", "Electronics", "Accessories", "Gaming", "Other"];
-const PAYMENT_METHODS = ["online", "cash_on_delivery", "in_person"];
-const DELIVERY_METHODS = ["shipping", "pickup", "both"];
+const PAYMENT_METHODS = ["online", "cash_on_delivery", "in_person"] as const;
+const DELIVERY_METHODS = ["shipping", "pickup", "both"] as const;
 
 export const CreateListingForm = () => {
   const { user } = useAuth();
@@ -27,8 +27,8 @@ export const CreateListingForm = () => {
   const [condition, setCondition] = useState("");
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
-  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
-  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [paymentMethods, setPaymentMethods] = useState<typeof PAYMENT_METHODS[number][]>([]);
+  const [deliveryMethod, setDeliveryMethod] = useState<typeof DELIVERY_METHODS[number]>("shipping");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,20 +70,18 @@ export const CreateListingForm = () => {
       // Create listing
       const { error } = await supabase
         .from("tech_marketplace_listings")
-        .insert([
-          {
-            seller_id: user.id,
-            title,
-            description,
-            price: parseFloat(price),
-            condition,
-            category,
-            images: imageUrls,
-            location,
-            payment_methods: paymentMethods,
-            delivery_method: deliveryMethod,
-          },
-        ]);
+        .insert({
+          seller_id: user.id,
+          title,
+          description,
+          price: parseFloat(price),
+          condition,
+          category,
+          images: imageUrls,
+          location,
+          payment_methods: paymentMethods,
+          delivery_method: deliveryMethod,
+        });
 
       if (error) throw error;
 

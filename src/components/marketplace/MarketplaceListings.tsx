@@ -8,11 +8,14 @@ import { MarketplaceListingCard } from "./MarketplaceListingCard";
 import { CreateListingForm } from "./CreateListingForm";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Search, Plus } from "lucide-react";
+import { OrdersList } from "./OrdersList";
+import { useNavigate } from "react-router-dom";
 
 export const MarketplaceListings = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const navigate = useNavigate();
 
   const { data: listings, isLoading } = useQuery({
     queryKey: ["marketplace-listings", searchQuery, selectedCategory],
@@ -88,10 +91,7 @@ export const MarketplaceListings = () => {
             <MarketplaceListingCard
               key={listing.id}
               listing={listing}
-              onClick={() => {
-                // TODO: Implement listing details view
-                console.log("View listing:", listing.id);
-              }}
+              onClick={() => navigate(`/categories/technology/marketplace/${listing.id}`)}
             />
           ))}
           {listings?.length === 0 && (
@@ -101,6 +101,11 @@ export const MarketplaceListings = () => {
           )}
         </div>
       )}
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Your Orders</h2>
+        <OrdersList />
+      </div>
     </div>
   );
 };
