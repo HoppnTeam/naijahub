@@ -24,6 +24,7 @@ import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 import { TechnologyCreatePost } from "@/components/posts/technology/TechnologyCreatePost";
+import Advertise from "@/pages/Advertise";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ function App() {
             <Route path="/categories/travel" element={<Travel />} />
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
+            <Route path="/advertise" element={<Advertise />} />
           </Routes>
           <Footer />
           <Toaster />
