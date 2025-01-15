@@ -20,10 +20,14 @@ export const OrdersList = () => {
             images
           ),
           buyer:buyer_id (
-            username
+            profiles!tech_marketplace_orders_buyer_id_profiles_fkey (
+              username
+            )
           ),
           seller:seller_id (
-            username
+            profiles!tech_marketplace_orders_seller_id_profiles_fkey (
+              username
+            )
           )
         `)
         .or(`buyer_id.eq.${user?.id},seller_id.eq.${user?.id}`);
@@ -48,8 +52,8 @@ export const OrdersList = () => {
         <div key={order.id} className="border rounded-lg p-4 shadow-sm">
           <h3 className="text-lg font-semibold">{order.listing.title}</h3>
           <p className="text-gray-600">Price: ₦{order.listing.price}</p>
-          <p className="text-sm text-gray-500">Buyer: {order.buyer.username}</p>
-          <p className="text-sm text-gray-500">Seller: {order.seller.username}</p>
+          <p className="text-sm text-gray-500">Buyer: {order.buyer.profiles.username}</p>
+          <p className="text-sm text-gray-500">Seller: {order.seller.profiles.username}</p>
           {order.listing.images?.[0] && (
             <img 
               src={order.listing.images[0]} 
