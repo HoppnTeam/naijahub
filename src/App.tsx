@@ -11,6 +11,7 @@ import Profile from "@/pages/Profile";
 import CreatePost from "@/pages/CreatePost";
 import PostDetails from "@/pages/PostDetails";
 import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
+import Entertainment from "@/pages/categories/Entertainment";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import Technology from "@/pages/categories/Technology";
 import Sports from "@/pages/categories/Sports";
@@ -47,7 +48,8 @@ function App() {
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts/:id" element={<PostDetails />} />
             <Route path="/categories/news-politics" element={<NewsAndPolitics />} />
-            <Route path="/categories/entertainment" element={<EntertainmentCreatePost />} />
+            <Route path="/categories/entertainment" element={<Entertainment />} />
+            <Route path="/categories/entertainment/create" element={<EntertainmentCreatePost />} />
             <Route path="/categories/technology" element={<Technology />} />
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/business" element={<Business />} />

@@ -52,7 +52,7 @@ const Entertainment = () => {
       <BackNavigation />
       <EntertainmentHeader
         onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post", { 
+        onCreatePost={() => navigate("/categories/entertainment/create", { 
           state: { 
             category: "Entertainment",
             categoryId: categories?.mainCategory?.id,
