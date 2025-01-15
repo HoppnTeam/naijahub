@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Edit, Trash } from "lucide-react";
 
 // Mock data for demonstration
 const mockAds = [
