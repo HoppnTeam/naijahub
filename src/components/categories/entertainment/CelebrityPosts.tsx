@@ -16,7 +16,7 @@ type CelebrityPost = {
   profiles: {
     username: string | null;
     avatar_url: string | null;
-  } | null;
+  };
 };
 
 export const CelebrityPosts = () => {
@@ -27,10 +27,7 @@ export const CelebrityPosts = () => {
         .from("celebrity_posts")
         .select(`
           *,
-          profiles (
-            username,
-            avatar_url
-          )
+          profiles:user_id(username, avatar_url)
         `)
         .order("created_at", { ascending: false })
         .limit(5);
