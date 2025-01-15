@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface Category {
   id: string;
@@ -9,9 +10,14 @@ interface Category {
 
 interface NewsSidebarProps {
   subcategories?: Category[];
+  onSubcategorySelect?: (subcategoryId: string | null) => void;
 }
 
-export const NewsSidebar = ({ subcategories }: NewsSidebarProps) => {
+export const NewsSidebar = ({ subcategories, onSubcategorySelect }: NewsSidebarProps) => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const currentSubcategory = searchParams.get('subcategory');
+
   return (
     <div className="space-y-6">
       <Card>
@@ -19,11 +25,20 @@ export const NewsSidebar = ({ subcategories }: NewsSidebarProps) => {
           <CardTitle className="text-lg">Categories</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
+          <Button
+            key="all"
+            variant={!currentSubcategory ? "secondary" : "ghost"}
+            className="w-full justify-start"
+            onClick={() => onSubcategorySelect?.(null)}
+          >
+            All News
+          </Button>
           {subcategories?.map((subcategory) => (
             <Button
               key={subcategory.id}
-              variant="ghost"
+              variant={currentSubcategory === subcategory.id ? "secondary" : "ghost"}
               className="w-full justify-start"
+              onClick={() => onSubcategorySelect?.(subcategory.id)}
             >
               {subcategory.name}
             </Button>

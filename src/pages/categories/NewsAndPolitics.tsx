@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare, Radio } from "lucide-react";
@@ -14,9 +14,14 @@ import { Badge } from "@/components/ui/badge";
 
 const NewsAndPolitics = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
 
+  // Get the current subcategory from URL params
+  const currentSubcategory = searchParams.get('subcategory');
+
+  // Fetch subcategories
   const { data: subcategories } = useQuery({
     queryKey: ["subcategories", "news-politics"],
     queryFn: async () => {
@@ -38,8 +43,9 @@ const NewsAndPolitics = () => {
     },
   });
 
+  // Fetch posts with subcategory filter
   const { data: posts } = useQuery<Post[]>({
-    queryKey: ["posts", "news-politics", selectedTab, searchQuery],
+    queryKey: ["posts", "news-politics", selectedTab, searchQuery, currentSubcategory],
     queryFn: async () => {
       let query = supabase
         .from("posts")
@@ -55,6 +61,10 @@ const NewsAndPolitics = () => {
           .select("id")
           .eq("name", "News & Politics")
           .single()).data?.id);
+
+      if (currentSubcategory) {
+        query = query.eq("subcategory_id", currentSubcategory);
+      }
 
       if (searchQuery) {
         query = query.ilike("title", `%${searchQuery}%`);
@@ -87,6 +97,14 @@ const NewsAndPolitics = () => {
       })) as Post[];
     },
   });
+
+  const handleSubcategorySelect = (subcategoryId: string | null) => {
+    if (subcategoryId) {
+      setSearchParams({ subcategory: subcategoryId });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -134,7 +152,10 @@ const NewsAndPolitics = () => {
           </Tabs>
         </div>
 
-        <NewsSidebar subcategories={subcategories} />
+        <NewsSidebar 
+          subcategories={subcategories} 
+          onSubcategorySelect={handleSubcategorySelect}
+        />
       </div>
 
       <div className="mt-8 border-t pt-6">
