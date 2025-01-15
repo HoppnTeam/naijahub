@@ -17,6 +17,21 @@ export const TechJobsList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Trigger external jobs fetch
+  const { isLoading: isFetchingExternal } = useQuery({
+    queryKey: ["trigger-external-jobs-fetch"],
+    queryFn: async () => {
+      const response = await fetch('https://ejltrhkhsvdtpxkhbher.supabase.co/functions/v1/fetch-external-jobs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch external jobs');
+      }
+      return response.json();
+    },
+    // Only fetch once when component mounts
+    staleTime: Infinity,
+    retry: 1,
+  });
+
   // Fetch local jobs
   const { data: localJobs, isLoading: isLoadingLocal } = useQuery({
     queryKey: ["tech-jobs", selectedType, selectedLocation, searchQuery],
@@ -42,7 +57,10 @@ export const TechJobsList = () => {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching local jobs:", error);
+        throw error;
+      }
       return data || [];
     },
   });
@@ -56,7 +74,10 @@ export const TechJobsList = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching external jobs:", error);
+        throw error;
+      }
 
       // Transform external jobs to match TechJob interface
       return (jobs || []).map(job => ({
@@ -65,12 +86,13 @@ export const TechJobsList = () => {
         status: 'active', // All fetched external jobs are considered active
         profiles: null,
         // Ensure all required TechJob fields are present
-        job_type: job.job_type || 'full_time',
-        location_type: job.location_type || 'onsite',
+        job_type: job.job_type?.toLowerCase() || 'full_time',
+        location_type: job.location_type?.toLowerCase() || 'onsite',
         location: job.location || 'Nigeria',
         skills: job.skills || []
       })) as TechJob[];
     },
+    enabled: !isFetchingExternal, // Only fetch after external jobs are synced
   });
 
   // Combine and sort all jobs by date
@@ -80,8 +102,8 @@ export const TechJobsList = () => {
 
   // Filter combined jobs based on search and filters
   const filteredJobs = allJobs.filter(job => {
-    const matchesType = selectedType === "all" || job.job_type === selectedType;
-    const matchesLocation = selectedLocation === "all" || job.location_type === selectedLocation;
+    const matchesType = selectedType === "all" || job.job_type?.toLowerCase() === selectedType.toLowerCase();
+    const matchesLocation = selectedLocation === "all" || job.location_type?.toLowerCase() === selectedLocation.toLowerCase();
     const matchesSearch = !searchQuery || 
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company_name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -99,7 +121,7 @@ export const TechJobsList = () => {
     }
   };
 
-  const isLoading = isLoadingLocal || isLoadingExternal;
+  const isLoading = isLoadingLocal || isLoadingExternal || isFetchingExternal;
 
   return (
     <div className="space-y-6">
