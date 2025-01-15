@@ -4,9 +4,9 @@ export const NewsAndPoliticsCreatePost = () => {
   return (
     <BaseCreatePost
       categoryName="News & Politics"
-      redirectPath="/categories/news-politics"
-      showLiveDiscussion={true}
+      redirectPath="/news-and-politics"
       showSubcategories={true}
+      showLiveDiscussion={true}
       showHeadline={true}
     />
   );

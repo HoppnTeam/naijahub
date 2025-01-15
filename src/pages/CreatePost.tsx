@@ -4,7 +4,7 @@ import { NewsAndPoliticsCreatePost } from "@/components/posts/NewsAndPoliticsCre
 
 export default function CreatePost() {
   const location = useLocation();
-  const categoryFromPath = location.state?.category || "Entertainment";
+  const categoryFromPath = location.state?.category;
 
   const renderCategoryForm = () => {
     switch (categoryFromPath) {
@@ -13,6 +13,7 @@ export default function CreatePost() {
       case "Entertainment":
         return <EntertainmentCreatePost />;
       default:
+        // If no category is specified, default to Entertainment
         return <EntertainmentCreatePost />;
     }
   };
