@@ -362,6 +362,68 @@ export type Database = {
         }
         Relationships: []
       }
+      tech_jobs: {
+        Row: {
+          application_url: string
+          company_name: string
+          created_at: string
+          description: string
+          id: string
+          job_type: string
+          location: string
+          location_type: string
+          requirements: string
+          salary_range: string | null
+          skills: string[]
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          application_url: string
+          company_name: string
+          created_at?: string
+          description: string
+          id?: string
+          job_type: string
+          location: string
+          location_type: string
+          requirements: string
+          salary_range?: string | null
+          skills?: string[]
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          application_url?: string
+          company_name?: string
+          created_at?: string
+          description?: string
+          id?: string
+          job_type?: string
+          location?: string
+          location_type?: string
+          requirements?: string
+          salary_range?: string | null
+          skills?: string[]
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_jobs_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       tech_marketplace_listings: {
         Row: {
           category: string

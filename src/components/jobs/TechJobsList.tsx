@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Globe, MapPin, Clock } from "lucide-react";
+import { TechJob } from "@/types/job";
 
 export const TechJobsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +26,7 @@ export const TechJobsList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: jobs, isLoading } = useQuery({
+  const { data: jobs, isLoading } = useQuery<TechJob[]>({
     queryKey: ["tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
       let query = supabase
