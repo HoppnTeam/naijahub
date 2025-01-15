@@ -6,6 +6,7 @@ import {
   Flag,
   Settings,
   List,
+  LayoutDashboard,
 } from "lucide-react";
 
 const navigation = [
@@ -14,6 +15,7 @@ const navigation = [
   { name: "Posts", to: "/admin/posts", icon: FileText },
   { name: "Reports", to: "/admin/reports", icon: Flag },
   { name: "Categories", to: "/admin/categories", icon: List },
+  { name: "Ads Management", to: "/admin/ads", icon: LayoutDashboard },
   { name: "Settings", to: "/admin/settings", icon: Settings },
 ];
 
