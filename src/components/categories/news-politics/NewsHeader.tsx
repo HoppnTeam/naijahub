@@ -2,13 +2,24 @@ import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface NewsHeaderProps {
   onSearch: (query: string) => void;
-  onCreatePost: () => void;
+  onCreatePost?: () => void;
 }
 
 export const NewsHeader = ({ onSearch, onCreatePost }: NewsHeaderProps) => {
+  const navigate = useNavigate();
+
+  const handleCreatePost = () => {
+    if (onCreatePost) {
+      onCreatePost();
+    } else {
+      navigate("/create-post", { state: { category: "News & Politics" } });
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
       <div className="flex items-center gap-3">
@@ -24,7 +35,7 @@ export const NewsHeader = ({ onSearch, onCreatePost }: NewsHeaderProps) => {
             className="pl-10"
           />
         </div>
-        <Button onClick={onCreatePost}>Create Post</Button>
+        <Button onClick={handleCreatePost}>Create Post</Button>
       </div>
     </div>
   );
