@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { PostForm } from "../PostForm";
+import { PostForm } from "@/components/posts/news-politics/PostForm";
 
 interface TechnologyCreatePostProps {
   categoryId?: string;
@@ -41,7 +41,7 @@ export const TechnologyCreatePost = ({ categoryId }: TechnologyCreatePostProps) 
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
           const filePath = `${user.id}/${fileName}`;
 
-          const { error: uploadError, data } = await supabase.storage
+          const { error: uploadError } = await supabase.storage
             .from('post-images')
             .upload(filePath, file);
 
