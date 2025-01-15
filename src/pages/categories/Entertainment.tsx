@@ -16,28 +16,32 @@ const Entertainment = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
 
-  const { data: subcategories } = useQuery({
-    queryKey: ["subcategories", "entertainment"],
+  const { data: categories } = useQuery({
+    queryKey: ["categories", "entertainment"],
     queryFn: async () => {
+      // Get the Entertainment category ID
       const { data: parentCategory } = await supabase
         .from("categories")
         .select("id")
         .eq("name", "Entertainment")
         .single();
 
-      if (!parentCategory) return [];
+      if (!parentCategory) return { mainCategory: null, subcategories: [] };
 
-      const { data, error } = await supabase
+      // Get all subcategories
+      const { data: subcategories } = await supabase
         .from("categories")
         .select("*")
         .eq("parent_id", parentCategory.id);
 
-      if (error) throw error;
-      return data;
+      return {
+        mainCategory: parentCategory,
+        subcategories: subcategories || [],
+      };
     },
   });
 
-  const { data: posts } = useQuery<Post[]>({
+  const { data: posts, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", "entertainment", selectedTab, searchQuery],
     queryFn: async () => {
       let query = supabase
@@ -49,29 +53,22 @@ const Entertainment = () => {
           likes (count),
           comments (count)
         `)
-        .eq("category_id", (await supabase
-          .from("categories")
-          .select("id")
-          .eq("name", "Entertainment")
-          .single()).data?.id);
+        .eq("category_id", categories?.mainCategory?.id);
 
       if (searchQuery) {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      switch (selectedTab) {
-        case "trending":
-          query = query.order("created_at", { ascending: false });
-          break;
-        case "media":
-          query = query.not("image_url", "is", null)
-            .order("created_at", { ascending: false });
-          break;
-        case "celebrities":
-          query = query.order("created_at", { ascending: false });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
+      // Filter by subcategory if a specific tab is selected
+      if (selectedTab !== "latest" && selectedTab !== "trending") {
+        query = query.eq("subcategory_id", selectedTab);
+      }
+
+      // Apply sorting
+      if (selectedTab === "trending") {
+        query = query.order("created_at", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
       }
 
       const { data, error } = await query;
@@ -101,19 +98,31 @@ const Entertainment = () => {
             <TabsList className="w-full justify-start mb-6">
               <TabsTrigger value="latest">Latest</TabsTrigger>
               <TabsTrigger value="trending">Trending</TabsTrigger>
-              <TabsTrigger value="media">Media Gallery</TabsTrigger>
-              <TabsTrigger value="celebrities">Celebrity Corner</TabsTrigger>
+              {categories?.subcategories?.map((subcategory) => (
+                <TabsTrigger key={subcategory.id} value={subcategory.id}>
+                  {subcategory.name}
+                </TabsTrigger>
+              ))}
             </TabsList>
 
             <TabsContent value={selectedTab} className="space-y-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+              {isLoading ? (
+                <div>Loading posts...</div>
+              ) : (
+                posts?.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))
+              )}
+              {!isLoading && (!posts || posts.length === 0) && (
+                <div className="text-center text-muted-foreground">
+                  No posts found in this category
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
 
-        <EntertainmentSidebar subcategories={subcategories} />
+        <EntertainmentSidebar subcategories={categories?.subcategories} />
       </div>
 
       <div className="mt-8 border-t pt-6">
