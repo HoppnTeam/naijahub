@@ -26,7 +26,7 @@ export const TechJobsList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Fetch both local and external jobs
+  // Fetch local jobs
   const { data: localJobs, isLoading: isLoadingLocal } = useQuery<TechJob[]>({
     queryKey: ["tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
@@ -52,10 +52,11 @@ export const TechJobsList = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
+  // Fetch external jobs
   const { data: externalJobs, isLoading: isLoadingExternal } = useQuery<TechJob[]>({
     queryKey: ["external-tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
@@ -77,7 +78,14 @@ export const TechJobsList = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      
+      // Transform external jobs to match TechJob interface
+      return (data || []).map(job => ({
+        ...job,
+        user_id: '', // External jobs don't have a user_id
+        status: 'active', // All fetched external jobs are considered active
+        profiles: null
+      }));
     },
   });
 
