@@ -21,16 +21,18 @@ export const TopContributors = () => {
 
       if (!entertainmentCategory) return [];
 
-      // Modified query to correctly count and order posts
+      // Fixed query to use correct order syntax
       const { data, error } = await supabase
         .from('profiles')
         .select(`
           username,
           avatar_url,
-          posts!inner (id)
+          posts!inner (
+            id
+          )
         `)
         .eq('posts.category_id', entertainmentCategory.id)
-        .order('posts.id', { foreignTable: 'posts', ascending: false })
+        .order('created_at', { ascending: false })
         .limit(5);
 
       if (error) {
