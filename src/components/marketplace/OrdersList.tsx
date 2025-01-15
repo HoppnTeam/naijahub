@@ -21,11 +21,11 @@ export const OrdersList = () => {
             title,
             images
           ),
-          buyer:buyer_id (
+          buyer:profiles!tech_marketplace_orders_buyer_id_profiles_fkey (
             username,
             user_id
           ),
-          seller:seller_id (
+          seller:profiles!tech_marketplace_orders_seller_id_profiles_fkey (
             username,
             user_id
           )
