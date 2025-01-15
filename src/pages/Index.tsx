@@ -24,7 +24,8 @@ const Index = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*");
+        .select("*")
+        .is('parent_id', null); // Only fetch main categories
       if (error) throw error;
       return data;
     },
@@ -59,6 +60,7 @@ const Index = () => {
         }
       })) as Post[];
     },
+    enabled: selectedCategory === "all" || !!selectedCategory,
   });
 
   if (!user) return null;

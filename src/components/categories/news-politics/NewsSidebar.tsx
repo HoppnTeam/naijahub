@@ -17,16 +17,18 @@ interface NewsSidebarProps {
     description?: string;
   }>;
   onSubcategorySelect: (subcategoryId: string) => void;
+  categoryId?: string;
 }
 
 export const NewsSidebar = ({ 
   subcategories,
-  onSubcategorySelect 
+  onSubcategorySelect,
+  categoryId 
 }: NewsSidebarProps) => {
   const { data: topContributors } = useQuery<Profile[]>({
-    queryKey: ["top-contributors"],
+    queryKey: ["top-contributors", categoryId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('profiles')
         .select(`
           username,
@@ -36,9 +38,16 @@ export const NewsSidebar = ({
         .order('created_at', { ascending: false })
         .limit(5);
 
+      if (categoryId) {
+        query = query.eq('posts.category_id', categoryId);
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
       return data;
     },
+    enabled: !!categoryId,
   });
 
   return (
