@@ -4,8 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, Share2 } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
 
-interface CelebrityPost {
+type CelebrityPost = {
   id: string;
   user_id: string;
   celebrity_name: string;
@@ -13,11 +14,11 @@ interface CelebrityPost {
   image_url: string | null;
   post_type: string | null;
   created_at: string;
-  user: {
+  profiles?: {
     username: string | null;
     avatar_url: string | null;
   } | null;
-}
+};
 
 export const CelebrityPosts = () => {
   const { data: celebrityPosts } = useQuery<CelebrityPost[]>({
@@ -27,7 +28,7 @@ export const CelebrityPosts = () => {
         .from("celebrity_posts")
         .select(`
           *,
-          user:profiles!celebrity_posts_user_id_fkey (
+          profiles:profiles!celebrity_posts_user_id_fkey (
             username,
             avatar_url
           )
@@ -48,9 +49,9 @@ export const CelebrityPosts = () => {
           <CardContent className="pt-4">
             <div className="flex items-start gap-4">
               <Avatar>
-                <AvatarImage src={post.user?.avatar_url || ""} />
+                <AvatarImage src={post.profiles?.avatar_url || ""} />
                 <AvatarFallback>
-                  {post.user?.username?.charAt(0).toUpperCase() || "U"}
+                  {post.profiles?.username?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
