@@ -122,7 +122,6 @@ export const EntertainmentCreatePost = () => {
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <CategorySelect
-          subcategories={[]}
           selectedSubcategoryId={subcategoryId}
           onSubcategoryChange={setSubcategoryId}
           categoryName="Entertainment"
