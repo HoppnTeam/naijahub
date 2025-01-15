@@ -27,10 +27,10 @@ export const TopContributors = () => {
         .select(`
           username,
           avatar_url,
-          post_count:posts(count)
+          posts!inner (id)
         `)
         .eq('posts.category_id', entertainmentCategory.id)
-        .order('post_count', { ascending: false })
+        .order('posts.id', { foreignTable: 'posts', ascending: false })
         .limit(5);
 
       if (error) {
@@ -41,7 +41,7 @@ export const TopContributors = () => {
       return data.map(contributor => ({
         username: contributor.username,
         avatar_url: contributor.avatar_url,
-        post_count: contributor.post_count[0]?.count || 0
+        post_count: contributor.posts?.length || 0
       })) as TopContributor[];
     },
   });
