@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { NewsAndPoliticsCreatePost } from "@/components/posts/NewsAndPoliticsCreatePost";
-import { EntertainmentCreatePost } from "@/components/posts/EntertainmentCreatePost";
+import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 
 export default function CreatePost() {
   const location = useLocation();
