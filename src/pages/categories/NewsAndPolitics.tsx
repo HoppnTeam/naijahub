@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare, Radio } from "lucide-react";
@@ -14,15 +14,14 @@ import { Badge } from "@/components/ui/badge";
 
 const NewsAndPolitics = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
 
   // Get the current subcategory from URL params
-  const currentSubcategory = searchParams.get('subcategory');
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
 
   // Fetch subcategories
-  const { data: subcategories } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ["subcategories", "news-politics"],
     queryFn: async () => {
       const { data: parentCategory } = await supabase
@@ -39,13 +38,13 @@ const NewsAndPolitics = () => {
         .eq("parent_id", parentCategory.id);
 
       if (error) throw error;
-      return data;
+      return { mainCategory: parentCategory, subcategories: data };
     },
   });
 
   // Fetch posts with subcategory filter
   const { data: posts } = useQuery<Post[]>({
-    queryKey: ["posts", "news-politics", selectedTab, searchQuery, currentSubcategory],
+    queryKey: ["posts", "news-politics", selectedTab, searchQuery, selectedSubcategoryId],
     queryFn: async () => {
       let query = supabase
         .from("posts")
@@ -56,14 +55,10 @@ const NewsAndPolitics = () => {
           likes (count),
           comments (count)
         `)
-        .eq("category_id", (await supabase
-          .from("categories")
-          .select("id")
-          .eq("name", "News & Politics")
-          .single()).data?.id);
+        .eq("category_id", categories?.mainCategory?.id);
 
-      if (currentSubcategory) {
-        query = query.eq("subcategory_id", currentSubcategory);
+      if (selectedSubcategoryId) {
+        query = query.eq("subcategory_id", selectedSubcategoryId);
       }
 
       if (searchQuery) {
@@ -98,12 +93,14 @@ const NewsAndPolitics = () => {
     },
   });
 
-  const handleSubcategorySelect = (subcategoryId: string | null) => {
-    if (subcategoryId) {
-      setSearchParams({ subcategory: subcategoryId });
-    } else {
-      setSearchParams({});
-    }
+  const handleCreatePost = () => {
+    navigate("/create-post", { 
+      state: { 
+        category: "News & Politics",
+        categoryId: categories?.mainCategory?.id,
+        subcategories: categories?.subcategories 
+      } 
+    });
   };
 
   return (
@@ -111,7 +108,7 @@ const NewsAndPolitics = () => {
       <BackNavigation />
       <NewsHeader
         onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post")}
+        onCreatePost={handleCreatePost}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -137,7 +134,7 @@ const NewsAndPolitics = () => {
                       : "No posts found."}
                   </p>
                   <Button 
-                    onClick={() => navigate("/create-post")} 
+                    onClick={handleCreatePost} 
                     className="mt-4"
                   >
                     Create Post
@@ -153,8 +150,8 @@ const NewsAndPolitics = () => {
         </div>
 
         <NewsSidebar 
-          subcategories={subcategories} 
-          onSubcategorySelect={handleSubcategorySelect}
+          subcategories={categories?.subcategories} 
+          onSubcategorySelect={setSelectedSubcategoryId}
         />
       </div>
 
@@ -165,7 +162,7 @@ const NewsAndPolitics = () => {
             <Button variant="link">Help Center</Button>
             <Button variant="link">Community Guidelines</Button>
           </div>
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleCreatePost}>
             <MessageSquare className="mr-2 h-4 w-4" />
             Start Discussion
           </Button>

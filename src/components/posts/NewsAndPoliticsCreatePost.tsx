@@ -7,11 +7,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { CategorySelect } from "./CategorySelect";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUpload } from "./ImageUpload";
 import { LiveDiscussionToggle } from "./LiveDiscussionToggle";
 
-export const NewsAndPoliticsCreatePost = () => {
+interface Category {
+  id: string;
+  name: string;
+  parent_id: string | null;
+}
+
+interface NewsAndPoliticsCreatePostProps {
+  categoryId?: string;
+  subcategories?: Category[];
+}
+
+export const NewsAndPoliticsCreatePost = ({ 
+  categoryId,
+  subcategories = []
+}: NewsAndPoliticsCreatePostProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -67,7 +81,7 @@ export const NewsAndPoliticsCreatePost = () => {
       return;
     }
 
-    if (!subcategoryId) {
+    if (!subcategoryId && subcategories.length > 0) {
       toast({
         title: "Select a subcategory",
         description: "Please select a subcategory for your post",
@@ -84,16 +98,6 @@ export const NewsAndPoliticsCreatePost = () => {
         uploadedImageUrls = await uploadImages();
       }
 
-      const { data: categoryData } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("name", "News & Politics")
-        .single();
-
-      if (!categoryData) {
-        throw new Error("Category not found");
-      }
-
       const { error } = await supabase
         .from("posts")
         .insert([
@@ -101,8 +105,8 @@ export const NewsAndPoliticsCreatePost = () => {
             title,
             content,
             user_id: user.id,
-            category_id: categoryData.id,
-            subcategory_id: subcategoryId,
+            category_id: categoryId,
+            subcategory_id: subcategoryId || null,
             is_live: isLive,
             image_urls: uploadedImageUrls,
           },
@@ -136,12 +140,23 @@ export const NewsAndPoliticsCreatePost = () => {
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <CategorySelect
-          subcategories={[]}
-          selectedSubcategoryId={subcategoryId}
-          onSubcategoryChange={setSubcategoryId}
-          categoryName="News & Politics"
-        />
+        {subcategories.length > 0 && (
+          <div className="space-y-2">
+            <Label htmlFor="subcategory">Select Subcategory</Label>
+            <Select value={subcategoryId} onValueChange={setSubcategoryId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a subcategory" />
+              </SelectTrigger>
+              <SelectContent>
+                {subcategories.map((subcategory) => (
+                  <SelectItem key={subcategory.id} value={subcategory.id}>
+                    {subcategory.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         
         <div className="space-y-2">
           <Label htmlFor="title">Headline</Label>

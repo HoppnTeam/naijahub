@@ -4,16 +4,21 @@ import { EntertainmentCreatePost } from "@/components/posts/EntertainmentCreateP
 
 export default function CreatePost() {
   const location = useLocation();
-  const categoryFromPath = location.state?.category;
+  const { category, categoryId, subcategories } = location.state || {};
 
   const renderCategoryForm = () => {
-    switch (categoryFromPath) {
+    switch (category) {
       case "News & Politics":
-        return <NewsAndPoliticsCreatePost />;
+        return <NewsAndPoliticsCreatePost 
+          categoryId={categoryId} 
+          subcategories={subcategories} 
+        />;
       case "Entertainment":
         return <EntertainmentCreatePost />;
       default:
-        return <EntertainmentCreatePost />;
+        return <div className="container py-8">
+          <h1 className="text-2xl font-bold">Select a category to create a post</h1>
+        </div>;
     }
   };
 
