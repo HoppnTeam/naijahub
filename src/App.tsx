@@ -7,6 +7,7 @@ import Auth from "@/pages/Auth";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 import AdminSignIn from "@/pages/admin/SignIn";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import Profile from "@/pages/Profile";
 import CreatePost from "@/pages/CreatePost";
 import PostDetails from "@/pages/PostDetails";
@@ -61,6 +62,7 @@ function App() {
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
           </Routes>
+          <Footer />
           <Toaster />
         </AuthProvider>
       </Router>
