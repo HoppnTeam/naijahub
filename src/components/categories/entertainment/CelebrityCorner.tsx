@@ -49,14 +49,23 @@ export const CelebrityCorner = () => {
       const { data, error } = await supabase
         .from("celebrity_posts")
         .select(`
-          *,
-          user:profiles(username, avatar_url)
+          id,
+          user_id,
+          celebrity_name,
+          content,
+          image_url,
+          post_type,
+          created_at,
+          user:profiles (
+            username,
+            avatar_url
+          )
         `)
         .order("created_at", { ascending: false })
         .limit(5);
       
       if (error) throw error;
-      return data;
+      return data as CelebrityPost[];
     },
   });
 
