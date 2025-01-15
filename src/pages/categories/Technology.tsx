@@ -11,6 +11,7 @@ import { TechnologySidebar } from "@/components/categories/technology/Technology
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
 import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
+import { TechJobsList } from "@/components/jobs/TechJobsList";
 
 const Technology = () => {
   const navigate = useNavigate();
@@ -150,15 +151,8 @@ const Technology = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="tech-jobs" className="space-y-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-              {posts?.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No job posts
-                </div>
-              )}
+            <TabsContent value="tech-jobs">
+              <TechJobsList />
             </TabsContent>
 
             <TabsContent value="tech-marketplace">
