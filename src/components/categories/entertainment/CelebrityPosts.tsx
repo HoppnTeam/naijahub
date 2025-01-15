@@ -36,7 +36,7 @@ export const CelebrityPosts = () => {
         .limit(5);
       
       if (error) throw error;
-      return data as CelebrityPost[];
+      return data;
     },
   });
 
