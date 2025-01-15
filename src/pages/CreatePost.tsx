@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { EntertainmentCreatePost } from "@/components/posts/EntertainmentCreatePost";
 import { NewsAndPoliticsCreatePost } from "@/components/posts/NewsAndPoliticsCreatePost";
+import { EntertainmentCreatePost } from "@/components/posts/EntertainmentCreatePost";
 
 export default function CreatePost() {
   const location = useLocation();
@@ -13,7 +13,6 @@ export default function CreatePost() {
       case "Entertainment":
         return <EntertainmentCreatePost />;
       default:
-        // If no category is specified, default to Entertainment
         return <EntertainmentCreatePost />;
     }
   };

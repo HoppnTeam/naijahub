@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -21,11 +23,37 @@ interface CategorySelectProps {
 }
 
 export const CategorySelect = ({
-  subcategories,
   selectedSubcategoryId,
   onSubcategoryChange,
   categoryName,
 }: CategorySelectProps) => {
+  const [subcategories, setSubcategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      // First fetch the main category
+      const { data: category } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", categoryName)
+        .single();
+
+      if (category) {
+        // Then fetch its subcategories
+        const { data: subcategoriesData } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("parent_id", category.id);
+
+        if (subcategoriesData) {
+          setSubcategories(subcategoriesData);
+        }
+      }
+    };
+
+    fetchSubcategories();
+  }, [categoryName]);
+
   if (subcategories.length === 0) return null;
 
   return (
