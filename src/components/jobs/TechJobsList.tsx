@@ -18,7 +18,7 @@ export const TechJobsList = () => {
   const { toast } = useToast();
 
   // Fetch local jobs
-  const { data: localJobs, isLoading: isLoadingLocal } = useQuery<TechJob[]>({
+  const { data: localJobs, isLoading: isLoadingLocal } = useQuery({
     queryKey: ["tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
       let query = supabase
@@ -48,35 +48,28 @@ export const TechJobsList = () => {
   });
 
   // Fetch external jobs
-  const { data: externalJobs, isLoading: isLoadingExternal } = useQuery<TechJob[]>({
+  const { data: externalJobs, isLoading: isLoadingExternal } = useQuery({
     queryKey: ["external-tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
-      let query = supabase
+      const { data: jobs, error } = await supabase
         .from("external_tech_jobs")
-        .select("*");
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (selectedType !== "all") {
-        query = query.eq("job_type", selectedType);
-      }
-
-      if (selectedLocation !== "all") {
-        query = query.eq("location_type", selectedLocation);
-      }
-
-      if (searchQuery) {
-        query = query.ilike("title", `%${searchQuery}%`);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
-      
+
       // Transform external jobs to match TechJob interface
-      return (data || []).map(job => ({
+      return (jobs || []).map(job => ({
         ...job,
         user_id: '', // External jobs don't have a user_id
         status: 'active', // All fetched external jobs are considered active
-        profiles: null
-      }));
+        profiles: null,
+        // Ensure all required TechJob fields are present
+        job_type: job.job_type || 'full_time',
+        location_type: job.location_type || 'onsite',
+        location: job.location || 'Nigeria',
+        skills: job.skills || []
+      })) as TechJob[];
     },
   });
 
@@ -84,6 +77,17 @@ export const TechJobsList = () => {
   const allJobs = [...(localJobs || []), ...(externalJobs || [])].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
+
+  // Filter combined jobs based on search and filters
+  const filteredJobs = allJobs.filter(job => {
+    const matchesType = selectedType === "all" || job.job_type === selectedType;
+    const matchesLocation = selectedLocation === "all" || job.location_type === selectedLocation;
+    const matchesSearch = !searchQuery || 
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company_name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesType && matchesLocation && matchesSearch;
+  });
 
   const handleCreateClick = () => {
     if (!user) {
@@ -121,7 +125,7 @@ export const TechJobsList = () => {
         </Dialog>
       </div>
 
-      <JobList jobs={allJobs} isLoading={isLoading} />
+      <JobList jobs={filteredJobs} isLoading={isLoading} />
     </div>
   );
 };

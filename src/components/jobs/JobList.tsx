@@ -1,5 +1,6 @@
 import { TechJob } from "@/types/job";
 import { JobCard } from "./JobCard";
+import { Loader2 } from "lucide-react";
 
 interface JobListProps {
   jobs: TechJob[];
@@ -8,11 +9,19 @@ interface JobListProps {
 
 export const JobList = ({ jobs, isLoading }: JobListProps) => {
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (jobs.length === 0) {
-    return <div>No jobs found</div>;
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        No jobs found matching your criteria
+      </div>
+    );
   }
 
   return (
