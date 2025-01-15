@@ -1,32 +1,23 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const OrdersList = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
 
-  const { data: buyerOrders, isLoading: buyerLoading } = useQuery({
+  const { data: buyerOrders, isLoading: isLoadingBuyer } = useQuery({
     queryKey: ["buyer-orders", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("tech_marketplace_orders")
         .select(`
           *,
-          listing:listing_id (
-            title,
-            price,
-            images
-          ),
-          seller:seller_id (
-            profiles!tech_marketplace_orders_seller_id_profiles_fkey (
-              username
-            )
-          )
+          listing:tech_marketplace_listings(*),
+          buyer:profiles!tech_marketplace_orders_buyer_id_profiles_fkey(username),
+          seller:profiles!tech_marketplace_orders_seller_id_profiles_fkey(username)
         `)
         .eq("buyer_id", user?.id);
 
@@ -36,23 +27,16 @@ export const OrdersList = () => {
     enabled: !!user,
   });
 
-  const { data: sellerOrders, isLoading: sellerLoading } = useQuery({
+  const { data: sellerOrders, isLoading: isLoadingSeller } = useQuery({
     queryKey: ["seller-orders", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("tech_marketplace_orders")
         .select(`
           *,
-          listing:listing_id (
-            title,
-            price,
-            images
-          ),
-          buyer:buyer_id (
-            profiles!tech_marketplace_orders_buyer_id_profiles_fkey (
-              username
-            )
-          )
+          listing:tech_marketplace_listings(*),
+          buyer:profiles!tech_marketplace_orders_buyer_id_profiles_fkey(username),
+          seller:profiles!tech_marketplace_orders_seller_id_profiles_fkey(username)
         `)
         .eq("seller_id", user?.id);
 
@@ -62,79 +46,94 @@ export const OrdersList = () => {
     enabled: !!user,
   });
 
-  const OrderCard = ({ order, isBuyerView = true }) => (
-    <Card key={order.id} className="mb-4">
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{order.listing.title}</h3>
-            <p className="text-gray-600">Price: ₦{order.listing.price}</p>
-            {isBuyerView ? (
-              <p className="text-sm text-gray-500">
-                Seller: {order.seller.profiles.username}
-              </p>
-            ) : (
-              <p className="text-sm text-gray-500">
-                Buyer: {order.buyer.profiles.username}
-              </p>
-            )}
-          </div>
-          {order.listing.images?.[0] && (
-            <img 
-              src={order.listing.images[0]} 
-              alt={order.listing.title} 
-              className="w-20 h-20 object-cover rounded-md"
-            />
-          )}
-        </div>
-        <div className="mt-4 flex gap-2">
-          <Badge variant={order.payment_status === "paid" ? "success" : "secondary"}>
-            {order.payment_status}
-          </Badge>
-          <Badge variant={order.delivery_status === "delivered" ? "success" : "secondary"}>
-            {order.delivery_status}
-          </Badge>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  if (buyerLoading || sellerLoading) {
-    return <div>Loading...</div>;
+  if (isLoadingBuyer || isLoadingSeller) {
+    return <div>Loading orders...</div>;
   }
 
+  const getPaymentStatusBadge = (status: string) => {
+    switch (status) {
+      case "paid":
+        return <Badge variant="default">Paid</Badge>;
+      case "pending":
+        return <Badge variant="secondary">Pending</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getDeliveryStatusBadge = (status: string) => {
+    switch (status) {
+      case "delivered":
+        return <Badge variant="default">Delivered</Badge>;
+      case "in_transit":
+        return <Badge variant="secondary">In Transit</Badge>;
+      case "pending":
+        return <Badge variant="outline">Pending</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="buying" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="buying">Buying</TabsTrigger>
-          <TabsTrigger value="selling">Selling</TabsTrigger>
-        </TabsList>
-        <TabsContent value="buying">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Items You're Buying</h2>
-            {buyerOrders?.length === 0 ? (
-              <p className="text-muted-foreground">No purchases yet</p>
-            ) : (
-              buyerOrders?.map((order) => (
-                <OrderCard key={order.id} order={order} isBuyerView={true} />
-              ))
-            )}
-          </div>
-        </TabsContent>
-        <TabsContent value="selling">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Items You're Selling</h2>
-            {sellerOrders?.length === 0 ? (
-              <p className="text-muted-foreground">No sales yet</p>
-            ) : (
-              sellerOrders?.map((order) => (
-                <OrderCard key={order.id} order={order} isBuyerView={false} />
-              ))
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <Tabs defaultValue="buying" className="w-full">
+      <TabsList>
+        <TabsTrigger value="buying">Buying</TabsTrigger>
+        <TabsTrigger value="selling">Selling</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="buying">
+        <div className="space-y-4">
+          {buyerOrders?.map((order) => (
+            <Card key={order.id}>
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {order.listing.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p>Seller: {order.seller.username}</p>
+                  <p>Amount: ₦{order.amount}</p>
+                  <div className="flex gap-2">
+                    {getPaymentStatusBadge(order.payment_status)}
+                    {getDeliveryStatusBadge(order.delivery_status)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {buyerOrders?.length === 0 && (
+            <p className="text-center text-muted-foreground">No orders found</p>
+          )}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="selling">
+        <div className="space-y-4">
+          {sellerOrders?.map((order) => (
+            <Card key={order.id}>
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {order.listing.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p>Buyer: {order.buyer.username}</p>
+                  <p>Amount: ₦{order.amount}</p>
+                  <div className="flex gap-2">
+                    {getPaymentStatusBadge(order.payment_status)}
+                    {getDeliveryStatusBadge(order.delivery_status)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {sellerOrders?.length === 0 && (
+            <p className="text-center text-muted-foreground">No orders found</p>
+          )}
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 };
