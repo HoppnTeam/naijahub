@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, Share2 } from "lucide-react";
-import { Database } from "@/integrations/supabase/types";
 
 type CelebrityPost = {
   id: string;
@@ -14,7 +13,7 @@ type CelebrityPost = {
   image_url: string | null;
   post_type: string | null;
   created_at: string;
-  profiles?: {
+  profiles: {
     username: string | null;
     avatar_url: string | null;
   } | null;
@@ -28,7 +27,7 @@ export const CelebrityPosts = () => {
         .from("celebrity_posts")
         .select(`
           *,
-          profiles:profiles!celebrity_posts_user_id_fkey (
+          profiles (
             username,
             avatar_url
           )
