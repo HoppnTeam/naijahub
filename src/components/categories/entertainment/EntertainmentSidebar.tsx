@@ -10,9 +10,15 @@ interface Subcategory {
 
 interface EntertainmentSidebarProps {
   subcategories?: Subcategory[];
+  onSubcategorySelect?: (subcategoryId: string) => void;
+  selectedSubcategoryId?: string;
 }
 
-export const EntertainmentSidebar = ({ subcategories }: EntertainmentSidebarProps) => {
+export const EntertainmentSidebar = ({ 
+  subcategories,
+  onSubcategorySelect,
+  selectedSubcategoryId 
+}: EntertainmentSidebarProps) => {
   return (
     <div className="space-y-6">
       <Card>
@@ -24,8 +30,9 @@ export const EntertainmentSidebar = ({ subcategories }: EntertainmentSidebarProp
             {subcategories?.map((subcategory) => (
               <Button
                 key={subcategory.id}
-                variant="ghost"
+                variant={selectedSubcategoryId === subcategory.id ? "default" : "ghost"}
                 className="w-full justify-start"
+                onClick={() => onSubcategorySelect?.(subcategory.id)}
               >
                 {getSubcategoryIcon(subcategory.name)}
                 <span className="ml-2">{subcategory.name}</span>
@@ -41,7 +48,11 @@ export const EntertainmentSidebar = ({ subcategories }: EntertainmentSidebarProp
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Button variant="outline" className="w-full">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => onSubcategorySelect?.("celebrity")}
+            >
               <Star className="mr-2 h-4 w-4" />
               Top Celebrities
             </Button>

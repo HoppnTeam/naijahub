@@ -15,6 +15,7 @@ const Entertainment = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | undefined>();
 
   const { data: categories, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["categories", "entertainment"],
@@ -44,7 +45,7 @@ const Entertainment = () => {
   });
 
   const { data: posts, isLoading: isPostsLoading } = useQuery<Post[]>({
-    queryKey: ["posts", "entertainment", selectedTab, searchQuery, categories?.mainCategory?.id],
+    queryKey: ["posts", "entertainment", selectedTab, searchQuery, categories?.mainCategory?.id, selectedSubcategoryId],
     queryFn: async () => {
       if (!categories?.mainCategory?.id) {
         return [];
@@ -65,8 +66,8 @@ const Entertainment = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      if (selectedTab !== "latest" && selectedTab !== "trending") {
-        query = query.eq("subcategory_id", selectedTab);
+      if (selectedSubcategoryId) {
+        query = query.eq("subcategory_id", selectedSubcategoryId);
       }
 
       if (selectedTab === "trending") {
@@ -90,6 +91,10 @@ const Entertainment = () => {
   });
 
   const isLoading = isCategoriesLoading || isPostsLoading;
+
+  const handleSubcategorySelect = (subcategoryId: string) => {
+    setSelectedSubcategoryId(subcategoryId === selectedSubcategoryId ? undefined : subcategoryId);
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -130,7 +135,11 @@ const Entertainment = () => {
           </Tabs>
         </div>
 
-        <EntertainmentSidebar subcategories={categories?.subcategories} />
+        <EntertainmentSidebar 
+          subcategories={categories?.subcategories}
+          onSubcategorySelect={handleSubcategorySelect}
+          selectedSubcategoryId={selectedSubcategoryId}
+        />
       </div>
 
       <div className="mt-8 border-t pt-6">
