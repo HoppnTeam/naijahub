@@ -37,54 +37,41 @@ export default function CreatePost() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Category[]>([]);
 
-  // Fetch categories and set initial category if coming from a specific section
+  // Fetch entertainment category and its subcategories
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data: categoriesData, error } = await supabase
+      // First get the Entertainment category
+      const { data: entertainmentCategory, error: categoryError } = await supabase
         .from("categories")
         .select("*")
-        .is("parent_id", null);
+        .eq("name", "Entertainment")
+        .single();
 
-      if (error) {
-        console.error("Error fetching categories:", error);
+      if (categoryError) {
+        console.error("Error fetching entertainment category:", categoryError);
         return;
       }
 
-      setCategories(categoriesData);
+      if (entertainmentCategory) {
+        setCategoryId(entertainmentCategory.id);
+        
+        // Then fetch its subcategories
+        const { data: subcategoriesData, error: subcategoriesError } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("parent_id", entertainmentCategory.id);
 
-      // If coming from News & Politics, pre-select the category
-      if (location.pathname.includes("news-politics")) {
-        const newsCategory = categoriesData.find(cat => cat.name === "News & Politics");
-        if (newsCategory) {
-          setCategoryId(newsCategory.id);
-          fetchSubcategories(newsCategory.id);
+        if (subcategoriesError) {
+          console.error("Error fetching subcategories:", subcategoriesError);
+          return;
         }
+
+        setSubcategories(subcategoriesData || []);
       }
     };
 
     fetchCategories();
   }, [location.pathname]);
-
-  // Fetch subcategories when a category is selected
-  const fetchSubcategories = async (selectedCategoryId: string) => {
-    const { data: subcategoriesData, error } = await supabase
-      .from("categories")
-      .select("*")
-      .eq("parent_id", selectedCategoryId);
-
-    if (error) {
-      console.error("Error fetching subcategories:", error);
-      return;
-    }
-
-    setSubcategories(subcategoriesData);
-  };
-
-  const handleCategoryChange = (value: string) => {
-    setCategoryId(value);
-    setSubcategoryId(""); // Reset subcategory when category changes
-    fetchSubcategories(value);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +108,7 @@ export default function CreatePost() {
         description: "Your post has been created",
       });
       
-      navigate("/categories/news-politics");
+      navigate("/categories/entertainment");
     } catch (error) {
       console.error("Error creating post:", error);
       toast({
@@ -136,28 +123,12 @@ export default function CreatePost() {
 
   return (
     <div className="container max-w-2xl py-8">
-      <h1 className="text-3xl font-bold mb-8">Create a New Post</h1>
+      <h1 className="text-3xl font-bold mb-8">Create a New Entertainment Post</h1>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
-          <Select value={categoryId} onValueChange={handleCategoryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {categoryId && subcategories.length > 0 && (
+        {subcategories.length > 0 && (
           <div className="space-y-2">
-            <Label htmlFor="subcategory">Subcategory</Label>
+            <Label htmlFor="subcategory">Entertainment Category</Label>
             <Select value={subcategoryId} onValueChange={setSubcategoryId}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a subcategory" />
