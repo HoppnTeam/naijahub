@@ -16,23 +16,24 @@ const Entertainment = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["categories", "entertainment"],
     queryFn: async () => {
-      // Get the Entertainment category ID
-      const { data: parentCategory } = await supabase
+      const { data: parentCategory, error: parentError } = await supabase
         .from("categories")
         .select("id")
         .eq("name", "Entertainment")
         .single();
 
+      if (parentError) throw parentError;
       if (!parentCategory) return { mainCategory: null, subcategories: [] };
 
-      // Get all subcategories
-      const { data: subcategories } = await supabase
+      const { data: subcategories, error: subError } = await supabase
         .from("categories")
         .select("*")
         .eq("parent_id", parentCategory.id);
+
+      if (subError) throw subError;
 
       return {
         mainCategory: parentCategory,
@@ -41,9 +42,13 @@ const Entertainment = () => {
     },
   });
 
-  const { data: posts, isLoading } = useQuery<Post[]>({
-    queryKey: ["posts", "entertainment", selectedTab, searchQuery],
+  const { data: posts, isLoading: isPostsLoading } = useQuery<Post[]>({
+    queryKey: ["posts", "entertainment", selectedTab, searchQuery, categories?.mainCategory?.id],
     queryFn: async () => {
+      if (!categories?.mainCategory?.id) {
+        return [];
+      }
+
       let query = supabase
         .from("posts")
         .select(`
@@ -53,18 +58,16 @@ const Entertainment = () => {
           likes (count),
           comments (count)
         `)
-        .eq("category_id", categories?.mainCategory?.id);
+        .eq("category_id", categories.mainCategory.id);
 
       if (searchQuery) {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      // Filter by subcategory if a specific tab is selected
       if (selectedTab !== "latest" && selectedTab !== "trending") {
         query = query.eq("subcategory_id", selectedTab);
       }
 
-      // Apply sorting
       if (selectedTab === "trending") {
         query = query.order("created_at", { ascending: false });
       } else {
@@ -82,7 +85,10 @@ const Entertainment = () => {
         }
       })) as Post[];
     },
+    enabled: !!categories?.mainCategory?.id,
   });
+
+  const isLoading = isCategoriesLoading || isPostsLoading;
 
   return (
     <div className="container mx-auto py-8">
@@ -107,14 +113,11 @@ const Entertainment = () => {
 
             <TabsContent value={selectedTab} className="space-y-6">
               {isLoading ? (
-                <div>Loading posts...</div>
+                <div className="text-center py-8">Loading posts...</div>
+              ) : posts && posts.length > 0 ? (
+                posts.map((post) => <PostCard key={post.id} post={post} />)
               ) : (
-                posts?.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))
-              )}
-              {!isLoading && (!posts || posts.length === 0) && (
-                <div className="text-center text-muted-foreground">
+                <div className="text-center py-8 text-muted-foreground">
                   No posts found in this category
                 </div>
               )}
