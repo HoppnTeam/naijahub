@@ -16,7 +16,7 @@ interface CelebrityPost {
   user: {
     username: string | null;
     avatar_url: string | null;
-  };
+  } | null;
 }
 
 export const CelebrityPosts = () => {
@@ -26,14 +26,8 @@ export const CelebrityPosts = () => {
       const { data, error } = await supabase
         .from("celebrity_posts")
         .select(`
-          id,
-          user_id,
-          celebrity_name,
-          content,
-          image_url,
-          post_type,
-          created_at,
-          user:profiles (
+          *,
+          user:profiles!celebrity_posts_user_id_fkey (
             username,
             avatar_url
           )
