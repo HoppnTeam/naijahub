@@ -10,6 +10,7 @@ import { EntertainmentHeader } from "@/components/categories/entertainment/Enter
 import { EntertainmentSidebar } from "@/components/categories/entertainment/EntertainmentSidebar";
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Entertainment = () => {
   const navigate = useNavigate();
@@ -90,6 +91,17 @@ const Entertainment = () => {
 
   const isLoading = isCategoriesLoading || isPostsLoading;
 
+  // Group subcategories into rows
+  const mainTabs = ["latest", "trending"];
+  const subcategoryRows = categories?.subcategories?.reduce((acc: any[][], curr, i) => {
+    const rowIndex = Math.floor(i / 4);
+    if (!acc[rowIndex]) {
+      acc[rowIndex] = [];
+    }
+    acc[rowIndex].push(curr);
+    return acc;
+  }, []) || [];
+
   return (
     <div className="container mx-auto py-8">
       <BackNavigation />
@@ -101,15 +113,33 @@ const Entertainment = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="w-full justify-start mb-6">
-              <TabsTrigger value="latest">Latest</TabsTrigger>
-              <TabsTrigger value="trending">Trending</TabsTrigger>
-              {categories?.subcategories?.map((subcategory) => (
-                <TabsTrigger key={subcategory.id} value={subcategory.id}>
-                  {subcategory.name}
-                </TabsTrigger>
+            <ScrollArea className="w-full">
+              <TabsList className="w-full justify-start mb-2 flex-wrap">
+                {mainTabs.map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className="capitalize"
+                  >
+                    {tab}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {subcategoryRows.map((row, rowIndex) => (
+                <TabsList key={rowIndex} className="w-full justify-start mb-2 flex-wrap">
+                  {row.map((subcategory) => (
+                    <TabsTrigger
+                      key={subcategory.id}
+                      value={subcategory.id}
+                      className="text-sm"
+                    >
+                      {subcategory.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
               ))}
-            </TabsList>
+            </ScrollArea>
 
             <TabsContent value={selectedTab} className="space-y-6">
               {isLoading ? (
