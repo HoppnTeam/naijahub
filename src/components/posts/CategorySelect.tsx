@@ -16,7 +16,6 @@ interface Category {
 }
 
 interface CategorySelectProps {
-  subcategories: Category[];
   selectedSubcategoryId: string;
   onSubcategoryChange: (value: string) => void;
   categoryName: string;
