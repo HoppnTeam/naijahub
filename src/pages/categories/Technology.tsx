@@ -7,6 +7,7 @@ import { PostCard } from "@/components/PostCard";
 import { TechnologyHeader } from "@/components/categories/technology/TechnologyHeader";
 import { TechnologySidebar } from "@/components/categories/technology/TechnologySidebar";
 import { TechJobsList } from "@/components/jobs/TechJobsList";
+import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
 import { BackNavigation } from "@/components/BackNavigation";
 import { Post } from "@/types/post";
 import { Laptop, Code, Cpu, Package } from "lucide-react";
@@ -154,9 +155,7 @@ const Technology = () => {
             </TabsContent>
 
             <TabsContent value="tech-marketplace">
-              <div className="text-center py-8 text-muted-foreground">
-                Coming soon...
-              </div>
+              <MarketplaceListings />
             </TabsContent>
           </Tabs>
         </div>
