@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface TopContributor {
   username: string;
   avatar_url: string | null;
-  posts: { count: number }[];
+  post_count: number;
 }
 
 export const TopContributors = () => {
@@ -21,15 +21,16 @@ export const TopContributors = () => {
 
       if (!entertainmentCategory) return [];
 
+      // Modified query to correctly count and order posts
       const { data, error } = await supabase
-        .from("profiles")
+        .from('profiles')
         .select(`
           username,
           avatar_url,
-          posts:posts(count)
+          post_count:posts(count)
         `)
-        .eq("posts.category_id", entertainmentCategory.id)
-        .order("created_at", { ascending: false })
+        .eq('posts.category_id', entertainmentCategory.id)
+        .order('post_count', { ascending: false })
         .limit(5);
 
       if (error) {
@@ -37,7 +38,11 @@ export const TopContributors = () => {
         throw error;
       }
 
-      return data as TopContributor[];
+      return data.map(contributor => ({
+        username: contributor.username,
+        avatar_url: contributor.avatar_url,
+        post_count: contributor.post_count[0]?.count || 0
+      })) as TopContributor[];
     },
   });
 
@@ -65,7 +70,7 @@ export const TopContributors = () => {
                 <div>
                   <p className="font-medium">{contributor.username}</p>
                   <p className="text-sm text-muted-foreground">
-                    {contributor.posts[0]?.count || 0} posts
+                    {contributor.post_count} posts
                   </p>
                 </div>
               </div>
