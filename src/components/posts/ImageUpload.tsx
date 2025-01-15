@@ -6,9 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ImageUploadProps {
   onImagesChange: (files: File[]) => void;
+  onImageUploaded?: (url: string) => void;
+  className?: string;
 }
 
-export const ImageUpload = ({ onImagesChange }: ImageUploadProps) => {
+export const ImageUpload = ({ onImagesChange, onImageUploaded, className }: ImageUploadProps) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
@@ -56,7 +58,7 @@ export const ImageUpload = ({ onImagesChange }: ImageUploadProps) => {
         multiple
         onChange={handleFileChange}
         disabled={selectedFiles.length >= 4}
-        className="cursor-pointer"
+        className={`cursor-pointer ${className}`}
       />
       {selectedFiles.length > 0 && (
         <div className="grid grid-cols-2 gap-4 mt-4">
