@@ -13,6 +13,7 @@ export const useCategorySelect = (categoryName: string, showSubcategories: boole
 
   useEffect(() => {
     const fetchCategories = async () => {
+      // First fetch the main category
       const { data: category, error: categoryError } = await supabase
         .from("categories")
         .select("*")
@@ -28,6 +29,7 @@ export const useCategorySelect = (categoryName: string, showSubcategories: boole
         setCategoryId(category.id);
         
         if (showSubcategories) {
+          // Then fetch its subcategories
           const { data: subcategoriesData, error: subcategoriesError } = await supabase
             .from("categories")
             .select("*")
