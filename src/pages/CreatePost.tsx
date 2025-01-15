@@ -5,14 +5,13 @@ import { TechnologyCreatePost } from "@/components/posts/technology/TechnologyCr
 
 export default function CreatePost() {
   const location = useLocation();
-  const { category, categoryId, subcategories } = location.state || {};
+  const { category, categoryId } = location.state || {};
 
   const renderCategoryForm = () => {
     switch (category) {
       case "News & Politics":
         return <NewsAndPoliticsCreatePost 
-          categoryId={categoryId} 
-          subcategories={subcategories} 
+          categoryId={categoryId}
         />;
       case "Entertainment":
         return <EntertainmentCreatePost />;
