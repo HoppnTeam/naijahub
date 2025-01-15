@@ -1,62 +1,119 @@
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Youtube, Music, Star, Clapperboard, Video } from "lucide-react";
-import { CelebrityCorner } from "./CelebrityCorner";
+import { Button } from "@/components/ui/button";
 
-interface Subcategory {
-  id: string;
-  name: string;
-  description: string | null;
+interface TopContributor {
+  username: string;
+  avatar_url: string | null;
+  posts: { count: number }[];
 }
 
 interface EntertainmentSidebarProps {
-  subcategories?: Subcategory[];
-  onSubcategorySelect?: (subcategoryId: string) => void;
+  subcategories?: { id: string; name: string }[];
   selectedSubcategoryId?: string;
+  onSubcategorySelect: (id: string) => void;
 }
 
-export const EntertainmentSidebar = ({ 
+export const EntertainmentSidebar = ({
   subcategories,
+  selectedSubcategoryId,
   onSubcategorySelect,
-  selectedSubcategoryId 
 }: EntertainmentSidebarProps) => {
+  const { data: topContributors, isLoading } = useQuery({
+    queryKey: ["topContributors", "entertainment"],
+    queryFn: async () => {
+      // First get the Entertainment category ID
+      const { data: entertainmentCategory } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Entertainment")
+        .single();
+
+      if (!entertainmentCategory) return [];
+
+      // Then get profiles with post counts for this category
+      const { data, error } = await supabase
+        .from("profiles")
+        .select(`
+          username,
+          avatar_url,
+          posts:posts(count)
+        `)
+        .eq("posts.category_id", entertainmentCategory.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) {
+        console.error("Error fetching top contributors:", error);
+        throw error;
+      }
+
+      return data as TopContributor[];
+    },
+  });
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Trending Topics</CardTitle>
+          <CardTitle>Top Contributors</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {subcategories?.map((subcategory) => (
-              <Button
-                key={subcategory.id}
-                variant={selectedSubcategoryId === subcategory.id ? "default" : "ghost"}
-                className="w-full justify-start"
-                onClick={() => onSubcategorySelect?.(subcategory.id)}
-              >
-                {getSubcategoryIcon(subcategory.name)}
-                <span className="ml-2">{subcategory.name}</span>
-              </Button>
-            ))}
-          </div>
+          {isLoading ? (
+            <div>Loading contributors...</div>
+          ) : (
+            <div className="space-y-4">
+              {topContributors?.map((contributor) => (
+                <div
+                  key={contributor.username}
+                  className="flex items-center gap-3"
+                >
+                  <Avatar>
+                    <AvatarImage src={contributor.avatar_url || ""} />
+                    <AvatarFallback>
+                      {contributor.username.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{contributor.username}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {contributor.posts[0]?.count || 0} posts
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <CelebrityCorner />
+      {subcategories && subcategories.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Entertainment Categories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              {subcategories.map((subcategory) => (
+                <Button
+                  key={subcategory.id}
+                  variant={
+                    selectedSubcategoryId === subcategory.id
+                      ? "default"
+                      : "outline"
+                  }
+                  onClick={() => onSubcategorySelect(subcategory.id)}
+                  className="justify-start"
+                >
+                  {subcategory.name}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-};
-
-const getSubcategoryIcon = (name: string) => {
-  switch (name) {
-    case "Music":
-      return <Music className="h-4 w-4" />;
-    case "Movies & TV":
-      return <Clapperboard className="h-4 w-4" />;
-    case "Celebrity News":
-      return <Star className="h-4 w-4" />;
-    default:
-      return <Video className="h-4 w-4" />;
-  }
 };
