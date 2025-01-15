@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PlusCircle, ShieldCheck } from "lucide-react";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { Post } from "@/types/post";
+import { AdPlacement } from "@/components/ads/AdPlacement";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Index = () => {
       const { data, error } = await supabase
         .from("categories")
         .select("*")
-        .is('parent_id', null); // Only fetch main categories
+        .is('parent_id', null);
       if (error) throw error;
       return data;
     },
@@ -68,6 +69,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background font-poppins">
       <main className="container py-8">
+        <AdPlacement type="banner" />
+        
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Welcome to NaijaHub</h1>
           <div className="flex gap-4">

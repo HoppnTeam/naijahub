@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code, Cpu, Rocket } from "lucide-react";
+import { AdPlacement } from "@/components/ads/AdPlacement";
 
 interface Category {
   id: string;
@@ -46,6 +47,8 @@ export const TechnologySidebar = ({
         </CardContent>
       </Card>
 
+      <AdPlacement type="sidebar" />
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Featured</CardTitle>
@@ -68,24 +71,7 @@ export const TechnologySidebar = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Related Categories</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm">
-              Business
-            </Button>
-            <Button variant="outline" size="sm">
-              Education
-            </Button>
-            <Button variant="outline" size="sm">
-              Innovation
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <AdPlacement type="sidebar" />
     </div>
   );
 };
