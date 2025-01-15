@@ -2,15 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostCard } from "@/components/PostCard";
 import { TechnologyHeader } from "@/components/categories/technology/TechnologyHeader";
 import { TechnologySidebar } from "@/components/categories/technology/TechnologySidebar";
-import { TechJobsList } from "@/components/jobs/TechJobsList";
-import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
+import { TechnologyTabs } from "@/components/categories/technology/TechnologyTabs";
 import { BackNavigation } from "@/components/BackNavigation";
 import { Post } from "@/types/post";
-import { Laptop, Code, Cpu, Package } from "lucide-react";
 
 const Technology = () => {
   const navigate = useNavigate();
@@ -108,56 +104,11 @@ const Technology = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
-          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="w-full justify-start mb-6">
-              <TabsTrigger value="latest">
-                <Laptop className="w-4 h-4 mr-2" />
-                Latest
-              </TabsTrigger>
-              <TabsTrigger value="trending">
-                <Code className="w-4 h-4 mr-2" />
-                Trending
-              </TabsTrigger>
-              <TabsTrigger value="tech-jobs">
-                <Cpu className="w-4 h-4 mr-2" />
-                Tech Jobs
-              </TabsTrigger>
-              <TabsTrigger value="tech-marketplace">
-                <Package className="w-4 h-4 mr-2" />
-                Marketplace
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="latest" className="space-y-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-              {posts?.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No posts found
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="trending" className="space-y-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-              {posts?.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No trending posts
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="tech-jobs">
-              <TechJobsList />
-            </TabsContent>
-
-            <TabsContent value="tech-marketplace">
-              <MarketplaceListings />
-            </TabsContent>
-          </Tabs>
+          <TechnologyTabs 
+            posts={posts}
+            selectedTab={selectedTab}
+            onTabChange={setSelectedTab}
+          />
         </div>
 
         <TechnologySidebar 
