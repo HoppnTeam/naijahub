@@ -3,30 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { CategorySelect } from "./CategorySelect";
-import { ImageUpload } from "./ImageUpload";
-import { LiveDiscussionToggle } from "./LiveDiscussionToggle";
+import { PostForm } from "./PostForm";
 
 export const EntertainmentCreatePost = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
-  const [isLive, setIsLive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const uploadImages = async () => {
+  const uploadImages = async (files: File[]) => {
     const uploadedUrls: string[] = [];
 
-    for (const file of selectedFiles) {
+    for (const file of files) {
       const fileExt = file.name.split('.').pop();
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
       const filePath = `${user?.id}/${fileName}`;
@@ -55,9 +43,13 @@ export const EntertainmentCreatePost = () => {
     return uploadedUrls;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = async (formData: {
+    title: string;
+    content: string;
+    subcategoryId: string;
+    isLive: boolean;
+    selectedFiles: File[];
+  }) => {
     if (!user) {
       toast({
         title: "Please sign in",
@@ -71,24 +63,24 @@ export const EntertainmentCreatePost = () => {
     
     try {
       let uploadedImageUrls: string[] = [];
-      if (selectedFiles.length > 0) {
-        uploadedImageUrls = await uploadImages();
+      if (formData.selectedFiles.length > 0) {
+        uploadedImageUrls = await uploadImages(formData.selectedFiles);
       }
 
       const { error } = await supabase
         .from("posts")
         .insert([
           {
-            title,
-            content,
+            title: formData.title,
+            content: formData.content,
             user_id: user.id,
             category_id: (await supabase
               .from("categories")
               .select("id")
               .eq("name", "Entertainment")
               .single()).data?.id,
-            subcategory_id: subcategoryId || null,
-            is_live: isLive,
+            subcategory_id: formData.subcategoryId || null,
+            is_live: formData.isLive,
             image_urls: uploadedImageUrls,
           },
         ]);
@@ -120,47 +112,10 @@ export const EntertainmentCreatePost = () => {
         <p className="text-muted-foreground">Share entertainment content with the community</p>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <CategorySelect
-          selectedSubcategoryId={subcategoryId}
-          onSubcategoryChange={setSubcategoryId}
-          categoryName="Entertainment"
-        />
-        
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter your post title"
-            required
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="content">Content</Label>
-          <Textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Write your post content here..."
-            className="min-h-[200px]"
-            required
-          />
-        </div>
-
-        <ImageUpload onImagesChange={setSelectedFiles} />
-
-        <LiveDiscussionToggle
-          isLive={isLive}
-          onLiveChange={setIsLive}
-        />
-        
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Creating..." : "Create Post"}
-        </Button>
-      </form>
+      <PostForm
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
