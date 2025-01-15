@@ -1,1 +1,3 @@
 project_id = "ejltrhkhsvdtpxkhbher"
+[functions.fetch-external-jobs]
+verify_jwt = false

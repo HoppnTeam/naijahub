@@ -26,7 +26,8 @@ export const TechJobsList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: jobs, isLoading } = useQuery<TechJob[]>({
+  // Fetch both local and external jobs
+  const { data: localJobs, isLoading: isLoadingLocal } = useQuery<TechJob[]>({
     queryKey: ["tech-jobs", selectedType, selectedLocation, searchQuery],
     queryFn: async () => {
       let query = supabase
@@ -55,6 +56,36 @@ export const TechJobsList = () => {
     },
   });
 
+  const { data: externalJobs, isLoading: isLoadingExternal } = useQuery<TechJob[]>({
+    queryKey: ["external-tech-jobs", selectedType, selectedLocation, searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from("external_tech_jobs")
+        .select("*");
+
+      if (selectedType !== "all") {
+        query = query.eq("job_type", selectedType);
+      }
+
+      if (selectedLocation !== "all") {
+        query = query.eq("location_type", selectedLocation);
+      }
+
+      if (searchQuery) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Combine and sort all jobs by date
+  const allJobs = [...(localJobs || []), ...(externalJobs || [])].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
   const handleCreateClick = () => {
     if (!user) {
       toast({
@@ -64,6 +95,8 @@ export const TechJobsList = () => {
       });
     }
   };
+
+  const isLoading = isLoadingLocal || isLoadingExternal;
 
   return (
     <div className="space-y-6">
@@ -113,11 +146,11 @@ export const TechJobsList = () => {
 
       {isLoading ? (
         <div>Loading...</div>
-      ) : jobs?.length === 0 ? (
+      ) : allJobs.length === 0 ? (
         <div>No jobs found</div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {jobs?.map((job) => (
+          {allJobs.map((job) => (
             <Card key={job.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -163,7 +196,12 @@ export const TechJobsList = () => {
                     ))}
                   </div>
                   
-                  <Button className="w-full">View Details</Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => window.open(job.application_url, '_blank')}
+                  >
+                    Apply Now
+                  </Button>
                 </div>
               </CardContent>
             </Card>

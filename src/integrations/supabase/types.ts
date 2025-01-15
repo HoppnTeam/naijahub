@@ -174,6 +174,60 @@ export type Database = {
           },
         ]
       }
+      external_tech_jobs: {
+        Row: {
+          application_url: string
+          company_name: string
+          created_at: string
+          description: string
+          external_id: string
+          id: string
+          job_type: string
+          location: string
+          location_type: string
+          requirements: string | null
+          salary_range: string | null
+          skills: string[] | null
+          source: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          application_url: string
+          company_name: string
+          created_at?: string
+          description: string
+          external_id: string
+          id?: string
+          job_type: string
+          location: string
+          location_type: string
+          requirements?: string | null
+          salary_range?: string | null
+          skills?: string[] | null
+          source: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          application_url?: string
+          company_name?: string
+          created_at?: string
+          description?: string
+          external_id?: string
+          id?: string
+          job_type?: string
+          location?: string
+          location_type?: string
+          requirements?: string | null
+          salary_range?: string | null
+          skills?: string[] | null
+          source?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
