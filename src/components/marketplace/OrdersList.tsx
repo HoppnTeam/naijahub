@@ -22,10 +22,12 @@ export const OrdersList = () => {
             images
           ),
           buyer:buyer_id (
-            username
+            username,
+            user_id
           ),
           seller:seller_id (
-            username
+            username,
+            user_id
           )
         `)
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
@@ -79,7 +81,7 @@ export const OrdersList = () => {
                   {user?.id === order.buyer_id ? "Seller" : "Buyer"}
                 </div>
                 <div className="font-semibold">
-                  {user?.id === order.buyer_id ? order.seller?.username : order.buyer?.username}
+                  {user?.id === order.buyer_id ? order.seller.username : order.buyer.username}
                 </div>
               </div>
               <div>
