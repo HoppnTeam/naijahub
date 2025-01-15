@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Laptop, Code, Cpu, Rocket } from "lucide-react";
+import { Laptop, Code, Cpu, Rocket, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
@@ -10,6 +10,7 @@ import { TechnologyHeader } from "@/components/categories/technology/TechnologyH
 import { TechnologySidebar } from "@/components/categories/technology/TechnologySidebar";
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
+import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
 
 const Technology = () => {
   const navigate = useNavigate();
@@ -69,7 +70,6 @@ const Technology = () => {
       }
 
       if (selectedTab === "trending") {
-        // You could implement trending logic here
         query = query.order("created_at", { ascending: false });
       } else {
         query = query.order("created_at", { ascending: false });
@@ -123,12 +123,12 @@ const Technology = () => {
                 Tech Jobs
               </TabsTrigger>
               <TabsTrigger value="tech-marketplace">
-                <Rocket className="w-4 h-4 mr-2" />
+                <Package className="w-4 h-4 mr-2" />
                 Marketplace
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value={selectedTab} className="space-y-6">
+            <TabsContent value="latest" className="space-y-6">
               {posts?.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -137,6 +137,32 @@ const Technology = () => {
                   No posts found
                 </div>
               )}
+            </TabsContent>
+
+            <TabsContent value="trending" className="space-y-6">
+              {posts?.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+              {posts?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No trending posts
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="tech-jobs" className="space-y-6">
+              {posts?.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+              {posts?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No job posts
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="tech-marketplace">
+              <MarketplaceListings />
             </TabsContent>
           </Tabs>
         </div>

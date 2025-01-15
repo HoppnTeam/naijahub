@@ -362,6 +362,151 @@ export type Database = {
         }
         Relationships: []
       }
+      tech_marketplace_listings: {
+        Row: {
+          category: string
+          condition: string
+          created_at: string
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          description: string
+          id: string
+          images: string[]
+          location: string
+          payment_methods: Database["public"]["Enums"]["payment_method"][]
+          price: number
+          seller_id: string
+          status: Database["public"]["Enums"]["listing_status"] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          condition: string
+          created_at?: string
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          description: string
+          id?: string
+          images: string[]
+          location: string
+          payment_methods: Database["public"]["Enums"]["payment_method"][]
+          price: number
+          seller_id: string
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          condition?: string
+          created_at?: string
+          delivery_method?: Database["public"]["Enums"]["delivery_method"]
+          description?: string
+          id?: string
+          images?: string[]
+          location?: string
+          payment_methods?: Database["public"]["Enums"]["payment_method"][]
+          price?: number
+          seller_id?: string
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tech_marketplace_orders: {
+        Row: {
+          amount: number
+          buyer_id: string
+          created_at: string
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          delivery_status: string
+          id: string
+          listing_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status: string
+          paystack_reference: string | null
+          seller_id: string
+          shipping_address: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          created_at?: string
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          delivery_status?: string
+          id?: string
+          listing_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id: string
+          shipping_address?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          created_at?: string
+          delivery_method?: Database["public"]["Enums"]["delivery_method"]
+          delivery_status?: string
+          id?: string
+          listing_id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id?: string
+          shipping_address?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_marketplace_orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "tech_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_marketplace_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          order_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          rating?: number
+          reviewed_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_marketplace_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "tech_marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_activity_logs: {
         Row: {
           action: string
@@ -432,6 +577,9 @@ export type Database = {
       }
     }
     Enums: {
+      delivery_method: "shipping" | "pickup" | "both"
+      listing_status: "active" | "sold" | "pending" | "cancelled"
+      payment_method: "online" | "cash_on_delivery" | "in_person"
       user_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
