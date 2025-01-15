@@ -10,6 +10,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, MessageSquare, Share2, Star } from "lucide-react";
 
+interface CelebrityPost {
+  id: string;
+  user_id: string;
+  celebrity_name: string;
+  content: string;
+  image_url: string | null;
+  post_type: string | null;
+  created_at: string;
+  user: {
+    username: string | null;
+    avatar_url: string | null;
+  }
+}
+
 export const CelebrityCorner = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -29,12 +43,15 @@ export const CelebrityCorner = () => {
     },
   });
 
-  const { data: celebrityPosts } = useQuery({
+  const { data: celebrityPosts } = useQuery<CelebrityPost[]>({
     queryKey: ["celebrity-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("celebrity_posts")
-        .select("*, profiles(username, avatar_url)")
+        .select(`
+          *,
+          user:profiles(username, avatar_url)
+        `)
         .order("created_at", { ascending: false })
         .limit(5);
       
@@ -120,9 +137,9 @@ export const CelebrityCorner = () => {
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-4">
                       <Avatar>
-                        <AvatarImage src={post.profiles?.avatar_url || ""} />
+                        <AvatarImage src={post.user?.avatar_url || ""} />
                         <AvatarFallback>
-                          {post.profiles?.username?.charAt(0).toUpperCase() || "U"}
+                          {post.user?.username?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
