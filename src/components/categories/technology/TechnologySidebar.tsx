@@ -9,9 +9,15 @@ interface Category {
 
 interface TechnologySidebarProps {
   subcategories?: Category[];
+  selectedSubcategoryId: string | null;
+  onSubcategorySelect: (id: string | null) => void;
 }
 
-export const TechnologySidebar = ({ subcategories }: TechnologySidebarProps) => {
+export const TechnologySidebar = ({ 
+  subcategories,
+  selectedSubcategoryId,
+  onSubcategorySelect 
+}: TechnologySidebarProps) => {
   return (
     <div className="space-y-6">
       <Card>
@@ -19,11 +25,20 @@ export const TechnologySidebar = ({ subcategories }: TechnologySidebarProps) => 
           <CardTitle className="text-lg">Categories</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {subcategories?.map((subcategory) => (
+          <Button
+            key="all"
+            variant={selectedSubcategoryId === null ? "default" : "ghost"}
+            className="w-full justify-start"
+            onClick={() => onSubcategorySelect(null)}
+          >
+            All Posts
+          </Button>
+          {subcategories?.filter(cat => cat.name !== "Tech Marketplace").map((subcategory) => (
             <Button
               key={subcategory.id}
-              variant="ghost"
+              variant={selectedSubcategoryId === subcategory.id ? "default" : "ghost"}
               className="w-full justify-start"
+              onClick={() => onSubcategorySelect(subcategory.id)}
             >
               {subcategory.name}
             </Button>

@@ -15,6 +15,7 @@ const Technology = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("latest");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
   const { data: subcategories } = useQuery({
     queryKey: ["subcategories", "technology"],
@@ -38,7 +39,7 @@ const Technology = () => {
   });
 
   const { data: posts } = useQuery<Post[]>({
-    queryKey: ["posts", "technology", selectedTab, searchQuery],
+    queryKey: ["posts", "technology", selectedTab, searchQuery, selectedSubcategory],
     queryFn: async () => {
       const { data: parentCategory } = await supabase
         .from("categories")
@@ -63,13 +64,15 @@ const Technology = () => {
         query = query.ilike("title", `%${searchQuery}%`);
       }
 
-      if (selectedTab !== "latest") {
-        const subcategory = subcategories?.find(
-          (sub) => sub.name.toLowerCase().replace(/\s+/g, "-") === selectedTab
-        );
-        if (subcategory) {
-          query = query.eq("subcategory_id", subcategory.id);
-        }
+      if (selectedSubcategory) {
+        query = query.eq("subcategory_id", selectedSubcategory);
+      }
+
+      if (selectedTab === "trending") {
+        // You could implement trending logic here
+        query = query.order("created_at", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
       }
 
       const { data, error } = await query;
@@ -85,12 +88,22 @@ const Technology = () => {
     },
   });
 
+  const handleCreatePost = () => {
+    navigate("/create-post", {
+      state: {
+        category: "Technology",
+        categoryId: subcategories?.[0]?.parent_id,
+        subcategories
+      }
+    });
+  };
+
   return (
     <div className="container mx-auto py-8">
       <BackNavigation />
       <TechnologyHeader
         onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post")}
+        onCreatePost={handleCreatePost}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -101,9 +114,9 @@ const Technology = () => {
                 <Laptop className="w-4 h-4 mr-2" />
                 Latest
               </TabsTrigger>
-              <TabsTrigger value="product-reviews">
+              <TabsTrigger value="trending">
                 <Code className="w-4 h-4 mr-2" />
-                Product Reviews
+                Trending
               </TabsTrigger>
               <TabsTrigger value="tech-jobs">
                 <Cpu className="w-4 h-4 mr-2" />
@@ -119,11 +132,20 @@ const Technology = () => {
               {posts?.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
+              {posts?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No posts found
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
 
-        <TechnologySidebar subcategories={subcategories} />
+        <TechnologySidebar 
+          subcategories={subcategories} 
+          selectedSubcategoryId={selectedSubcategory}
+          onSubcategorySelect={setSelectedSubcategory}
+        />
       </div>
     </div>
   );
