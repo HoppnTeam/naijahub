@@ -2,16 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Laptop, Code, Cpu, Rocket, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
 import { TechnologyHeader } from "@/components/categories/technology/TechnologyHeader";
 import { TechnologySidebar } from "@/components/categories/technology/TechnologySidebar";
-import { Post } from "@/types/post";
-import { BackNavigation } from "@/components/BackNavigation";
-import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
 import { TechJobsList } from "@/components/jobs/TechJobsList";
+import { BackNavigation } from "@/components/BackNavigation";
+import { Post } from "@/types/post";
+import { Laptop, Code, Cpu, Package } from "lucide-react";
 
 const Technology = () => {
   const navigate = useNavigate();
@@ -156,7 +154,9 @@ const Technology = () => {
             </TabsContent>
 
             <TabsContent value="tech-marketplace">
-              <MarketplaceListings />
+              <div className="text-center py-8 text-muted-foreground">
+                Coming soon...
+              </div>
             </TabsContent>
           </Tabs>
         </div>
