@@ -3,47 +3,60 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { adFormSchema, type AdFormValues } from "./adFormSchema";
-import { BasicInfoFields } from "./BasicInfoFields";
-import { PlacementFields } from "./PlacementFields";
-import { DateFields } from "./DateFields";
+import { useNavigate } from "react-router-dom";
+import { AdFormSchema, adFormSchema } from "./adFormSchema";
 
 interface AdFormProps {
-  initialData?: AdFormValues & { id: string };
-  onSuccess: () => void;
+  initialData?: {
+    id: string;
+    title: string;
+    description: string;
+    tier: string;
+    placement: string;
+    start_date: string;
+    end_date: string;
+    image_url?: string;
+  };
 }
 
-export function AdForm({ initialData, onSuccess }: AdFormProps) {
+export const AdForm = ({ initialData }: AdFormProps) => {
   const { toast } = useToast();
-  const form = useForm<AdFormValues>({
+  const navigate = useNavigate();
+  const form = useForm<AdFormSchema>({
     resolver: zodResolver(adFormSchema),
     defaultValues: initialData || {
       title: "",
       description: "",
       tier: "basic",
       placement: "sidebar",
-      start_date: new Date().toISOString().split("T")[0],
-      end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
-      image_url: "",
-      status: "pending",
+      start_date: "",
+      end_date: "",
     },
   });
 
-  const onSubmit = async (values: AdFormValues) => {
+  const onSubmit = async (values: AdFormSchema) => {
     try {
       const submissionData = {
         ...values,
         impression_count: 0,
         click_count: 0,
+        title: values.title,
+        description: values.description,
         tier: values.tier,
         placement: values.placement,
         start_date: values.start_date,
         end_date: values.end_date,
-        title: values.title,
+        status: "pending",
       };
 
       if (initialData?.id) {
@@ -55,20 +68,23 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
         if (error) throw error;
         toast({
           title: "Advertisement updated",
-          description: "The advertisement has been updated successfully.",
+          description: "Your advertisement has been updated successfully.",
         });
       } else {
         const { error } = await supabase
           .from("advertisements")
-          .insert(submissionData);
+          .insert([submissionData]);
+
         if (error) throw error;
         toast({
           title: "Advertisement created",
-          description: "The advertisement has been created successfully.",
+          description: "Your advertisement has been created successfully.",
         });
       }
-      onSuccess();
+
+      navigate("/admin/ads");
     } catch (error) {
+      console.error("Error:", error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -79,19 +95,108 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <BasicInfoFields form={form} />
-        <PlacementFields form={form} />
-        <DateFields form={form} />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter advertisement title" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
-          name="image_url"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Advertisement image URL" {...field} />
+                <Textarea
+                  placeholder="Enter advertisement description"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tier"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tier</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a tier" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="basic">Basic</SelectItem>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="placement"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Placement</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select placement" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="sidebar">Sidebar</SelectItem>
+                  <SelectItem value="feed">Feed</SelectItem>
+                  <SelectItem value="banner">Banner</SelectItem>
+                  <SelectItem value="popup">Popup</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="start_date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Date</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="end_date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>End Date</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,4 +209,4 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
       </form>
     </Form>
   );
-}
+};
