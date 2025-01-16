@@ -1,8 +1,19 @@
 import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { Map } from "leaflet";
+import { Map, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Workshop } from "@/types/workshop";
+
+// Fix for default marker icon in Leaflet
+const defaultIcon = new Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 interface WorkshopMapProps {
   latitude: number;
@@ -29,7 +40,7 @@ const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }:
     <MapContainer
       center={[latitude, longitude]}
       zoom={13}
-      scrollWheelZoom={false}
+      scrollWheelZoom={true}
       style={{ height: "100%", width: "100%" }}
       ref={mapRef}
     >
@@ -37,7 +48,7 @@ const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }:
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={[latitude, longitude]}>
+      <Marker position={[latitude, longitude]} icon={defaultIcon}>
         <Popup>{name}</Popup>
       </Marker>
       {workshops?.map((workshop) => (
@@ -45,8 +56,17 @@ const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }:
           <Marker
             key={workshop.id}
             position={[workshop.latitude, workshop.longitude]}
+            icon={defaultIcon}
           >
-            <Popup>{workshop.name}</Popup>
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-semibold">{workshop.name}</h3>
+                <p className="text-sm text-muted-foreground">{workshop.address}</p>
+                {workshop.phone_number && (
+                  <p className="text-sm">📞 {workshop.phone_number}</p>
+                )}
+              </div>
+            </Popup>
           </Marker>
         ) : null
       ))}

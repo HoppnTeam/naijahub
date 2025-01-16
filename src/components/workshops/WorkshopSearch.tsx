@@ -29,7 +29,10 @@ const WorkshopSearch = () => {
         .not('latitude', 'is', null)
         .not('longitude', 'is', null);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching workshops:', error);
+        throw error;
+      }
 
       // Calculate distance and filter workshops within 30 miles
       const workshopsWithDistance = data
@@ -71,6 +74,7 @@ const WorkshopSearch = () => {
         setIsLocating(false);
       },
       (error) => {
+        console.error('Geolocation error:', error);
         toast({
           title: "Error",
           description: "Unable to get your location. Please try again.",
