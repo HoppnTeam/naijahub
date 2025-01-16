@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plane, MapPin, Globe, Camera, UtensilsCrossed } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
 import { TravelHeader } from "@/components/categories/travel/TravelHeader";
@@ -37,7 +35,7 @@ const Travel = () => {
     },
   });
 
-  const { data: posts } = useQuery<Post[]>({
+  const { data: posts, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", "travel", selectedTab, searchQuery],
     queryFn: async () => {
       const { data: parentCategory } = await supabase
@@ -54,8 +52,8 @@ const Travel = () => {
           *,
           profiles (username, avatar_url),
           categories!posts_category_id_fkey (name),
-          likes:likes(count),
-          comments:comments(count)
+          likes (count),
+          comments (count)
         `)
         .eq("category_id", parentCategory.id);
 
@@ -83,6 +81,7 @@ const Travel = () => {
         }
       })) as Post[];
     },
+    enabled: !!subcategories,
   });
 
   return (
@@ -97,32 +96,27 @@ const Travel = () => {
         <div className="lg:col-span-3">
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
             <TabsList className="w-full justify-start mb-6 overflow-x-auto">
-              <TabsTrigger value="latest">
-                <Plane className="w-4 h-4 mr-2" />
-                Latest
-              </TabsTrigger>
-              <TabsTrigger value="destination-guides">
-                <MapPin className="w-4 h-4 mr-2" />
-                Destination Guides
-              </TabsTrigger>
-              <TabsTrigger value="travel-stories">
-                <Camera className="w-4 h-4 mr-2" />
-                Travel Stories
-              </TabsTrigger>
-              <TabsTrigger value="overseas-travel">
-                <Globe className="w-4 h-4 mr-2" />
-                Overseas Travel
-              </TabsTrigger>
-              <TabsTrigger value="street-foods">
-                <UtensilsCrossed className="w-4 h-4 mr-2" />
-                Street Foods
-              </TabsTrigger>
+              <TabsTrigger value="latest">Latest</TabsTrigger>
+              {subcategories?.map((subcategory) => (
+                <TabsTrigger
+                  key={subcategory.id}
+                  value={subcategory.name.toLowerCase().replace(/\s+/g, "-")}
+                >
+                  {subcategory.name}
+                </TabsTrigger>
+              ))}
             </TabsList>
 
             <TabsContent value={selectedTab} className="space-y-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+              {isLoading ? (
+                <div className="text-center py-8">Loading posts...</div>
+              ) : posts && posts.length > 0 ? (
+                posts.map((post) => <PostCard key={post.id} post={post} />)
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No posts found in this category
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
