@@ -1,14 +1,27 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Plus, Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AdForm } from "@/components/admin/ads/AdForm";
 
 export const AdsManagement = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [selectedAd, setSelectedAd] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: advertisements } = useQuery({
     queryKey: ["advertisements"],
@@ -36,10 +49,37 @@ export const AdsManagement = () => {
     }
   };
 
+  const handleSuccess = () => {
+    setIsDialogOpen(false);
+    setSelectedAd(null);
+    queryClient.invalidateQueries({ queryKey: ["advertisements"] });
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Ads Management</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Ads Management</h1>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setSelectedAd(null)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Advertisement
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedAd ? "Edit Advertisement" : "Create Advertisement"}
+                </DialogTitle>
+              </DialogHeader>
+              <AdForm
+                initialData={selectedAd}
+                onSuccess={handleSuccess}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="col-span-2">
@@ -55,6 +95,7 @@ export const AdsManagement = () => {
                     <TableHead>Placement</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Duration</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -70,6 +111,18 @@ export const AdsManagement = () => {
                       </TableCell>
                       <TableCell>
                         {new Date(ad.start_date).toLocaleDateString()} - {new Date(ad.end_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedAd(ad);
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
