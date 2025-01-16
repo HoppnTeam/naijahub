@@ -70,7 +70,10 @@ const Business = () => {
   const handleCreatePost = () => {
     const businessCategory = posts?.[0]?.category_id;
     navigate("/create-post", {
-      state: { category: "Business", categoryId: businessCategory },
+      state: { 
+        category: "Business", 
+        categoryId: businessCategory,
+      }
     });
   };
 
