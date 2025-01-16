@@ -6,6 +6,7 @@ import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { WorkshopsList } from "@/components/workshops/WorkshopsList";
 
 interface Category {
   id: string;
@@ -122,26 +123,32 @@ export const AutomotiveContent = ({
         </Card>
       )}
 
-      {/* Posts Grid */}
-      <div className="space-y-4">
-        {posts?.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-semibold text-center">No posts found</p>
-              <p className="text-muted-foreground text-center">
-                {searchQuery 
-                  ? "Try adjusting your search terms"
-                  : "Be the first to create a post in this category"}
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          posts?.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))
-        )}
-      </div>
+      {/* Content Area */}
+      {selectedSubcategory && 
+       subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
+        <WorkshopsList />
+      ) : (
+        /* Posts Grid */
+        <div className="space-y-4">
+          {posts?.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
+                <p className="text-lg font-semibold text-center">No posts found</p>
+                <p className="text-muted-foreground text-center">
+                  {searchQuery 
+                    ? "Try adjusting your search terms"
+                    : "Be the first to create a post in this category"}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            posts?.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };
