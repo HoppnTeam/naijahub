@@ -1,84 +1,73 @@
 import { useState } from "react";
-import { X } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-interface ImageUploadProps {
-  onImagesChange: (files: File[]) => void;
-  onImageUploaded?: (url: string) => void;
-  className?: string;
+export interface ImageUploadProps {
+  onImageUploaded: (url: string) => void;
+  bucket: string;
+  currentImageUrl?: string | null;
 }
 
-export const ImageUpload = ({ onImagesChange, onImageUploaded, className }: ImageUploadProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const { toast } = useToast();
+export const ImageUpload = ({ onImageUploaded, bucket, currentImageUrl }: ImageUploadProps) => {
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length + selectedFiles.length > 4) {
-      toast({
-        title: "Too many files",
-        description: "You can only upload up to 4 images",
-        variant: "destructive",
-      });
-      return;
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setIsUploading(true);
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${Math.random()}.${fileExt}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(filePath);
+
+      onImageUploaded(publicUrl);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setIsUploading(false);
     }
-
-    const validFiles = files.filter(file => {
-      const isValid = file.type.startsWith('image/');
-      if (!isValid) {
-        toast({
-          title: "Invalid file type",
-          description: `${file.name} is not an image file`,
-          variant: "destructive",
-        });
-      }
-      return isValid;
-    });
-
-    const newFiles = [...selectedFiles, ...validFiles];
-    setSelectedFiles(newFiles);
-    onImagesChange(newFiles);
-  };
-
-  const removeFile = (index: number) => {
-    const newFiles = selectedFiles.filter((_, i) => i !== index);
-    setSelectedFiles(newFiles);
-    onImagesChange(newFiles);
   };
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="images">Images (Max 4)</Label>
-      <Input
-        id="images"
-        type="file"
-        accept="image/*"
-        multiple
-        onChange={handleFileChange}
-        disabled={selectedFiles.length >= 4}
-        className={`cursor-pointer ${className}`}
-      />
-      {selectedFiles.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          {selectedFiles.map((file, index) => (
-            <div key={index} className="relative">
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`Preview ${index + 1}`}
-                className="w-full h-40 object-cover rounded-lg"
-              />
-              <button
-                type="button"
-                onClick={() => removeFile(index)}
-                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+      <Label htmlFor="image">Image (optional)</Label>
+      <div className="flex items-center gap-4">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-[200px]"
+          disabled={isUploading}
+        >
+          <Label htmlFor="image" className="cursor-pointer">
+            {isUploading ? "Uploading..." : "Upload Image"}
+          </Label>
+        </Button>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          className="hidden"
+          onChange={handleUpload}
+          disabled={isUploading}
+        />
+      </div>
+      {currentImageUrl && (
+        <img
+          src={currentImageUrl}
+          alt="Preview"
+          className="mt-2 max-w-[200px] rounded-md"
+        />
       )}
     </div>
   );
