@@ -77,6 +77,9 @@ export const AddWorkshopForm = () => {
         .insert({
           ...values,
           user_id: user.id,
+          rating: 0,
+          review_count: 0,
+          verified: false,
         });
 
       if (error) throw error;

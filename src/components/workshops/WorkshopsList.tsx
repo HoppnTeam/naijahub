@@ -13,9 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Star, Wrench, Globe } from "lucide-react";
 import { Workshop } from "@/types/workshop";
 
+type WorkshopType = Workshop['workshop_type'] | 'all';
+
 export const WorkshopsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState<WorkshopType>("all");
   const [selectedState, setSelectedState] = useState<string>("all");
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
   const { user } = useAuth();
