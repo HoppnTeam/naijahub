@@ -11,4 +11,3 @@ export const adFormSchema = z.object({
 });
 
 export type AdFormSchema = z.infer<typeof adFormSchema>;
-export type AdFormValues = z.infer<typeof adFormSchema>;
