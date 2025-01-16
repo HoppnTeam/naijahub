@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
-import { CategoryTabs } from "@/components/CategoryTabs";
-import { Footer } from "@/components/Footer";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlusCircle, ShieldCheck } from "lucide-react";
+import { CategoryTabs } from "@/components/CategoryTabs";
 import { Post } from "@/types/post";
 import { AdPlacement } from "@/components/ads/AdPlacement";
 
-export default function Index() {
+const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -70,7 +68,6 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background font-poppins">
-      <Navigation />
       <main className="container py-8">
         <AdPlacement type="banner" />
         
@@ -99,7 +96,8 @@ export default function Index() {
           onCategoryChange={setSelectedCategory}
         />
       </main>
-      <Footer />
     </div>
   );
-}
+};
+
+export default Index;
