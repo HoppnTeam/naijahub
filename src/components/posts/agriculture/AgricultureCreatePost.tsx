@@ -9,12 +9,9 @@ import { ImageUpload } from "@/components/posts/ImageUpload";
 import { CategorySelect } from "@/components/posts/CategorySelect";
 import { LiveDiscussionToggle } from "@/components/posts/LiveDiscussionToggle";
 import { useToast } from "@/hooks/use-toast";
+import { BackNavigation } from "@/components/BackNavigation";
 
-interface AgricultureCreatePostProps {
-  categoryId: string;
-}
-
-export const AgricultureCreatePost = ({ categoryId }: AgricultureCreatePostProps) => {
+export const AgricultureCreatePost = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -41,8 +38,7 @@ export const AgricultureCreatePost = ({ categoryId }: AgricultureCreatePostProps
             content,
             image_url: imageUrl,
             user_id: user.id,
-            category_id: categoryId,
-            subcategory_id: selectedSubcategoryId,
+            category_id: selectedSubcategoryId,
             is_live: isLive,
           },
         ])
@@ -53,7 +49,7 @@ export const AgricultureCreatePost = ({ categoryId }: AgricultureCreatePostProps
 
       toast({
         title: "Success!",
-        description: "Your post has been created.",
+        description: "Your agricultural post has been created.",
       });
 
       navigate(`/posts/${post.id}`);
@@ -70,43 +66,51 @@ export const AgricultureCreatePost = ({ categoryId }: AgricultureCreatePostProps
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-2">
-        <Input
-          placeholder="Post title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+    <div className="container mx-auto py-8">
+      <BackNavigation />
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Create Agriculture Post</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <CategorySelect
+            selectedSubcategoryId={selectedSubcategoryId}
+            onSubcategoryChange={setSelectedSubcategoryId}
+            categoryName="Agriculture"
+          />
+
+          <div className="space-y-2">
+            <Input
+              placeholder="Post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="text-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Write your post content here..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              className="min-h-[200px]"
+            />
+          </div>
+
+          <ImageUpload
+            currentImageUrl={imageUrl}
+            onImageUploaded={setImageUrl}
+            bucket="post-images"
+          />
+
+          <LiveDiscussionToggle isLive={isLive} onLiveChange={setIsLive} />
+
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Creating..." : "Create Post"}
+          </Button>
+        </form>
       </div>
-
-      <div className="space-y-2">
-        <Textarea
-          placeholder="Write your post content here..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-          className="min-h-[200px]"
-        />
-      </div>
-
-      <CategorySelect
-        selectedSubcategoryId={selectedSubcategoryId}
-        onSubcategoryChange={setSelectedSubcategoryId}
-        categoryName="Agriculture"
-      />
-
-      <ImageUpload
-        currentImageUrl={imageUrl}
-        onImageUploaded={setImageUrl}
-        bucket="post-images"
-      />
-
-      <LiveDiscussionToggle isLive={isLive} onLiveChange={setIsLive} />
-
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : "Create Post"}
-      </Button>
-    </form>
+    </div>
   );
 };

@@ -28,6 +28,8 @@ import { TechnologyCreatePost } from "@/components/posts/technology/TechnologyCr
 import Advertise from "@/pages/Advertise";
 import { BusinessCategoryCreatePost } from "@/components/posts/business/BusinessCategoryCreatePost";
 
+import { AgricultureCreatePost } from "@/components/posts/agriculture/AgricultureCreatePost";
+
 // Create a client
 const queryClient = new QueryClient();
 
@@ -70,6 +72,7 @@ function App() {
             <Route path="/categories/business/create" element={<BusinessCategoryCreatePost />} />
             <Route path="/categories/health" element={<Health />} />
             <Route path="/categories/agriculture" element={<Agriculture />} />
+            <Route path="/categories/agriculture/create" element={<AgricultureCreatePost />} />
             <Route path="/categories/travel" element={<Travel />} />
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
