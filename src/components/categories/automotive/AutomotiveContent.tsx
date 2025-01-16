@@ -67,14 +67,15 @@ export const AutomotiveContent = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div className="space-y-8">
+      {/* Subcategories Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Button
           variant={selectedSubcategory === null ? "default" : "outline"}
           onClick={() => onSubcategoryChange(null)}
-          className="flex items-center justify-center h-auto py-4 px-6"
+          className="flex items-center gap-3 h-auto p-4 w-full"
         >
-          <Car className="w-5 h-5 mr-2" />
+          <Car className="h-6 w-6 flex-shrink-0" />
           <div className="text-left">
             <div className="font-semibold">All Automotive</div>
             <div className="text-sm text-muted-foreground">View all posts</div>
@@ -85,14 +86,14 @@ export const AutomotiveContent = ({
             key={subcategory.id}
             variant={selectedSubcategory === subcategory.id ? "default" : "outline"}
             onClick={() => onSubcategoryChange(subcategory.id)}
-            className="flex items-center justify-center h-auto py-4 px-6"
+            className="flex items-center gap-3 h-auto p-4 w-full group transition-all"
           >
-            <div className="mr-3">
+            <div className="flex-shrink-0">
               {getSubcategoryIcon(subcategory.name)}
             </div>
             <div className="text-left">
               <div className="font-semibold">{subcategory.name}</div>
-              <div className="text-sm text-muted-foreground line-clamp-1">
+              <div className="text-sm text-muted-foreground line-clamp-2">
                 {getSubcategoryDescription(subcategory.name)}
               </div>
             </div>
@@ -100,8 +101,9 @@ export const AutomotiveContent = ({
         ))}
       </div>
 
+      {/* Selected Subcategory Header */}
       {selectedSubcategory && subcategories?.find(s => s.id === selectedSubcategory) && (
-        <Card className="mb-6">
+        <Card className="border-l-4 border-l-primary">
           <CardHeader>
             <div className="flex items-center gap-3">
               {getSubcategoryIcon(subcategories.find(s => s.id === selectedSubcategory)?.name || "")}
@@ -116,7 +118,8 @@ export const AutomotiveContent = ({
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-6">
+      {/* Posts Grid */}
+      <div className="space-y-6">
         {posts?.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-8">
