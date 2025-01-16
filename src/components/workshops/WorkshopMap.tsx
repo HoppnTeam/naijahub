@@ -23,7 +23,7 @@ interface WorkshopMapProps {
 }
 
 // Separate component to handle map view updates
-const MapUpdater = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+function MapUpdater({ latitude, longitude }: { latitude: number; longitude: number }) {
   const map = useMap();
   
   useEffect(() => {
@@ -32,14 +32,10 @@ const MapUpdater = ({ latitude, longitude }: { latitude: number; longitude: numb
   }, [latitude, longitude, map]);
   
   return null;
-};
+}
 
 const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }: WorkshopMapProps) => {
-  const mapRef = useRef<Map | null>(null);
-
-  useEffect(() => {
-    console.log('Map mounted with workshops:', workshops?.length);
-  }, [workshops]);
+  console.log('WorkshopMap render:', { latitude, longitude, workshopsCount: workshops?.length });
 
   return (
     <MapContainer
@@ -47,15 +43,16 @@ const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }:
       zoom={13}
       scrollWheelZoom={true}
       style={{ height: "100%", width: "100%" }}
-      ref={mapRef}
     >
       <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
+      
       <Marker position={[latitude, longitude]} icon={defaultIcon}>
         <Popup>{name}</Popup>
       </Marker>
+
       {workshops?.map((workshop) => (
         workshop.latitude && workshop.longitude ? (
           <Marker
@@ -75,6 +72,7 @@ const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }:
           </Marker>
         ) : null
       ))}
+
       <MapUpdater latitude={latitude} longitude={longitude} />
     </MapContainer>
   );
