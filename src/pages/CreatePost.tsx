@@ -26,7 +26,7 @@ export default function CreatePost() {
       case "Health":
         return <HealthCreatePost categoryId={categoryId} />;
       case "Agriculture":
-        return <AgricultureCreatePost categoryId={categoryId} />;
+        return <AgricultureCreatePost />;
       default:
         return (
           <div className="container py-8">
