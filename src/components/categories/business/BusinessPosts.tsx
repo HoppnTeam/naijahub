@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
 import { Post } from "@/types/post";
 
 interface BusinessPostsProps {
@@ -25,8 +24,8 @@ export const BusinessPosts = ({
           *,
           profiles:profiles!posts_user_id_fkey (username, avatar_url),
           categories:categories!posts_category_id_fkey (name),
-          likes (count),
-          comments (count)
+          likes:likes (count),
+          comments:comments (count)
         `)
         .eq("categories.name", "Business")
         .order("created_at", { ascending: false });
@@ -39,6 +38,10 @@ export const BusinessPosts = ({
       
       return data?.map(post => ({
         ...post,
+        profiles: {
+          username: post.profiles?.username || "",
+          avatar_url: post.profiles?.avatar_url
+        },
         _count: {
           likes: post.likes?.[0]?.count || 0,
           comments: post.comments?.[0]?.count || 0

@@ -32,7 +32,7 @@ const Business = () => {
     },
   });
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
     const { data: businessCategory } = await supabase
       .from("categories")
       .select("id")
