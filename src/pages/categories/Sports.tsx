@@ -9,6 +9,7 @@ import { PostCard } from "@/components/PostCard";
 import { SportsHeader } from "@/components/categories/sports/SportsHeader";
 import { SportsSidebar } from "@/components/categories/sports/SportsSidebar";
 import { LiveScoresWidget } from "@/components/categories/sports/LiveScoresWidget";
+import { FanZone } from "@/components/categories/sports/FanZone";
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
 
@@ -18,7 +19,6 @@ const Sports = () => {
   const [selectedTab, setSelectedTab] = useState("latest");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
-  // Fetch sports subcategories
   const { data: subcategories } = useQuery({
     queryKey: ["subcategories", "sports"],
     queryFn: async () => {
@@ -40,7 +40,6 @@ const Sports = () => {
     },
   });
 
-  // Fetch posts based on selected subcategory
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", "sports", selectedTab, searchQuery, selectedSubcategory],
     queryFn: async () => {
@@ -143,7 +142,7 @@ const Sports = () => {
               ))}
             </div>
 
-            <TabsContent value={selectedTab} className="space-y-6">
+            <TabsContent value="latest" className="space-y-6">
               {posts?.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -152,6 +151,21 @@ const Sports = () => {
                   No posts found. Be the first to create a post in this category!
                 </div>
               )}
+            </TabsContent>
+
+            <TabsContent value="trending" className="space-y-6">
+              {posts?.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+              {posts?.length === 0 && (
+                <div className="text-center text-muted-foreground py-8">
+                  No trending posts yet.
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="fan-zone">
+              <FanZone />
             </TabsContent>
           </Tabs>
         </div>

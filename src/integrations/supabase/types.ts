@@ -467,6 +467,60 @@ export type Database = {
         }
         Relationships: []
       }
+      sports_fan_posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          team_name: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          team_name: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          team_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sports_team_follows: {
+        Row: {
+          created_at: string
+          id: string
+          league: string
+          reason: string | null
+          team_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league: string
+          reason?: string | null
+          team_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league?: string
+          reason?: string | null
+          team_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tech_jobs: {
         Row: {
           application_url: string
