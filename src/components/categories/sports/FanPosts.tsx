@@ -18,7 +18,7 @@ export const FanPosts = () => {
   const { data: posts } = useQuery({
     queryKey: ["fan-posts"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("sports_fan_posts")
         .select(`
           *,
@@ -26,7 +26,12 @@ export const FanPosts = () => {
         `)
         .order("created_at", { ascending: false });
 
-      return data as FanPost[];
+      if (error) throw error;
+
+      return (data?.map(post => ({
+        ...post,
+        user: post.user || { username: '', avatar_url: null }
+      })) || []) as FanPost[];
     },
   });
 

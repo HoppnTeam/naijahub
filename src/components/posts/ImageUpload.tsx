@@ -4,20 +4,34 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface ImageUploadProps {
-  onImageUploaded: (url: string) => void;
-  bucket: string;
+  onImageUploaded?: (url: string) => void;
+  onImagesChange?: (files: File[]) => void;
+  bucket?: string;
   currentImageUrl?: string | null;
+  className?: string;
 }
 
-export const ImageUpload = ({ onImageUploaded, bucket, currentImageUrl }: ImageUploadProps) => {
+export const ImageUpload = ({ 
+  onImageUploaded, 
+  onImagesChange,
+  bucket = "post-images",
+  currentImageUrl,
+  className 
+}: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setIsUploading(true);
-      const file = event.target.files?.[0];
-      if (!file) return;
+      const files = event.target.files;
+      if (!files) return;
 
+      if (onImagesChange) {
+        onImagesChange(Array.from(files));
+        return;
+      }
+
+      const file = files[0];
       const fileExt = file.name.split('.').pop();
       const filePath = `${Math.random()}.${fileExt}`;
 
@@ -31,7 +45,9 @@ export const ImageUpload = ({ onImageUploaded, bucket, currentImageUrl }: ImageU
         .from(bucket)
         .getPublicUrl(filePath);
 
-      onImageUploaded(publicUrl);
+      if (onImageUploaded) {
+        onImageUploaded(publicUrl);
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
     } finally {
@@ -40,7 +56,7 @@ export const ImageUpload = ({ onImageUploaded, bucket, currentImageUrl }: ImageU
   };
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${className || ''}`}>
       <Label htmlFor="image">Image (optional)</Label>
       <div className="flex items-center gap-4">
         <Button
@@ -60,6 +76,7 @@ export const ImageUpload = ({ onImageUploaded, bucket, currentImageUrl }: ImageU
           className="hidden"
           onChange={handleUpload}
           disabled={isUploading}
+          multiple={!!onImagesChange}
         />
       </div>
       {currentImageUrl && (

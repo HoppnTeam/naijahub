@@ -26,18 +26,25 @@ export const HealthContent = () => {
         .from("posts")
         .select(`
           *,
-          profiles:profiles!posts_user_id_fkey (username, avatar_url),
-          categories:categories!posts_category_id_fkey (name),
-          _count {
-            likes,
-            comments
-          }
+          profiles!posts_user_id_fkey (username, avatar_url),
+          categories!posts_category_id_fkey (name),
+          likes (count),
+          comments (count)
         `)
         .eq("category_id", healthCategory?.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Post[];
+
+      return (data?.map(post => ({
+        ...post,
+        profiles: post.profiles || { username: '', avatar_url: null },
+        categories: post.categories || { name: '' },
+        _count: {
+          likes: post.likes?.[0]?.count || 0,
+          comments: post.comments?.[0]?.count || 0
+        }
+      })) || []) as Post[];
     },
     enabled: !!healthCategory?.id,
   });
