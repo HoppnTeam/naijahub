@@ -7,30 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { AddWorkshopForm } from "./AddWorkshopForm";
+import { WorkshopDetails } from "./WorkshopDetails";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Phone, Star, Tool, Globe } from "lucide-react";
-
-interface Workshop {
-  id: string;
-  name: string;
-  description: string;
-  workshop_type: string;
-  address: string;
-  city: string;
-  state: string;
-  phone_number: string | null;
-  email: string | null;
-  website: string | null;
-  rating: number;
-  review_count: number;
-  verified: boolean;
-}
+import { MapPin, Phone, Star, Wrench, Globe } from "lucide-react";
+import { Workshop } from "@/types/workshop";
 
 export const WorkshopsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedState, setSelectedState] = useState<string>("all");
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -136,7 +123,11 @@ export const WorkshopsList = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workshops?.map((workshop) => (
-            <Card key={workshop.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={workshop.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => setSelectedWorkshop(workshop)}
+            >
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span className="text-lg">{workshop.name}</span>
@@ -155,7 +146,7 @@ export const WorkshopsList = () => {
                   {workshop.description}
                 </p>
                 <div className="flex items-center gap-2 text-sm">
-                  <Tool className="w-4 h-4" />
+                  <Wrench className="w-4 h-4" />
                   <span className="capitalize">{workshop.workshop_type.replace(/_/g, " ")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -176,6 +167,7 @@ export const WorkshopsList = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       Visit Website
                     </a>
@@ -185,6 +177,14 @@ export const WorkshopsList = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedWorkshop && (
+        <WorkshopDetails
+          workshop={selectedWorkshop}
+          isOpen={!!selectedWorkshop}
+          onClose={() => setSelectedWorkshop(null)}
+        />
       )}
     </div>
   );

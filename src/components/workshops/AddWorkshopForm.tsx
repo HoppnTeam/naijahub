@@ -74,12 +74,10 @@ export const AddWorkshopForm = () => {
     try {
       const { error } = await supabase
         .from("automotive_workshops")
-        .insert([
-          {
-            ...values,
-            user_id: user.id,
-          },
-        ]);
+        .insert({
+          ...values,
+          user_id: user.id,
+        });
 
       if (error) throw error;
 
@@ -88,7 +86,6 @@ export const AddWorkshopForm = () => {
         description: "Workshop has been added successfully",
       });
 
-      // Reset form
       form.reset();
     } catch (error) {
       console.error("Error adding workshop:", error);
