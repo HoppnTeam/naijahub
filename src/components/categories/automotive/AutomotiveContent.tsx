@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
-import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield } from "lucide-react";
+import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Category {
