@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkshopsList } from "@/components/workshops/WorkshopsList";
+import WorkshopSearch from "@/components/workshops/WorkshopSearch";
 
 interface Category {
   id: string;
@@ -126,7 +127,7 @@ export const AutomotiveContent = ({
       {/* Content Area */}
       {selectedSubcategory && 
        subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
-        <WorkshopsList />
+        <WorkshopSearch />
       ) : (
         /* Posts Grid */
         <div className="space-y-4">
