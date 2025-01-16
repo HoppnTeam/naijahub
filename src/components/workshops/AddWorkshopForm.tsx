@@ -12,11 +12,7 @@ import { LocationFields } from "./form/LocationFields";
 import { ContactFields } from "./form/ContactFields";
 import { workshopSchema, type WorkshopFormValues } from "./form/WorkshopFormSchema";
 
-interface AddWorkshopFormProps {
-  onSuccess?: () => void;
-}
-
-export const AddWorkshopForm = ({ onSuccess }: AddWorkshopFormProps) => {
+export const AddWorkshopForm = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,28 +37,15 @@ export const AddWorkshopForm = ({ onSuccess }: AddWorkshopFormProps) => {
     
     setIsSubmitting(true);
     try {
-      // Ensure all required fields are present and properly typed
-      const workshopData = {
-        name: values.name,
-        description: values.description,
-        workshop_type: values.workshop_type,
-        address: values.address,
-        city: values.city,
-        state: values.state,
-        phone_number: values.phone_number || null,
-        email: values.email || null,
-        website: values.website || null,
-        user_id: user.id,
-        rating: 0,
-        review_count: 0,
-        verified: false,
-        latitude: null as number | null,
-        longitude: null as number | null,
-      };
-
       const { error } = await supabase
         .from("automotive_workshops")
-        .insert(workshopData);
+        .insert({
+          ...values,
+          user_id: user.id,
+          rating: 0,
+          review_count: 0,
+          verified: false,
+        });
 
       if (error) throw error;
 
@@ -72,7 +55,6 @@ export const AddWorkshopForm = ({ onSuccess }: AddWorkshopFormProps) => {
       });
 
       form.reset();
-      onSuccess?.();
     } catch (error) {
       console.error("Error adding workshop:", error);
       toast({

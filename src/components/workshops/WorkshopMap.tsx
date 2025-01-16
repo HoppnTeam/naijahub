@@ -1,81 +1,73 @@
-import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { Map, Icon } from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { Workshop } from "@/types/workshop";
-
-// Fix for default marker icon in Leaflet
-const defaultIcon = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+import { useEffect, useRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { Workshop } from '@/types/workshop';
 
 interface WorkshopMapProps {
   latitude: number;
   longitude: number;
-  name?: string;
-  workshops?: Workshop[];
+  workshops: (Workshop & { distance?: number })[];
 }
 
-// Separate component to handle map view updates
-function MapUpdater({ latitude, longitude }: { latitude: number; longitude: number }) {
-  const map = useMap();
-  
+export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const markers = useRef<mapboxgl.Marker[]>([]);
+
   useEffect(() => {
-    console.log('Updating map center to:', latitude, longitude);
-    map.setView([latitude, longitude], 13);
-  }, [latitude, longitude, map]);
-  
-  return null;
-}
+    if (!mapContainer.current) return;
 
-const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }: WorkshopMapProps) => {
-  console.log('WorkshopMap render:', { latitude, longitude, workshopsCount: workshops?.length });
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
-  return (
-    <MapContainer
-      center={[latitude, longitude]}
-      zoom={13}
-      scrollWheelZoom={true}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      
-      <Marker position={[latitude, longitude]} icon={defaultIcon}>
-        <Popup>{name}</Popup>
-      </Marker>
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [longitude, latitude],
+      zoom: 11
+    });
 
-      {workshops?.map((workshop) => (
-        workshop.latitude && workshop.longitude ? (
-          <Marker
-            key={workshop.id}
-            position={[workshop.latitude, workshop.longitude]}
-            icon={defaultIcon}
-          >
-            <Popup>
-              <div className="p-2">
-                <h3 className="font-semibold">{workshop.name}</h3>
-                <p className="text-sm text-muted-foreground">{workshop.address}</p>
-                {workshop.phone_number && (
-                  <p className="text-sm">📞 {workshop.phone_number}</p>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ) : null
-      ))}
+    // Add user location marker
+    new mapboxgl.Marker({ color: '#FF0000' })
+      .setLngLat([longitude, latitude])
+      .setPopup(new mapboxgl.Popup().setHTML('<h3>Your Location</h3>'))
+      .addTo(map.current);
 
-      <MapUpdater latitude={latitude} longitude={longitude} />
-    </MapContainer>
-  );
+    // Add workshop markers
+    workshops.forEach((workshop) => {
+      if (workshop.latitude && workshop.longitude) {
+        const marker = new mapboxgl.Marker({ color: '#32a852' })
+          .setLngLat([workshop.longitude, workshop.latitude])
+          .setPopup(
+            new mapboxgl.Popup().setHTML(`
+              <h3>${workshop.name}</h3>
+              <p>${workshop.distance?.toFixed(1)} miles away</p>
+            `)
+          )
+          .addTo(map.current!);
+        markers.current.push(marker);
+      }
+    });
+
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    // Fit bounds to include all markers
+    if (workshops.length > 0) {
+      const bounds = new mapboxgl.LngLatBounds();
+      bounds.extend([longitude, latitude]); // Include user location
+      workshops.forEach((workshop) => {
+        if (workshop.latitude && workshop.longitude) {
+          bounds.extend([workshop.longitude, workshop.latitude]);
+        }
+      });
+      map.current.fitBounds(bounds, { padding: 50 });
+    }
+
+    return () => {
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
+      map.current?.remove();
+    };
+  }, [latitude, longitude, workshops]);
+
+  return <div ref={mapContainer} className="h-full rounded-lg" />;
 };
-
-export default WorkshopMap;

@@ -1,101 +1,129 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Phone, Mail, Globe, Clock, MapPin } from "lucide-react";
-import WorkshopMap from "./WorkshopMap";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { MapPin, Phone, Star, Globe, Clock, Mail, Wrench } from "lucide-react";
 import { Workshop } from "@/types/workshop";
+import { WorkshopMap } from "./WorkshopMap";
 
 interface WorkshopDetailsProps {
   workshop: Workshop;
-  nearbyWorkshops?: Workshop[];
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const WorkshopDetails = ({ workshop, nearbyWorkshops }: WorkshopDetailsProps) => {
-  const [showMap, setShowMap] = useState(false);
-
+export const WorkshopDetails = ({ workshop, isOpen, onClose }: WorkshopDetailsProps) => {
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-2xl">{workshop.name}</CardTitle>
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <MapPin className="h-4 w-4" />
-          <span>{workshop.address}, {workshop.city}</span>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid gap-4">
-          {workshop.phone_number && (
-            <div className="flex items-center space-x-2">
-              <Phone className="h-4 w-4" />
-              <a href={`tel:${workshop.phone_number}`} className="text-primary hover:underline">
-                {workshop.phone_number}
-              </a>
-            </div>
-          )}
-          {workshop.email && (
-            <div className="flex items-center space-x-2">
-              <Mail className="h-4 w-4" />
-              <a href={`mailto:${workshop.email}`} className="text-primary hover:underline">
-                {workshop.email}
-              </a>
-            </div>
-          )}
-          {workshop.website && (
-            <div className="flex items-center space-x-2">
-              <Globe className="h-4 w-4" />
-              <a href={workshop.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                Visit Website
-              </a>
-            </div>
-          )}
-          {workshop.opening_hours && (
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4" />
-              <span>Opening Hours</span>
-            </div>
-          )}
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center justify-between">
+            <span>{workshop.name}</span>
+            {workshop.verified && (
+              <span className="text-primary text-sm">✓ Verified</span>
+            )}
+          </DialogTitle>
+        </DialogHeader>
 
-        {workshop.services_offered && workshop.services_offered.length > 0 && (
-          <div>
-            <h3 className="font-semibold mb-2">Services Offered</h3>
-            <div className="flex flex-wrap gap-2">
-              {workshop.services_offered.map((service, index) => (
-                <span
-                  key={index}
-                  className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                >
-                  {service}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Wrench className="w-5 h-5 text-muted-foreground" />
+                  <span className="capitalize">{workshop.workshop_type.replace(/_/g, " ")}</span>
+                </div>
 
-        {workshop.latitude && workshop.longitude && (
-          <div>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowMap(!showMap)}
-            >
-              {showMap ? "Hide Map" : "Show Map"}
-            </Button>
-            {showMap && (
-              <div className="h-[300px] mt-4">
-                <WorkshopMap
-                  latitude={workshop.latitude}
-                  longitude={workshop.longitude}
-                  name={workshop.name}
-                  workshops={nearbyWorkshops}
-                />
-              </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400" />
+                  <span>{workshop.rating.toFixed(1)} ({workshop.review_count} reviews)</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-muted-foreground" />
+                  <span>{workshop.address}, {workshop.city}, {workshop.state}</span>
+                </div>
+
+                {workshop.phone_number && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-5 h-5 text-muted-foreground" />
+                    <a href={`tel:${workshop.phone_number}`} className="hover:underline">
+                      {workshop.phone_number}
+                    </a>
+                  </div>
+                )}
+
+                {workshop.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-muted-foreground" />
+                    <a href={`mailto:${workshop.email}`} className="hover:underline">
+                      {workshop.email}
+                    </a>
+                  </div>
+                )}
+
+                {workshop.website && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-muted-foreground" />
+                    <a 
+                      href={workshop.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Visit Website
+                    </a>
+                  </div>
+                )}
+
+                {workshop.opening_hours && (
+                  <div className="flex items-start gap-2">
+                    <Clock className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div>
+                      <div className="font-medium mb-1">Opening Hours</div>
+                      <div className="text-sm text-muted-foreground">
+                        {Object.entries(workshop.opening_hours).map(([day, hours]) => (
+                          <div key={day} className="grid grid-cols-2 gap-2">
+                            <span className="capitalize">{day}:</span>
+                            <span>{hours}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="font-medium mb-2">About</h3>
+                <p className="text-muted-foreground">{workshop.description}</p>
+              </CardContent>
+            </Card>
+
+            {workshop.services_offered && workshop.services_offered.length > 0 && (
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="font-medium mb-2">Services Offered</h3>
+                  <ul className="list-disc list-inside text-muted-foreground">
+                    {workshop.services_offered.map((service, index) => (
+                      <li key={index}>{service}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             )}
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          <div className="h-[400px]">
+            <WorkshopMap 
+              latitude={workshop.latitude} 
+              longitude={workshop.longitude}
+              name={workshop.name}
+            />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
-
-export default WorkshopDetails;
