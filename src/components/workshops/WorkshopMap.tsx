@@ -16,7 +16,8 @@ export const WorkshopMap = ({ latitude, longitude, name }: WorkshopMapProps) => 
   useEffect(() => {
     if (!mapContainer.current || !latitude || !longitude) return;
 
-    mapboxgl.accessToken = process.env.VITE_MAPBOX_TOKEN || '';
+    // Use the VITE_MAPBOX_TOKEN from environment variables
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
