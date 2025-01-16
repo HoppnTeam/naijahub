@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -39,6 +39,11 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
         ...values,
         impression_count: 0,
         click_count: 0,
+        tier: values.tier,
+        placement: values.placement,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        title: values.title,
       };
 
       if (initialData?.id) {
