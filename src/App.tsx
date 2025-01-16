@@ -5,6 +5,7 @@ import { AdminDashboard } from "@/pages/admin/Dashboard";
 import AdminSignIn from "@/pages/admin/SignIn";
 import Users from "@/pages/admin/Users";
 import { ThemeProvider } from "@/components/theme-provider";
+import Index from "@/pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ export default function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Router>
           <Routes>
+            <Route path="/" element={<Index />} />
             <Route path="/admin/sign-in" element={<AdminSignIn />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<Users />} />
