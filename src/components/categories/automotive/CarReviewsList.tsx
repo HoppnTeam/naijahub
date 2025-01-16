@@ -19,7 +19,7 @@ export const CarReviewsList = () => {
         .from("car_reviews")
         .select(`
           *,
-          profiles:profiles(username, avatar_url)
+          user:profiles!car_reviews_user_id_fkey(username, avatar_url)
         `)
         .order("created_at", { ascending: false });
 
@@ -56,13 +56,13 @@ export const CarReviewsList = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar>
-                    <AvatarImage src={review.profiles?.avatar_url ?? undefined} />
+                    <AvatarImage src={review.user?.avatar_url ?? undefined} />
                     <AvatarFallback>
-                      {review.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
+                      {review.user?.username?.substring(0, 2).toUpperCase() ?? "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">{review.profiles?.username}</p>
+                    <p className="font-semibold">{review.user?.username}</p>
                     <p className="text-sm text-muted-foreground">
                       {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                     </p>

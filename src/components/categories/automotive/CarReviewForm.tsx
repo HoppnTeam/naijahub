@@ -10,6 +10,7 @@ import { ImageUpload } from "@/components/posts/ImageUpload";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -32,6 +33,7 @@ export const CarReviewForm = ({ onSuccess }: CarReviewFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth(); // Add this line to get the current user
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,10 +51,20 @@ export const CarReviewForm = ({ onSuccess }: CarReviewFormProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to submit a review",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
       const { error } = await supabase.from("car_reviews").insert({
+        user_id: user.id, // Add the user_id
         title: values.title,
         content: values.content,
         make: values.make,
