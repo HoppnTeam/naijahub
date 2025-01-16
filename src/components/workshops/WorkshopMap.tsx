@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Workshop } from "@/types/workshop";
 
 interface WorkshopMapProps {
@@ -35,7 +36,10 @@ const WorkshopMap = ({ latitude, longitude, name, workshops }: WorkshopMapProps)
         <Popup>{name}</Popup>
       </Marker>
       {workshops?.map(workshop => (
-        <Marker key={workshop.id} position={[workshop.latitude || 0, workshop.longitude || 0]}>
+        <Marker 
+          key={workshop.id} 
+          position={[workshop.latitude || 0, workshop.longitude || 0]}
+        >
           <Popup>{workshop.name}</Popup>
         </Marker>
       ))}

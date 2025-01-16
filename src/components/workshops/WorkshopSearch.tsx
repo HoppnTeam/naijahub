@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Workshop } from '@/types/workshop';
-import { WorkshopMap } from './WorkshopMap';
+import WorkshopMap from "./WorkshopMap";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, MapPin, Navigation } from 'lucide-react';

@@ -15,16 +15,16 @@ export const CarReviewsList = () => {
   const { data: reviews, isLoading } = useQuery({
     queryKey: ["car-reviews"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: reviewsData, error } = await supabase
         .from("car_reviews")
         .select(`
           *,
-          user:profiles!car_reviews_user_id_fkey(username, avatar_url)
+          profiles:profiles(username, avatar_url)
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return reviewsData;
     },
   });
 
@@ -56,13 +56,13 @@ export const CarReviewsList = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar>
-                    <AvatarImage src={review.user?.avatar_url ?? undefined} />
+                    <AvatarImage src={review.profiles?.avatar_url ?? undefined} />
                     <AvatarFallback>
-                      {review.user?.username?.substring(0, 2).toUpperCase() ?? "U"}
+                      {review.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">{review.user?.username}</p>
+                    <p className="font-semibold">{review.profiles?.username}</p>
                     <p className="text-sm text-muted-foreground">
                       {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                     </p>
