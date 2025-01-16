@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 import AdminSignIn from "@/pages/admin/SignIn";
 import Users from "@/pages/admin/Users";
-import { ThemeProvider } from "./components/theme-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const queryClient = new QueryClient();
 
