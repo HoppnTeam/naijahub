@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
+import { AdsManagement } from "@/pages/admin/AdsManagement";
 import AdminSignIn from "@/pages/admin/SignIn";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -44,6 +45,14 @@ function App() {
               element={
                 <ProtectedAdminRoute>
                   <AdminDashboard />
+                </ProtectedAdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/ads" 
+              element={
+                <ProtectedAdminRoute>
+                  <AdsManagement />
                 </ProtectedAdminRoute>
               } 
             />

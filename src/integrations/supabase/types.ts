@@ -41,6 +41,57 @@ export type Database = {
           },
         ]
       }
+      advertisements: {
+        Row: {
+          advertiser_id: string | null
+          click_count: number | null
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          image_url: string | null
+          impression_count: number | null
+          placement: string
+          start_date: string
+          status: string
+          tier: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          advertiser_id?: string | null
+          click_count?: number | null
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          image_url?: string | null
+          impression_count?: number | null
+          placement: string
+          start_date: string
+          status?: string
+          tier: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          advertiser_id?: string | null
+          click_count?: number | null
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          image_url?: string | null
+          impression_count?: number | null
+          placement?: string
+          start_date?: string
+          status?: string
+          tier?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
