@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Medal, Users, Football, Basketball, Running, Cricket, Tennis } from "lucide-react";
+import { Trophy, Medal, Users, Dumbbell, Gamepad2, Activity, Target, Swords } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
@@ -79,15 +79,17 @@ const Sports = () => {
   const getSubcategoryIcon = (name: string) => {
     switch (name.toLowerCase()) {
       case 'football':
-        return <Football className="w-4 h-4 mr-2" />;
+        return <Trophy className="w-4 h-4 mr-2" />;
       case 'basketball':
-        return <Basketball className="w-4 h-4 mr-2" />;
+        return <Target className="w-4 h-4 mr-2" />;
       case 'athletics':
-        return <Running className="w-4 h-4 mr-2" />;
+        return <Activity className="w-4 h-4 mr-2" />;
       case 'cricket':
-        return <Cricket className="w-4 h-4 mr-2" />;
+        return <Gamepad2 className="w-4 h-4 mr-2" />;
       case 'tennis':
-        return <Tennis className="w-4 h-4 mr-2" />;
+        return <Swords className="w-4 h-4 mr-2" />;
+      case 'combat sports':
+        return <Dumbbell className="w-4 h-4 mr-2" />;
       default:
         return <Trophy className="w-4 h-4 mr-2" />;
     }
