@@ -8,6 +8,7 @@ import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkshopsList } from "@/components/workshops/WorkshopsList";
 import WorkshopSearch from "@/components/workshops/WorkshopSearch";
+import { CarReviewsList } from "./CarReviewsList";
 
 interface Category {
   id: string;
@@ -68,6 +69,40 @@ export const AutomotiveContent = ({
     }
   };
 
+  const renderContent = () => {
+    if (selectedSubcategory && 
+        subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services") {
+      return <WorkshopSearch />;
+    }
+    
+    if (selectedSubcategory && 
+        subcategories?.find(s => s.id === selectedSubcategory)?.name === "Car Reviews") {
+      return <CarReviewsList />;
+    }
+
+    return (
+      <div className="space-y-4">
+        {posts?.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-8">
+              <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
+              <p className="text-lg font-semibold text-center">No posts found</p>
+              <p className="text-muted-foreground text-center">
+                {searchQuery 
+                  ? "Try adjusting your search terms"
+                  : "Be the first to create a post in this category"}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          posts?.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Subcategories Grid */}
@@ -125,31 +160,7 @@ export const AutomotiveContent = ({
       )}
 
       {/* Content Area */}
-      {selectedSubcategory && 
-       subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
-        <WorkshopSearch />
-      ) : (
-        /* Posts Grid */
-        <div className="space-y-4">
-          {posts?.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-8">
-                <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
-                <p className="text-lg font-semibold text-center">No posts found</p>
-                <p className="text-muted-foreground text-center">
-                  {searchQuery 
-                    ? "Try adjusting your search terms"
-                    : "Be the first to create a post in this category"}
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            posts?.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))
-          )}
-        </div>
-      )}
+      {renderContent()}
     </div>
   );
 };
