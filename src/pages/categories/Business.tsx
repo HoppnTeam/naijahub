@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
-import { Briefcase, ShoppingBag, Award, BookOpen } from "lucide-react";
+import { Briefcase, ShoppingBag, Award, BookOpen, Building2, FileText } from "lucide-react";
 import { Post } from "@/types/post";
 import { BackNavigation } from "@/components/BackNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 
 const Business = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("all");
@@ -71,6 +72,36 @@ const Business = () => {
     });
   };
 
+  const businessResources = [
+    {
+      title: "Government Resources",
+      icon: <Building2 className="w-5 h-5" />,
+      items: [
+        { name: "CAC Business Registration Guide", link: "#" },
+        { name: "FIRS Tax Compliance", link: "#" },
+        { name: "Export Documentation", link: "#" }
+      ]
+    },
+    {
+      title: "Business Guides",
+      icon: <FileText className="w-5 h-5" />,
+      items: [
+        { name: "Starting a Business in Nigeria", link: "#" },
+        { name: "SME Funding Options", link: "#" },
+        { name: "Business Plan Templates", link: "#" }
+      ]
+    },
+    {
+      title: "Institutional Support",
+      icon: <Award className="w-5 h-5" />,
+      items: [
+        { name: "SMEDAN Resources", link: "#" },
+        { name: "BOI Loan Programs", link: "#" },
+        { name: "NEXIM Bank Services", link: "#" }
+      ]
+    }
+  ];
+
   return (
     <div className="container py-8">
       <BackNavigation />
@@ -103,23 +134,32 @@ const Business = () => {
             </div>
 
             <div className="col-span-1">
-              <div className="bg-card rounded-lg p-6 sticky top-6">
+              <div className="bg-card rounded-lg p-6 sticky top-6 space-y-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BookOpen className="w-5 h-5" />
                   <h2 className="text-xl font-semibold">Business Resources</h2>
                 </div>
-                <div className="space-y-4">
-                  {posts?.filter(post => post.title.toLowerCase().includes("guide"))
-                    .slice(0, 5)
-                    .map((post) => (
-                      <div key={post.id} className="p-4 bg-muted rounded-lg">
-                        <h3 className="font-medium mb-2">{post.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {post.content}
-                        </p>
-                      </div>
-                    ))}
-                </div>
+                
+                {businessResources.map((section, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      {section.icon}
+                      <h3 className="font-medium">{section.title}</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {section.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>
+                          <a 
+                            href={item.link}
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            {item.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                ))}
               </div>
             </div>
           </div>
