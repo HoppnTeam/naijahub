@@ -41,7 +41,13 @@ export const AdForm = ({ initialData }: AdFormProps) => {
   const onSubmit = async (values: AdFormSchema) => {
     try {
       const submissionData = {
-        ...values,
+        title: values.title,
+        description: values.description,
+        tier: values.tier,
+        placement: values.placement,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        image_url: values.image_url,
         impression_count: 0,
         click_count: 0,
         status: "pending",
@@ -51,8 +57,7 @@ export const AdForm = ({ initialData }: AdFormProps) => {
         const { error } = await supabase
           .from("advertisements")
           .update(submissionData)
-          .eq("id", initialData.id)
-          .single();
+          .eq("id", initialData.id);
 
         if (error) throw error;
         toast({
@@ -62,8 +67,7 @@ export const AdForm = ({ initialData }: AdFormProps) => {
       } else {
         const { error } = await supabase
           .from("advertisements")
-          .insert([submissionData])
-          .single();
+          .insert([submissionData]);
 
         if (error) throw error;
         toast({

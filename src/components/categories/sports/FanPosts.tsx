@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { formatDate } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface FanPost {
   id: string;
@@ -23,7 +23,7 @@ export const FanPosts = () => {
         .from("sports_fan_posts")
         .select(`
           *,
-          profiles:user_id (
+          profiles:profiles!sports_fan_posts_user_id_fkey (
             username,
             avatar_url
           )
@@ -50,7 +50,9 @@ export const FanPosts = () => {
             />
             <div>
               <p className="font-semibold">{post.profiles.username}</p>
-              <p className="text-sm text-gray-500">{formatDate(post.created_at)}</p>
+              <p className="text-sm text-gray-500">
+                {format(new Date(post.created_at), "PPp")}
+              </p>
             </div>
           </div>
           <p className="mb-2">{post.content}</p>
