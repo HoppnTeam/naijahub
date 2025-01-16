@@ -6,9 +6,7 @@ import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { WorkshopsList } from "@/components/workshops/WorkshopsList";
-import WorkshopSearch from "@/components/workshops/WorkshopSearch";
-import { CarReviewsList } from "./CarReviewsList";
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: string;
@@ -31,6 +29,8 @@ export const AutomotiveContent = ({
   onSubcategoryChange,
   searchQuery 
 }: AutomotiveContentProps) => {
+  const navigate = useNavigate();
+
   const getSubcategoryIcon = (name: string) => {
     switch (name) {
       case "Car Reviews":
@@ -69,36 +69,44 @@ export const AutomotiveContent = ({
     }
   };
 
-  const renderContent = () => {
-    if (selectedSubcategory && 
-        subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services") {
-      return <WorkshopSearch />;
-    }
+  const handleSubcategoryClick = (subcategory: Category) => {
+    onSubcategoryChange(subcategory.id);
     
-    if (selectedSubcategory && 
-        subcategories?.find(s => s.id === selectedSubcategory)?.name === "Car Reviews") {
-      return <CarReviewsList />;
+    switch (subcategory.name) {
+      case "Car Reviews":
+        navigate("/categories/automotive/reviews");
+        break;
+      case "Workshops & Services":
+        navigate("/categories/automotive/workshops");
+        break;
+      default:
+        // For other subcategories, just update the selected state
+        break;
+    }
+  };
+
+  const renderContent = () => {
+    if (posts?.length === 0) {
+      return (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
+            <p className="text-lg font-semibold text-center">No posts found</p>
+            <p className="text-muted-foreground text-center">
+              {searchQuery 
+                ? "Try adjusting your search terms"
+                : "Be the first to create a post in this category"}
+            </p>
+          </CardContent>
+        </Card>
+      );
     }
 
     return (
       <div className="space-y-4">
-        {posts?.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-semibold text-center">No posts found</p>
-              <p className="text-muted-foreground text-center">
-                {searchQuery 
-                  ? "Try adjusting your search terms"
-                  : "Be the first to create a post in this category"}
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          posts?.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))
-        )}
+        {posts?.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
       </div>
     );
   };
@@ -124,7 +132,7 @@ export const AutomotiveContent = ({
           <Button
             key={subcategory.id}
             variant={selectedSubcategory === subcategory.id ? "default" : "outline"}
-            onClick={() => onSubcategoryChange(subcategory.id)}
+            onClick={() => handleSubcategoryClick(subcategory)}
             className={`flex items-center gap-2 h-auto p-4 w-full justify-start ${
               selectedSubcategory === subcategory.id ? 'bg-primary hover:bg-primary/90' : ''
             }`}
