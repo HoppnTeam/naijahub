@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AutomotiveHeader } from "@/components/categories/automotive/AutomotiveHeader";
 import { AutomotiveContent } from "@/components/categories/automotive/AutomotiveContent";
+import { AutomotiveSidebar } from "@/components/categories/automotive/AutomotiveSidebar";
 import { BackNavigation } from "@/components/BackNavigation";
 
 const Automotive = () => {
@@ -78,6 +79,9 @@ const Automotive = () => {
             onSubcategoryChange={setSelectedSubcategory}
             searchQuery={searchQuery}
           />
+        </div>
+        <div className="lg:col-span-1">
+          <AutomotiveSidebar />
         </div>
       </div>
     </div>
