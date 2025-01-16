@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const adFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
   tier: z.enum(["basic", "standard", "premium", "enterprise"]),
   placement: z.enum(["sidebar", "feed", "banner", "popup"]),
   start_date: z.string().min(1, "Start date is required"),
@@ -11,3 +11,4 @@ export const adFormSchema = z.object({
 });
 
 export type AdFormSchema = z.infer<typeof adFormSchema>;
+export type AdFormValues = z.infer<typeof adFormSchema>;

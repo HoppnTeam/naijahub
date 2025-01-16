@@ -51,7 +51,8 @@ export const AdForm = ({ initialData }: AdFormProps) => {
         const { error } = await supabase
           .from("advertisements")
           .update(submissionData)
-          .eq("id", initialData.id);
+          .eq("id", initialData.id)
+          .single();
 
         if (error) throw error;
         toast({
@@ -61,7 +62,8 @@ export const AdForm = ({ initialData }: AdFormProps) => {
       } else {
         const { error } = await supabase
           .from("advertisements")
-          .insert([submissionData]);
+          .insert([submissionData])
+          .single();
 
         if (error) throw error;
         toast({

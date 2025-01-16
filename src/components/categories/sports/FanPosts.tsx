@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
 
 interface FanPost {
@@ -13,12 +11,12 @@ interface FanPost {
   user_id: string;
   profiles: {
     username: string;
-    avatar_url: string | null;
+    avatar_url: string;
   };
 }
 
 export const FanPosts = () => {
-  const { data: fanPosts, isLoading } = useQuery({
+  const { data: posts, isLoading } = useQuery({
     queryKey: ["fan-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -37,48 +35,34 @@ export const FanPosts = () => {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!fanPosts || fanPosts.length === 0) {
-    return <div>No fan posts yet.</div>;
-  }
+  if (isLoading) return <div>Loading...</div>;
+  if (!posts?.length) return <div>No fan posts yet.</div>;
 
   return (
     <div className="space-y-4">
-      {fanPosts.map((post) => (
-        <Card key={post.id}>
-          <CardContent className="p-4">
-            <div className="flex items-start space-x-4">
-              <Avatar>
-                <AvatarImage src={post.profiles.avatar_url || undefined} />
-                <AvatarFallback>
-                  {post.profiles.username.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{post.profiles.username}</h3>
-                  <span className="text-sm text-muted-foreground">
-                    {formatDate(post.created_at)}
-                  </span>
-                </div>
-                <p className="mt-2">{post.content}</p>
-                {post.image_url && (
-                  <img
-                    src={post.image_url}
-                    alt="Fan post"
-                    className="mt-2 rounded-lg max-h-48 object-cover"
-                  />
-                )}
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Supporting: {post.team_name}
-                </p>
-              </div>
+      {posts.map((post) => (
+        <div key={post.id} className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <img
+              src={post.profiles.avatar_url || "/placeholder.svg"}
+              alt={post.profiles.username}
+              className="w-8 h-8 rounded-full"
+            />
+            <div>
+              <p className="font-semibold">{post.profiles.username}</p>
+              <p className="text-sm text-gray-500">{formatDate(post.created_at)}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="mb-2">{post.content}</p>
+          {post.image_url && (
+            <img
+              src={post.image_url}
+              alt="Fan post"
+              className="rounded-lg max-h-96 w-full object-cover"
+            />
+          )}
+          <p className="text-sm text-gray-500 mt-2">Team: {post.team_name}</p>
+        </div>
       ))}
     </div>
   );
