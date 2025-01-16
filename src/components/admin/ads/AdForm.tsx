@@ -30,6 +30,7 @@ const adFormSchema = z.object({
   start_date: z.string().min(1, "Start date is required"),
   end_date: z.string().min(1, "End date is required"),
   image_url: z.string().optional(),
+  status: z.string().default("pending"),
 });
 
 type AdFormValues = z.infer<typeof adFormSchema>;
@@ -53,15 +54,22 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
         .toISOString()
         .split("T")[0],
       image_url: "",
+      status: "pending",
     },
   });
 
   const onSubmit = async (values: AdFormValues) => {
     try {
+      const submissionData = {
+        ...values,
+        impression_count: 0,
+        click_count: 0,
+      };
+
       if (initialData?.id) {
         const { error } = await supabase
           .from("advertisements")
-          .update(values)
+          .update(submissionData)
           .eq("id", initialData.id);
 
         if (error) throw error;
@@ -70,7 +78,9 @@ export function AdForm({ initialData, onSuccess }: AdFormProps) {
           description: "The advertisement has been updated successfully.",
         });
       } else {
-        const { error } = await supabase.from("advertisements").insert(values);
+        const { error } = await supabase
+          .from("advertisements")
+          .insert(submissionData);
         if (error) throw error;
         toast({
           title: "Advertisement created",
