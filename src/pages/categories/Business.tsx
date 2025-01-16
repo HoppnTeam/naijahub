@@ -9,10 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 const Business = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("all");
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: subcategories } = useQuery({
     queryKey: ["business-subcategories"],
@@ -70,6 +72,15 @@ const Business = () => {
     navigate("/create-post", {
       state: { category: "Business", categoryId: businessCategory },
     });
+  };
+
+  const handleResourceClick = (name: string, link: string) => {
+    toast({
+      title: "Leaving NaijaHub",
+      description: `You are being redirected to ${name}. This is an external website.`,
+      duration: 3000,
+    });
+    window.open(link, '_blank');
   };
 
   const businessResources = [
@@ -176,12 +187,12 @@ const Business = () => {
                     <ul className="space-y-2">
                       {section.items.map((item, itemIndex) => (
                         <li key={itemIndex}>
-                          <a 
-                            href={item.link}
-                            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                          <button
+                            onClick={() => handleResourceClick(item.name, item.link)}
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors text-left w-full"
                           >
                             {item.name}
-                          </a>
+                          </button>
                         </li>
                       ))}
                     </ul>
