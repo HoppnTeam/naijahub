@@ -77,27 +77,54 @@ const Business = () => {
       title: "Government Resources",
       icon: <Building2 className="w-5 h-5" />,
       items: [
-        { name: "CAC Business Registration Guide", link: "#" },
-        { name: "FIRS Tax Compliance", link: "#" },
-        { name: "Export Documentation", link: "#" }
+        { 
+          name: "CAC Business Registration Guide", 
+          link: "https://www.cac.gov.ng/registration-guidelines/" 
+        },
+        { 
+          name: "FIRS Tax Compliance", 
+          link: "https://www.firs.gov.ng/tax-compliance/" 
+        },
+        { 
+          name: "Export Documentation", 
+          link: "https://www.nepc.gov.ng/export-procedures" 
+        }
       ]
     },
     {
       title: "Business Guides",
       icon: <FileText className="w-5 h-5" />,
       items: [
-        { name: "Starting a Business in Nigeria", link: "#" },
-        { name: "SME Funding Options", link: "#" },
-        { name: "Business Plan Templates", link: "#" }
+        { 
+          name: "Starting a Business in Nigeria", 
+          link: "https://www.cbn.gov.ng/devfin/entrepreneurship.asp" 
+        },
+        { 
+          name: "SME Funding Options", 
+          link: "https://www.boi.ng/sme-loans/" 
+        },
+        { 
+          name: "Business Plan Templates", 
+          link: "https://smedan.gov.ng/business-plans/" 
+        }
       ]
     },
     {
       title: "Institutional Support",
       icon: <Award className="w-5 h-5" />,
       items: [
-        { name: "SMEDAN Resources", link: "#" },
-        { name: "BOI Loan Programs", link: "#" },
-        { name: "NEXIM Bank Services", link: "#" }
+        { 
+          name: "SMEDAN Resources", 
+          link: "https://smedan.gov.ng/resources/" 
+        },
+        { 
+          name: "BOI Loan Programs", 
+          link: "https://www.boi.ng/apply-loan/" 
+        },
+        { 
+          name: "NEXIM Bank Services", 
+          link: "https://neximbank.com.ng/products-services/" 
+        }
       ]
     }
   ];
