@@ -73,7 +73,7 @@ export const BusinessCategoryCreatePost = ({ categoryId }: BusinessCategoryCreat
             category_id: categoryId,
             subcategory_id: formData.subcategoryId || null,
             is_live: formData.isLive,
-            image_url: uploadedImageUrls[0], // Use the first image as the main image
+            image_url: uploadedImageUrls[0],
           },
         ]);
 

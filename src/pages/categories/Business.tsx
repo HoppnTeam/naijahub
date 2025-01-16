@@ -39,7 +39,7 @@ const Business = () => {
       .eq("name", "Business")
       .single();
 
-    navigate("/create-post", {
+    navigate("/categories/business/create", {
       state: { 
         category: "Business", 
         categoryId: businessCategory?.id,
