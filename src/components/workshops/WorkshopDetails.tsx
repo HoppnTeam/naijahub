@@ -1,66 +1,100 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Workshop } from "@/types/workshop";
-import WorkshopMap from "./WorkshopMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Phone, Mail, Globe, Clock, MapPin } from "lucide-react";
+import WorkshopMap from "./WorkshopMap";
+import { Workshop } from "@/types/workshop";
 
-const WorkshopDetails = () => {
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const { data: workshops, isLoading } = useQuery({
-    queryKey: ["workshops", userLocation],
-    queryFn: async () => {
-      if (!userLocation) return [];
+interface WorkshopDetailsProps {
+  workshop: Workshop;
+  nearbyWorkshops?: Workshop[];
+}
 
-      const { data, error } = await supabase
-        .from("automotive_workshops")
-        .select("*")
-        .not("latitude", "is", null)
-        .not("longitude", "is", null);
-
-      if (error) throw error;
-
-      return data;
-    },
-    enabled: !!userLocation,
-  });
+const WorkshopDetails = ({ workshop, nearbyWorkshops }: WorkshopDetailsProps) => {
+  const [showMap, setShowMap] = useState(false);
 
   return (
-    <div className="space-y-6">
-      {isLoading ? (
-        <div className="flex items-center justify-center p-8">
-          <Loader2 className="h-8 w-8 animate-spin" />
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-2xl">{workshop.name}</CardTitle>
+        <div className="flex items-center space-x-2 text-muted-foreground">
+          <MapPin className="h-4 w-4" />
+          <span>{workshop.address}, {workshop.city}</span>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">
-              Workshops {workshops?.length ? `(${workshops.length} found)` : ''}
-            </h2>
-            {workshops?.map((workshop) => (
-              <Card key={workshop.id}>
-                <CardHeader>
-                  <CardTitle>{workshop.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{workshop.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          {userLocation && (
-            <div className="h-[600px] rounded-lg overflow-hidden">
-              <WorkshopMap
-                latitude={userLocation.latitude}
-                longitude={userLocation.longitude}
-                workshops={workshops || []}
-              />
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid gap-4">
+          {workshop.phone_number && (
+            <div className="flex items-center space-x-2">
+              <Phone className="h-4 w-4" />
+              <a href={`tel:${workshop.phone_number}`} className="text-primary hover:underline">
+                {workshop.phone_number}
+              </a>
+            </div>
+          )}
+          {workshop.email && (
+            <div className="flex items-center space-x-2">
+              <Mail className="h-4 w-4" />
+              <a href={`mailto:${workshop.email}`} className="text-primary hover:underline">
+                {workshop.email}
+              </a>
+            </div>
+          )}
+          {workshop.website && (
+            <div className="flex items-center space-x-2">
+              <Globe className="h-4 w-4" />
+              <a href={workshop.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                Visit Website
+              </a>
+            </div>
+          )}
+          {workshop.opening_hours && (
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4" />
+              <span>Opening Hours</span>
             </div>
           )}
         </div>
-      )}
-    </div>
+
+        {workshop.services_offered && workshop.services_offered.length > 0 && (
+          <div>
+            <h3 className="font-semibold mb-2">Services Offered</h3>
+            <div className="flex flex-wrap gap-2">
+              {workshop.services_offered.map((service, index) => (
+                <span
+                  key={index}
+                  className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
+                >
+                  {service}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {workshop.latitude && workshop.longitude && (
+          <div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowMap(!showMap)}
+            >
+              {showMap ? "Hide Map" : "Show Map"}
+            </Button>
+            {showMap && (
+              <div className="h-[300px] mt-4">
+                <WorkshopMap
+                  latitude={workshop.latitude}
+                  longitude={workshop.longitude}
+                  name={workshop.name}
+                  workshops={nearbyWorkshops}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

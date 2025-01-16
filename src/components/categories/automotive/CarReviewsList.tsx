@@ -19,7 +19,7 @@ export const CarReviewsList = () => {
         .from("car_reviews")
         .select(`
           *,
-          profiles:profiles(username, avatar_url)
+          profiles!car_reviews_user_id_profiles_fkey (username, avatar_url)
         `)
         .order("created_at", { ascending: false });
 
