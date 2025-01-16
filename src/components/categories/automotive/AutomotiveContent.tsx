@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
-import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield, AlertTriangle } from "lucide-react";
+import { Car, Settings, ShoppingBag, Newspaper, Wrench, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Category {
@@ -34,7 +34,7 @@ export const AutomotiveContent = ({
         return <Car className="w-5 h-5" />;
       case "Maintenance & Repairs":
         return <Settings className="w-5 h-5" />;
-      case "Buy & Sell":
+      case "Auto Marketplace":
         return <ShoppingBag className="w-5 h-5" />;
       case "Auto News":
         return <Newspaper className="w-5 h-5" />;
@@ -52,13 +52,13 @@ export const AutomotiveContent = ({
       case "Car Reviews":
         return "Detailed reviews and comparisons of vehicles available in Nigeria";
       case "Maintenance & Repairs":
-        return "Tips, guides, and discussions about car maintenance and repairs";
-      case "Buy & Sell":
-        return "Marketplace for cars, parts, and automotive accessories";
+        return "Expert tips, guides, and discussions about car maintenance and repairs";
+      case "Auto Marketplace":
+        return "Buy, sell, and trade vehicles, parts, and automotive accessories";
       case "Auto News":
         return "Latest automotive news and updates from Nigeria and worldwide";
       case "Workshops & Services":
-        return "Find and review local automotive workshops and services";
+        return "Find and review trusted local automotive workshops and services";
       case "Road Safety":
         return "Discussions and tips about road safety in Nigeria";
       default:
