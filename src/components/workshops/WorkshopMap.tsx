@@ -27,6 +27,7 @@ const MapUpdater = ({ latitude, longitude }: { latitude: number; longitude: numb
   const map = useMap();
   
   useEffect(() => {
+    console.log('Updating map center to:', latitude, longitude);
     map.setView([latitude, longitude], 13);
   }, [latitude, longitude, map]);
   
@@ -35,6 +36,10 @@ const MapUpdater = ({ latitude, longitude }: { latitude: number; longitude: numb
 
 const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }: WorkshopMapProps) => {
   const mapRef = useRef<Map | null>(null);
+
+  useEffect(() => {
+    console.log('Map mounted with workshops:', workshops?.length);
+  }, [workshops]);
 
   return (
     <MapContainer

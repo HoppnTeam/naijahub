@@ -31,8 +31,15 @@ const WorkshopSearch = () => {
 
       if (error) {
         console.error('Error fetching workshops:', error);
-        throw error;
+        toast({
+          title: "Error",
+          description: "Failed to fetch nearby workshops. Please try again.",
+          variant: "destructive",
+        });
+        return [];
       }
+
+      if (!data) return [];
 
       // Calculate distance and filter workshops within 30 miles
       const workshopsWithDistance = data
@@ -48,6 +55,7 @@ const WorkshopSearch = () => {
         .filter((workshop) => workshop.distance <= 30)
         .sort((a, b) => a.distance - b.distance);
 
+      console.log('Found workshops:', workshopsWithDistance);
       return workshopsWithDistance;
     },
     enabled: !!userLocation,
@@ -67,6 +75,7 @@ const WorkshopSearch = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('Got user location:', position.coords);
         setUserLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -81,6 +90,11 @@ const WorkshopSearch = () => {
           variant: "destructive",
         });
         setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
       }
     );
   };
@@ -164,7 +178,7 @@ const WorkshopSearch = () => {
               </div>
             )}
           </div>
-          <div className="h-[600px] rounded-lg overflow-hidden">
+          <div className="h-[600px] rounded-lg overflow-hidden border">
             <WorkshopMap
               latitude={userLocation.latitude}
               longitude={userLocation.longitude}
