@@ -12,7 +12,11 @@ import { LocationFields } from "./form/LocationFields";
 import { ContactFields } from "./form/ContactFields";
 import { workshopSchema, type WorkshopFormValues } from "./form/WorkshopFormSchema";
 
-export const AddWorkshopForm = () => {
+interface AddWorkshopFormProps {
+  onSuccess?: () => void;
+}
+
+export const AddWorkshopForm = ({ onSuccess }: AddWorkshopFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,6 +49,8 @@ export const AddWorkshopForm = () => {
           rating: 0,
           review_count: 0,
           verified: false,
+          latitude: null,
+          longitude: null,
         });
 
       if (error) throw error;
@@ -55,6 +61,7 @@ export const AddWorkshopForm = () => {
       });
 
       form.reset();
+      onSuccess?.();
     } catch (error) {
       console.error("Error adding workshop:", error);
       toast({

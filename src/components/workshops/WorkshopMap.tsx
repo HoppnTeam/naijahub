@@ -7,11 +7,11 @@ import { Workshop } from "@/types/workshop";
 interface WorkshopMapProps {
   latitude: number;
   longitude: number;
-  name: string;
+  name?: string;
   workshops?: Workshop[];
 }
 
-const WorkshopMap = ({ latitude, longitude, name, workshops }: WorkshopMapProps) => {
+const WorkshopMap = ({ latitude, longitude, name = "Your Location", workshops }: WorkshopMapProps) => {
   const mapRef = useRef<Map | null>(null);
 
   useEffect(() => {

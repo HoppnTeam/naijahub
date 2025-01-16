@@ -164,6 +164,7 @@ const WorkshopSearch = () => {
             <WorkshopMap
               latitude={userLocation.latitude}
               longitude={userLocation.longitude}
+              name="Your Location"
               workshops={workshops || []}
             />
           </div>
