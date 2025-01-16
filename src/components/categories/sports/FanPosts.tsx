@@ -23,7 +23,7 @@ export const FanPosts = () => {
         .from("sports_fan_posts")
         .select(`
           *,
-          user:profiles!sports_fan_posts_user_id_fkey (
+          user:profiles (
             username,
             avatar_url
           )
