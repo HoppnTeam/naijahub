@@ -28,10 +28,10 @@ export const DeliveryMethodFields = ({
               type="button"
               variant={paymentMethods.includes(method) ? "default" : "outline"}
               onClick={() => {
-                setPaymentMethods(prev =>
-                  prev.includes(method)
-                    ? prev.filter(m => m !== method)
-                    : [...prev, method]
+                setPaymentMethods(
+                  paymentMethods.includes(method)
+                    ? paymentMethods.filter(m => m !== method)
+                    : [...paymentMethods, method]
                 );
               }}
             >

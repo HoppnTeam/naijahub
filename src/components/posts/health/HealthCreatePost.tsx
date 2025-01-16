@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CategorySelect } from "@/components/posts/CategorySelect";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import { BackNavigation } from "@/components/BackNavigation";
@@ -95,7 +95,7 @@ export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
           </div>
 
           <ImageUpload
-            imageUrl={imageUrl}
+            currentImageUrl={imageUrl}
             onImageUploaded={setImageUrl}
             bucket="post-images"
           />
