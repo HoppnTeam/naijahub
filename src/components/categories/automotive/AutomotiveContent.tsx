@@ -67,15 +67,17 @@ export const AutomotiveContent = ({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Subcategories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Button
           variant={selectedSubcategory === null ? "default" : "outline"}
           onClick={() => onSubcategoryChange(null)}
-          className="flex items-center gap-3 h-auto p-4 w-full"
+          className={`flex items-center gap-2 h-auto p-4 w-full justify-start ${
+            selectedSubcategory === null ? 'bg-primary hover:bg-primary/90' : ''
+          }`}
         >
-          <Car className="h-6 w-6 flex-shrink-0" />
+          <Car className="h-5 w-5 flex-shrink-0" />
           <div className="text-left">
             <div className="font-semibold">All Automotive</div>
             <div className="text-sm text-muted-foreground">View all posts</div>
@@ -86,13 +88,15 @@ export const AutomotiveContent = ({
             key={subcategory.id}
             variant={selectedSubcategory === subcategory.id ? "default" : "outline"}
             onClick={() => onSubcategoryChange(subcategory.id)}
-            className="flex items-center gap-3 h-auto p-4 w-full group transition-all"
+            className={`flex items-center gap-2 h-auto p-4 w-full justify-start ${
+              selectedSubcategory === subcategory.id ? 'bg-primary hover:bg-primary/90' : ''
+            }`}
           >
             <div className="flex-shrink-0">
               {getSubcategoryIcon(subcategory.name)}
             </div>
-            <div className="text-left">
-              <div className="font-semibold">{subcategory.name}</div>
+            <div className="text-left flex-1 min-w-0">
+              <div className="font-semibold truncate">{subcategory.name}</div>
               <div className="text-sm text-muted-foreground line-clamp-2">
                 {getSubcategoryDescription(subcategory.name)}
               </div>
@@ -103,7 +107,7 @@ export const AutomotiveContent = ({
 
       {/* Selected Subcategory Header */}
       {selectedSubcategory && subcategories?.find(s => s.id === selectedSubcategory) && (
-        <Card className="border-l-4 border-l-primary">
+        <Card className="border-l-4 border-l-primary bg-muted/30">
           <CardHeader>
             <div className="flex items-center gap-3">
               {getSubcategoryIcon(subcategories.find(s => s.id === selectedSubcategory)?.name || "")}
@@ -119,7 +123,7 @@ export const AutomotiveContent = ({
       )}
 
       {/* Posts Grid */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {posts?.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-8">
