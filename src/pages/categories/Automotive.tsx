@@ -1,32 +1,83 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AutomotiveHeader } from "@/components/categories/automotive/AutomotiveHeader";
-import { AutomotiveSidebar } from "@/components/categories/automotive/AutomotiveSidebar";
 import { AutomotiveContent } from "@/components/categories/automotive/AutomotiveContent";
 import { BackNavigation } from "@/components/BackNavigation";
 
 const Automotive = () => {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+  const { data: subcategories } = useQuery({
+    queryKey: ["subcategories", "automotive"],
+    queryFn: async () => {
+      const { data: parentCategory } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Automotive")
+        .single();
 
-  const handleCreatePost = () => {
-    navigate("/create-post");
-  };
+      if (!parentCategory) return [];
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("parent_id", parentCategory.id);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: posts } = useQuery({
+    queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
+    queryFn: async () => {
+      let query = supabase
+        .from("posts")
+        .select(`
+          *,
+          profiles (username, avatar_url),
+          categories!posts_category_id_fkey (name),
+          likes (count),
+          comments (count)
+        `)
+        .eq("categories.name", "Automotive");
+
+      if (selectedSubcategory) {
+        query = query.eq("subcategory_id", selectedSubcategory);
+      }
+
+      if (searchQuery) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return data.map(post => ({
+        ...post,
+        _count: {
+          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
+          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
+        }
+      }));
+    },
+  });
 
   return (
-    <div className="container py-6">
+    <div className="container mx-auto py-8">
       <BackNavigation />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-9">
-          <AutomotiveHeader onSearch={handleSearch} onCreatePost={handleCreatePost} />
-          <AutomotiveContent searchQuery={searchQuery} />
-        </div>
+      <AutomotiveHeader onSearch={setSearchQuery} />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
-          <AutomotiveSidebar />
+          <AutomotiveContent 
+            posts={posts}
+            subcategories={subcategories}
+            selectedSubcategory={selectedSubcategory}
+            onSubcategoryChange={setSelectedSubcategory}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
     </div>
