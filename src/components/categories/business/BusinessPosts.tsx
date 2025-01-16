@@ -22,7 +22,7 @@ export const BusinessPosts = ({
         .from("posts")
         .select(`
           *,
-          profiles:profiles!posts_user_id_fkey (username, avatar_url),
+          profiles:profiles!posts_user_id_profiles_fkey (username, avatar_url),
           categories:categories!posts_category_id_fkey (name),
           likes:likes (count),
           comments:comments (count)
