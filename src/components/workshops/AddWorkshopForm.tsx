@@ -41,14 +41,23 @@ export const AddWorkshopForm = ({ onSuccess }: AddWorkshopFormProps) => {
     
     setIsSubmitting(true);
     try {
+      // Ensure all required fields are present and properly typed
       const workshopData = {
-        ...values,
+        name: values.name,
+        description: values.description,
+        workshop_type: values.workshop_type,
+        address: values.address,
+        city: values.city,
+        state: values.state,
+        phone_number: values.phone_number || null,
+        email: values.email || null,
+        website: values.website || null,
         user_id: user.id,
         rating: 0,
         review_count: 0,
         verified: false,
-        latitude: null,
-        longitude: null,
+        latitude: null as number | null,
+        longitude: null as number | null,
       };
 
       const { error } = await supabase
