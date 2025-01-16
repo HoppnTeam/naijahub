@@ -7,9 +7,26 @@ import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { BackNavigation } from "@/components/BackNavigation";
+import { useNavigate } from "react-router-dom";
 
 const Health = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const { data: healthCategory } = useQuery({
+    queryKey: ["health-category"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Health")
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const { data: posts } = useQuery({
     queryKey: ["health-posts"],
     queryFn: async () => {
@@ -17,24 +34,20 @@ const Health = () => {
         .from("posts")
         .select(`
           *,
-          profiles:profiles!posts_user_id_profiles_fkey (username, avatar_url),
+          profiles:profiles!posts_user_id_fkey (username, avatar_url),
           categories:categories!posts_category_id_fkey (name),
-          likes (count),
-          comments (count)
+          _count {
+            likes,
+            comments
+          }
         `)
-        .eq("categories.name", "Health")
+        .eq("category_id", healthCategory?.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      
-      return data?.map(post => ({
-        ...post,
-        _count: {
-          likes: post.likes?.[0]?.count || 0,
-          comments: post.comments?.[0]?.count || 0
-        }
-      })) as Post[];
+      return data as Post[];
     },
+    enabled: !!healthCategory?.id,
   });
 
   const handleAskProfessional = () => {
@@ -44,13 +57,24 @@ const Health = () => {
     });
   };
 
+  const handleCreatePost = () => {
+    if (healthCategory) {
+      navigate("/create-post", {
+        state: { category: "Health", categoryId: healthCategory.id },
+      });
+    }
+  };
+
   return (
     <div className="container py-8">
       <BackNavigation />
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Health Hub</h1>
-          <Button onClick={handleAskProfessional}>Ask a Professional</Button>
+          <div className="space-x-4">
+            <Button onClick={handleAskProfessional}>Ask a Professional</Button>
+            <Button onClick={handleCreatePost}>Create Post</Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -90,7 +114,10 @@ const Health = () => {
                 (tab) => (
                   <TabsContent key={tab} value={tab} className="space-y-6">
                     {posts
-                      ?.filter((post) => post.title.toLowerCase().includes(tab))
+                      ?.filter((post) => 
+                        post.subcategory_id === tab || 
+                        post.title.toLowerCase().includes(tab)
+                      )
                       .map((post) => (
                         <PostCard key={post.id} post={post} />
                       ))}
