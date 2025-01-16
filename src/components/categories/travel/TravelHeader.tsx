@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 interface TravelHeaderProps {
   onSearch: (query: string) => void;
-  onCreatePost: () => void;
 }
 
 export const TravelHeader = ({ onSearch }: TravelHeaderProps) => {
