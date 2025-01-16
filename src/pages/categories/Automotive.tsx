@@ -5,6 +5,7 @@ import { AutomotiveHeader } from "@/components/categories/automotive/AutomotiveH
 import { AutomotiveContent } from "@/components/categories/automotive/AutomotiveContent";
 import { AutomotiveSidebar } from "@/components/categories/automotive/AutomotiveSidebar";
 import { BackNavigation } from "@/components/BackNavigation";
+import { Navigation } from "@/components/Navigation";
 
 const Automotive = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -67,21 +68,24 @@ const Automotive = () => {
   });
 
   return (
-    <div className="container mx-auto py-8">
-      <BackNavigation />
-      <AutomotiveHeader onSearch={setSearchQuery} />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
-          <AutomotiveContent 
-            posts={posts}
-            subcategories={subcategories}
-            selectedSubcategory={selectedSubcategory}
-            onSubcategoryChange={setSelectedSubcategory}
-            searchQuery={searchQuery}
-          />
-        </div>
-        <div className="lg:col-span-1">
-          <AutomotiveSidebar />
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="container mx-auto py-8 px-4">
+        <BackNavigation />
+        <AutomotiveHeader onSearch={setSearchQuery} />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-3">
+            <AutomotiveContent 
+              posts={posts}
+              subcategories={subcategories}
+              selectedSubcategory={selectedSubcategory}
+              onSubcategoryChange={setSelectedSubcategory}
+              searchQuery={searchQuery}
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <AutomotiveSidebar />
+          </div>
         </div>
       </div>
     </div>
