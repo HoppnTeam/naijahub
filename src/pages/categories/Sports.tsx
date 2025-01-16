@@ -69,12 +69,21 @@ const Sports = () => {
     },
   });
 
+  const handleCreatePost = () => {
+    navigate("/create-post", {
+      state: {
+        category: "Sports",
+        categoryId: posts?.[0]?.category_id // Using the category_id from the first post
+      }
+    });
+  };
+
   return (
     <div className="container mx-auto py-8">
       <BackNavigation />
       <SportsHeader
         onSearch={setSearchQuery}
-        onCreatePost={() => navigate("/create-post")}
+        onCreatePost={handleCreatePost}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
