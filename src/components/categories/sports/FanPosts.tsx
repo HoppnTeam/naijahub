@@ -9,7 +9,7 @@ interface FanPost {
   image_url: string | null;
   created_at: string;
   user_id: string;
-  profiles: {
+  user: {
     username: string;
     avatar_url: string;
   };
@@ -23,7 +23,7 @@ export const FanPosts = () => {
         .from("sports_fan_posts")
         .select(`
           *,
-          profiles:profiles!sports_fan_posts_user_id_fkey (
+          user:profiles!sports_fan_posts_user_id_fkey (
             username,
             avatar_url
           )
@@ -44,12 +44,12 @@ export const FanPosts = () => {
         <div key={post.id} className="border rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <img
-              src={post.profiles.avatar_url || "/placeholder.svg"}
-              alt={post.profiles.username}
+              src={post.user.avatar_url || "/placeholder.svg"}
+              alt={post.user.username}
               className="w-8 h-8 rounded-full"
             />
             <div>
-              <p className="font-semibold">{post.profiles.username}</p>
+              <p className="font-semibold">{post.user.username}</p>
               <p className="text-sm text-gray-500">
                 {format(new Date(post.created_at), "PPp")}
               </p>
