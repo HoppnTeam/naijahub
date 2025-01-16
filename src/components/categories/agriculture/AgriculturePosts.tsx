@@ -55,13 +55,23 @@ export const AgriculturePosts = () => {
             username,
             avatar_url
           ),
-          categories (
+          categories!posts_category_id_fkey (
             name
           ),
           likes:likes(count),
           comments:comments(count)
-        `)
-        .eq("categories.name", "Agriculture");
+        `);
+
+      // Get the Agriculture category ID first
+      const { data: agricultureCategory } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Agriculture")
+        .single();
+
+      if (!agricultureCategory) throw new Error("Agriculture category not found");
+
+      query = query.eq("category_id", agricultureCategory.id);
 
       if (selectedSubcategory) {
         query = query.eq("subcategory_id", selectedSubcategory);
