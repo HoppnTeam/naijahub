@@ -92,6 +92,75 @@ export type Database = {
         }
         Relationships: []
       }
+      automotive_workshops: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          opening_hours: Json | null
+          phone_number: string | null
+          rating: number | null
+          review_count: number | null
+          services_offered: string[] | null
+          state: string
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+          website: string | null
+          workshop_type: Database["public"]["Enums"]["workshop_type"]
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          opening_hours?: Json | null
+          phone_number?: string | null
+          rating?: number | null
+          review_count?: number | null
+          services_offered?: string[] | null
+          state: string
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+          website?: string | null
+          workshop_type: Database["public"]["Enums"]["workshop_type"]
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          opening_hours?: Json | null
+          phone_number?: string | null
+          rating?: number | null
+          review_count?: number | null
+          services_offered?: string[] | null
+          state?: string
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+          website?: string | null
+          workshop_type?: Database["public"]["Enums"]["workshop_type"]
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -806,6 +875,41 @@ export type Database = {
           },
         ]
       }
+      workshop_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number | null
+          user_id: string | null
+          workshop_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          user_id?: string | null
+          workshop_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          user_id?: string | null
+          workshop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_reviews_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "automotive_workshops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -824,6 +928,15 @@ export type Database = {
       listing_status: "active" | "sold" | "pending" | "cancelled"
       payment_method: "online" | "cash_on_delivery" | "in_person"
       user_role: "user" | "moderator" | "admin"
+      workshop_type:
+        | "mechanic"
+        | "auto_electrician"
+        | "panel_beater"
+        | "tire_service"
+        | "car_wash"
+        | "diagnostics_center"
+        | "spare_parts"
+        | "general_service"
     }
     CompositeTypes: {
       [_ in never]: never
