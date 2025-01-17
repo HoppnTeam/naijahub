@@ -18,7 +18,7 @@ export const OrdersList = () => {
         .from("tech_marketplace_orders")
         .select(`
           *,
-          listing:listing_id (
+          listing:tech_marketplace_listings!tech_marketplace_orders_listing_id_fkey (
             title,
             images
           ),
@@ -34,7 +34,10 @@ export const OrdersList = () => {
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching tech orders:", error);
+        throw error;
+      }
       return data;
     },
     enabled: !!user,
@@ -49,7 +52,7 @@ export const OrdersList = () => {
         .from("auto_marketplace_orders")
         .select(`
           *,
-          listing:listing_id (
+          listing:auto_marketplace_listings!auto_marketplace_orders_listing_id_fkey (
             title,
             images
           ),
@@ -65,7 +68,10 @@ export const OrdersList = () => {
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching auto orders:", error);
+        throw error;
+      }
       return data;
     },
     enabled: !!user,
@@ -112,10 +118,10 @@ export const OrdersList = () => {
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">
-                    {user?.id === order.buyer_id ? "Seller" : "Buyer"}
+                    {user?.id === order.buyer.user_id ? "Seller" : "Buyer"}
                   </div>
                   <div className="font-semibold">
-                    {user?.id === order.buyer_id ? order.seller.username : order.buyer.username}
+                    {user?.id === order.buyer.user_id ? order.seller.username : order.buyer.username}
                   </div>
                 </div>
                 <div>
