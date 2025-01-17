@@ -1,44 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
-import { Post } from "@/types/post";
-import { NewsCard } from "./NewsCard";
-import { NewsFetchButton } from "./NewsFetchButton";
-
-interface NewsPost extends Post {
-  categories: {
-    name: string;
-  } | null;
-}
+import { supabase } from "@/integrations/supabase/client";
+import { useDraftNewsPosts } from "@/hooks/use-draft-news-posts";
+import { NewsHeader } from "./NewsHeader";
+import { NewsGrid } from "./NewsGrid";
 
 export const AggregatedNewsList = () => {
   const { toast } = useToast();
-
-  const { data: draftPosts, isLoading, refetch } = useQuery({
-    queryKey: ["draft-news-posts"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("posts")
-        .select(`
-          *,
-          categories:category_id (name)
-        `)
-        .eq("is_draft", true)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching draft posts:", error);
-        throw error;
-      }
-
-      // Explicitly type the return value and handle potential null values
-      return (data || []).map(post => ({
-        ...post,
-        categories: post.categories || null
-      })) as NewsPost[];
-    },
-  });
+  const { data: draftPosts, isLoading, refetch } = useDraftNewsPosts();
 
   const fetchNewArticles = async () => {
     try {
@@ -88,22 +56,12 @@ export const AggregatedNewsList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Aggregated News</h2>
-        <NewsFetchButton onClick={fetchNewArticles} />
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center">
-          <Loader2 className="w-6 h-6 animate-spin" />
-        </div>
-      ) : (
-        <div className="grid gap-6">
-          {draftPosts?.map((post) => (
-            <NewsCard key={post.id} post={post} onPublish={publishPost} />
-          ))}
-        </div>
-      )}
+      <NewsHeader onFetchArticles={fetchNewArticles} />
+      <NewsGrid 
+        posts={draftPosts} 
+        isLoading={isLoading} 
+        onPublish={publishPost} 
+      />
     </div>
   );
 };
