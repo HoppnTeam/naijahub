@@ -7,7 +7,6 @@ interface SubcategoryButtonProps {
   icon: React.ReactNode;
   isSelected: boolean;
   onClick: () => void;
-  section?: 'vehicles' | 'parts';
 }
 
 export const SubcategoryButton = ({
@@ -17,7 +16,6 @@ export const SubcategoryButton = ({
   icon,
   isSelected,
   onClick,
-  section,
 }: SubcategoryButtonProps) => {
   return (
     <Button
@@ -25,7 +23,7 @@ export const SubcategoryButton = ({
       onClick={onClick}
       className={`flex items-center gap-2 h-auto p-4 w-full justify-start ${
         isSelected ? 'bg-primary hover:bg-primary/90' : ''
-      } ${section === 'parts' ? 'border-orange-500 border-2' : ''}`}
+      }`}
     >
       <div className="flex-shrink-0">
         {icon}
