@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { AdminMenuItem } from "@/components/admin/AdminMenuItem";
+import { User, LogOut } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
@@ -87,21 +88,30 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ProfileAvatar 
-          avatarUrl={profile?.avatar_url} 
-          username={profile?.username}
-        />
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <ProfileAvatar 
+            avatarUrl={profile?.avatar_url} 
+            username={profile?.username}
+          />
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem onClick={() => navigate(`/profile/${user.id}`)}>
-          Profile
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem 
+          onClick={() => navigate(`/profile/${user.id}`)}
+          className="cursor-pointer flex items-center"
+        >
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
         </DropdownMenuItem>
+        
         {profile?.user_roles?.[0]?.role === "admin" && <AdminMenuItem />}
+        
         <DropdownMenuItem 
           onClick={handleSignOut}
-          className="text-red-600 focus:text-red-600"
+          className="cursor-pointer flex items-center text-red-600 focus:text-red-600"
         >
-          Sign Out
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign Out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
