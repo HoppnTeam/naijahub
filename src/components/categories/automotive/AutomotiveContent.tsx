@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Car } from "lucide-react";
+import { Car, Wrench } from "lucide-react";
 import WorkshopSearch from "@/components/workshops/WorkshopSearch";
 import { SubcategoryButton } from "./SubcategoryButton";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { PostsList } from "./PostsList";
 import { getSubcategoryIcon, getSubcategoryDescription } from "./utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Category {
   id: string;
@@ -30,14 +31,14 @@ export const AutomotiveContent = ({
     queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
     queryFn: async () => {
       let query = supabase
-        .from("auto_marketplace_listings")
+        .from("posts")
         .select(`
           *,
-          profiles!auto_marketplace_listings_seller_id_fkey (username, avatar_url)
+          profiles!posts_user_id_profiles_fkey (username, avatar_url)
         `);
 
       if (selectedSubcategory) {
-        query = query.eq('vehicle_type', selectedSubcategory);
+        query = query.eq('subcategory_id', selectedSubcategory);
       }
 
       if (searchQuery) {
@@ -46,21 +47,27 @@ export const AutomotiveContent = ({
 
       const { data, error } = await query;
       if (error) throw error;
-
-      return data.map(listing => ({
-        ...listing,
-        id: listing.id,
-        title: listing.title,
-        content: listing.description,
-        image_url: listing.images[0],
-        created_at: listing.created_at,
-        profiles: listing.profiles,
-        _count: {
-          likes: 0,
-          comments: 0
-        }
-      }));
+      return data;
     },
+    enabled: !selectedSubcategory || selectedSubcategory !== "marketplace"
+  });
+
+  const { data: listingsData } = useQuery({
+    queryKey: ["auto_marketplace", searchQuery, selectedSubcategory],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("auto_marketplace_listings")
+        .select(`
+          *,
+          profiles (username, avatar_url)
+        `)
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: selectedSubcategory === "marketplace"
   });
 
   return (
@@ -76,7 +83,6 @@ export const AutomotiveContent = ({
           onClick={() => onSubcategoryChange(null)}
         />
         
-        {/* Vehicle subcategories */}
         {subcategories?.map((subcategory) => (
           <SubcategoryButton
             key={subcategory.id}
@@ -88,10 +94,19 @@ export const AutomotiveContent = ({
             onClick={() => onSubcategoryChange(subcategory.id)}
           />
         ))}
+
+        <SubcategoryButton
+          id="marketplace"
+          name="Auto Marketplace"
+          description="Buy and sell vehicles and parts"
+          icon={<Car className="h-5 w-5 flex-shrink-0" />}
+          isSelected={selectedSubcategory === "marketplace"}
+          onClick={() => onSubcategoryChange("marketplace")}
+        />
       </div>
 
       {/* Selected Subcategory Header */}
-      {selectedSubcategory && (
+      {selectedSubcategory && selectedSubcategory !== "marketplace" && (
         <SubcategoryHeader
           name={subcategories?.find(s => s.id === selectedSubcategory)?.name || ""}
           description={getSubcategoryDescription(subcategories?.find(s => s.id === selectedSubcategory)?.name || "")}
@@ -99,8 +114,29 @@ export const AutomotiveContent = ({
       )}
 
       {/* Content Area */}
-      {selectedSubcategory && 
-       subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
+      {selectedSubcategory === "marketplace" ? (
+        <Tabs defaultValue="vehicles" className="w-full">
+          <TabsList>
+            <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
+            <TabsTrigger value="parts">Parts</TabsTrigger>
+          </TabsList>
+          <TabsContent value="vehicles">
+            <PostsList 
+              listings={listingsData?.filter(l => l.section === 'vehicles')} 
+              searchQuery={searchQuery}
+              section="vehicles"
+            />
+          </TabsContent>
+          <TabsContent value="parts">
+            <PostsList 
+              listings={listingsData?.filter(l => l.section === 'parts')} 
+              searchQuery={searchQuery}
+              section="parts"
+            />
+          </TabsContent>
+        </Tabs>
+      ) : selectedSubcategory && 
+         subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
         <WorkshopSearch />
       ) : (
         <PostsList posts={postsData} searchQuery={searchQuery} />

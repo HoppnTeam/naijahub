@@ -110,7 +110,9 @@ export type Database = {
           make: string | null
           mileage: number | null
           model: string | null
+          part_category_id: string | null
           price: number
+          section: Database["public"]["Enums"]["auto_marketplace_section"]
           seller_id: string
           status: string | null
           title: string
@@ -136,7 +138,9 @@ export type Database = {
           make?: string | null
           mileage?: number | null
           model?: string | null
+          part_category_id?: string | null
           price: number
+          section?: Database["public"]["Enums"]["auto_marketplace_section"]
           seller_id: string
           status?: string | null
           title: string
@@ -162,7 +166,9 @@ export type Database = {
           make?: string | null
           mileage?: number | null
           model?: string | null
+          part_category_id?: string | null
           price?: number
+          section?: Database["public"]["Enums"]["auto_marketplace_section"]
           seller_id?: string
           status?: string | null
           title?: string
@@ -170,6 +176,45 @@ export type Database = {
           updated_at?: string
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_marketplace_listings_part_category_id_fkey"
+            columns: ["part_category_id"]
+            isOneToOne: false
+            referencedRelation: "auto_parts_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_listings_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      auto_parts_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1085,6 +1130,7 @@ export type Database = {
       }
     }
     Enums: {
+      auto_marketplace_section: "vehicles" | "parts"
       delivery_method: "shipping" | "pickup" | "both"
       listing_status: "active" | "sold" | "pending" | "cancelled"
       payment_method: "online" | "cash_on_delivery" | "in_person"
