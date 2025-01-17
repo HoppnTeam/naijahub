@@ -99,6 +99,14 @@ export const AgricultureCreatePost = () => {
           </div>
 
           <ImageUpload
+            onImagesChange={(files) => {
+              if (files.length > 0) {
+                // Handle the first image only since we only need one
+                const file = files[0];
+                // You might want to handle the image upload here
+                setImageUrl(URL.createObjectURL(file));
+              }
+            }}
             currentImageUrl={imageUrl}
             onImageUploaded={setImageUrl}
             bucket="post-images"

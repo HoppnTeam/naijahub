@@ -95,6 +95,12 @@ export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
           </div>
 
           <ImageUpload
+            onImagesChange={(files) => {
+              if (files.length > 0) {
+                const file = files[0];
+                setImageUrl(URL.createObjectURL(file));
+              }
+            }}
             currentImageUrl={imageUrl}
             onImageUploaded={setImageUrl}
             bucket="post-images"
