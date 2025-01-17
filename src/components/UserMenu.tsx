@@ -98,7 +98,7 @@ export const UserMenu = () => {
           Profile
         </DropdownMenuItem>
         {profile?.user_roles?.[0]?.role === "admin" && (
-          <DropdownMenuItem onClick={() => navigate("/admin")}>
+          <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
             Admin Dashboard
           </DropdownMenuItem>
         )}

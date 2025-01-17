@@ -59,7 +59,7 @@ function App() {
                 </ProtectedAdminRoute>
               } 
             />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:id" element={<Profile />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts/:id" element={<PostDetails />} />
             <Route path="/categories/news-politics" element={<NewsAndPolitics />} />
