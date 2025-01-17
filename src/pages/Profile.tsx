@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
+import { OrdersList } from "@/components/marketplace/OrdersList";
 import { Profile as ProfileType } from "@/types/profile";
 
 const Profile = () => {
@@ -89,11 +90,16 @@ const Profile = () => {
         <Tabs defaultValue="posts" className="space-y-6 mt-8">
           <TabsList>
             <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts">
             <ProfilePosts posts={profile.posts || []} />
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <OrdersList />
           </TabsContent>
 
           <TabsContent value="activity">
