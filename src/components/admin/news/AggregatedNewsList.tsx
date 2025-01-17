@@ -29,25 +29,9 @@ export const AggregatedNewsList = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      
-      // Explicitly type the response and ensure it matches the NewsPost interface
-      const typedData = (data || []) as Array<{
-        id: string;
-        title: string;
-        content: string;
-        image_url: string | null;
-        created_at: string;
-        user_id: string;
-        category_id: string | null;
-        subcategory_id: string | null;
-        pinned: boolean | null;
-        is_live: boolean | null;
-        is_draft: boolean | null;
-        source_url: string | null;
-        categories: { name: string } | null;
-      }>;
 
-      return typedData;
+      // First cast to unknown, then to our specific type to avoid type mismatch
+      return (data || []) as unknown as NewsPost[];
     },
   });
 
