@@ -6,6 +6,9 @@ import { ContactButton } from "./ContactButton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { ReviewForm } from "./ReviewForm";
+import { ReviewsList } from "./ReviewsList";
+import { Separator } from "@/components/ui/separator";
 
 interface ListingContentProps {
   listing: {
@@ -56,6 +59,12 @@ export const ListingContent = ({ listing, comments }: ListingContentProps) => {
     queryClient.invalidateQueries({ queryKey: ["listing_comments", listing.id] });
   };
 
+  const handleReviewSubmitted = () => {
+    queryClient.invalidateQueries({ queryKey: ["listing_reviews", listing.id] });
+  };
+
+  const canReview = user && user.id !== listing.seller_id;
+
   return (
     <Card>
       <CardHeader>
@@ -96,6 +105,23 @@ export const ListingContent = ({ listing, comments }: ListingContentProps) => {
             />
           </div>
         </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Reviews</h3>
+          {canReview && (
+            <ReviewForm
+              listingId={listing.id}
+              sellerId={listing.seller_id}
+              onReviewSubmitted={handleReviewSubmitted}
+            />
+          )}
+          <ReviewsList listingId={listing.id} />
+        </div>
+
+        <Separator />
+        
         <CommentsList 
           comments={comments} 
           listingId={listing.id} 
