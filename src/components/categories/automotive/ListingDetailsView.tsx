@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { MapPin, Calendar, MessageSquare, DollarSign, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { CommentsList } from "@/components/CommentsList";
 
 export const ListingDetailsView = () => {
   const { id } = useParams();
@@ -29,6 +30,26 @@ export const ListingDetailsView = () => {
         `)
         .eq("id", id)
         .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: comments } = useQuery({
+    queryKey: ["listing_comments", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("auto_marketplace_comments")
+        .select(`
+          *,
+          profiles (
+            username,
+            avatar_url
+          )
+        `)
+        .eq("listing_id", id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
@@ -150,6 +171,7 @@ export const ListingDetailsView = () => {
               )}
             </div>
           </div>
+          <CommentsList comments={comments} />
         </CardContent>
       </Card>
     </div>

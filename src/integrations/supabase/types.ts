@@ -92,6 +92,48 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_marketplace_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          listing_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_marketplace_comments_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "auto_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       auto_marketplace_listings: {
         Row: {
           business_verified: boolean | null
@@ -188,6 +230,58 @@ export type Database = {
           {
             foreignKeyName: "auto_marketplace_listings_seller_id_profiles_fkey"
             columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      auto_marketplace_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rating?: number
+          reviewed_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_marketplace_reviews_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "auto_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_reviews_reviewed_id_fkey"
+            columns: ["reviewed_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
