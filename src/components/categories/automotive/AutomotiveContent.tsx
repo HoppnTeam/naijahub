@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Car } from "lucide-react";
-import { WorkshopSearch } from "@/components/workshops/WorkshopSearch";
+import WorkshopSearch from "@/components/workshops/WorkshopSearch";
 import { SubcategoryButton } from "./SubcategoryButton";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { PostsList } from "./PostsList";

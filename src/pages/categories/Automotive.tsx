@@ -31,41 +31,6 @@ const Automotive = () => {
     },
   });
 
-  const { data: posts } = useQuery({
-    queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
-    queryFn: async () => {
-      let query = supabase
-        .from("posts")
-        .select(`
-          *,
-          profiles (username, avatar_url),
-          categories!posts_category_id_fkey (name),
-          likes (count),
-          comments (count)
-        `)
-        .eq("categories.name", "Automotive");
-
-      if (selectedSubcategory) {
-        query = query.eq("subcategory_id", selectedSubcategory);
-      }
-
-      if (searchQuery) {
-        query = query.ilike("title", `%${searchQuery}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      return data.map(post => ({
-        ...post,
-        _count: {
-          likes: Array.isArray(post.likes) ? post.likes[0]?.count || 0 : 0,
-          comments: Array.isArray(post.comments) ? post.comments[0]?.count || 0 : 0
-        }
-      }));
-    },
-  });
-
   return (
     <div className="container mx-auto py-8">
       <BackNavigation />
@@ -73,7 +38,6 @@ const Automotive = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
           <AutomotiveContent 
-            posts={posts}
             subcategories={subcategories}
             selectedSubcategory={selectedSubcategory}
             onSubcategoryChange={setSelectedSubcategory}
