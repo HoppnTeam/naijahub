@@ -4,13 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { BasicInfoFields } from "./form/BasicInfoFields";
+import { VehicleDetailsFields } from "./form/VehicleDetailsFields";
+import { LocationField } from "./form/LocationField";
 
 const VEHICLE_TYPES = ["car", "motorcycle", "tricycle", "truck", "bus", "van", "parts"] as const;
 const CONDITIONS = ["New", "Like New", "Good", "Fair", "Poor"] as const;
@@ -29,44 +27,9 @@ export const CreateListingForm = () => {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isValidatingLocation, setIsValidatingLocation] = useState(false);
-  const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
-
-  const validateLocation = async (locationString: string) => {
-    setIsValidatingLocation(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('geocode-location', {
-        body: { address: locationString }
-      });
-
-      if (error) throw error;
-
-      if (data && data.coordinates) {
-        setCoordinates(data.coordinates);
-        setLocation(data.formatted_address || locationString);
-        return true;
-      } else {
-        toast({
-          title: "Invalid Location",
-          description: "Please enter a valid Nigerian address",
-          variant: "destructive",
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Location validation error:', error);
-      toast({
-        title: "Location Validation Failed",
-        description: "Please try again or enter a different address",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsValidatingLocation(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,9 +43,14 @@ export const CreateListingForm = () => {
       return;
     }
 
-    // Validate location before proceeding
-    const isLocationValid = await validateLocation(location);
-    if (!isLocationValid) return;
+    if (!coordinates) {
+      toast({
+        title: "Invalid Location",
+        description: "Please enter and validate a location",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
     
@@ -122,8 +90,8 @@ export const CreateListingForm = () => {
           year: year ? parseInt(year) : null,
           images: imageUrls,
           location,
-          latitude: coordinates?.latitude,
-          longitude: coordinates?.longitude,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
         });
 
       if (error) throw error;
@@ -153,126 +121,33 @@ export const CreateListingForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter listing title"
-              required
-            />
-          </div>
+          <BasicInfoFields
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your vehicle"
-              className="min-h-[100px]"
-              required
-            />
-          </div>
+          <VehicleDetailsFields
+            price={price}
+            setPrice={setPrice}
+            vehicleType={vehicleType}
+            setVehicleType={setVehicleType}
+            condition={condition}
+            setCondition={setCondition}
+            make={make}
+            setMake={setMake}
+            model={model}
+            setModel={setModel}
+            year={year}
+            setYear={setYear}
+          />
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Price (₦)</Label>
-              <Input
-                id="price"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="Enter price"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="vehicle-type">Vehicle Type</Label>
-              <Select value={vehicleType} onValueChange={(value: typeof VEHICLE_TYPES[number]) => setVehicleType(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select vehicle type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {VEHICLE_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="make">Make</Label>
-              <Input
-                id="make"
-                value={make}
-                onChange={(e) => setMake(e.target.value)}
-                placeholder="e.g. Toyota"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="model">Model</Label>
-              <Input
-                id="model"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                placeholder="e.g. Camry"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="year">Year</Label>
-              <Input
-                id="year"
-                type="number"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                placeholder="e.g. 2020"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="condition">Condition</Label>
-              <Select value={condition} onValueChange={(value: typeof CONDITIONS[number]) => setCondition(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select condition" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CONDITIONS.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <div className="relative">
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter location in Nigeria"
-                  required
-                  className={isValidatingLocation ? "pr-10" : ""}
-                />
-                {isValidatingLocation && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <LocationField
+            location={location}
+            setLocation={setLocation}
+            setCoordinates={setCoordinates}
+          />
 
           <ImageUpload onImagesChange={setSelectedFiles} />
           
