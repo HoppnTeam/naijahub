@@ -5,7 +5,7 @@ import { Workshop } from '@/types/workshop';
 import { WorkshopMap } from './WorkshopMap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, MapPin, Navigation } from 'lucide-react';
+import { Loader2, MapPin, Navigation, Phone, Globe, Wrench } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Location {
@@ -59,11 +59,9 @@ const WorkshopSearch = () => {
   });
 
   const getUserLocation = () => {
-    console.log('Getting user location...'); // Debug log
     setIsLocating(true);
     
     if (!navigator.geolocation) {
-      console.log('Geolocation not supported'); // Debug log
       toast({
         title: "Error",
         description: "Geolocation is not supported by your browser",
@@ -75,7 +73,6 @@ const WorkshopSearch = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('Location obtained:', position.coords); // Debug log
         setUserLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -87,7 +84,6 @@ const WorkshopSearch = () => {
         });
       },
       (error) => {
-        console.error('Geolocation error:', error); // Debug log
         let errorMessage = "Unable to get your location. ";
         
         switch (error.code) {
@@ -110,11 +106,6 @@ const WorkshopSearch = () => {
           variant: "destructive",
         });
         setIsLocating(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
       }
     );
   };
@@ -156,8 +147,15 @@ const WorkshopSearch = () => {
 
       {userLocation && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">
+          <div className="h-[600px] rounded-lg overflow-hidden order-last lg:order-first">
+            <WorkshopMap
+              latitude={userLocation.latitude}
+              longitude={userLocation.longitude}
+              workshops={workshops || []}
+            />
+          </div>
+          <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            <h2 className="text-lg font-semibold sticky top-0 bg-background z-10 py-2">
               Workshops within 50 kilometers {workshops?.length ? `(${workshops.length} found)` : ''}
             </h2>
             {isLoading ? (
@@ -175,7 +173,7 @@ const WorkshopSearch = () => {
             ) : (
               <div className="space-y-4">
                 {workshops?.map((workshop) => (
-                  <Card key={workshop.id}>
+                  <Card key={workshop.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span>{workshop.name}</span>
@@ -186,24 +184,39 @@ const WorkshopSearch = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <p className="flex items-center text-sm text-muted-foreground">
-                          <MapPin className="mr-2 h-4 w-4" />
-                          {workshop.address}, {workshop.city}, {workshop.state}
-                        </p>
-                        <p className="text-sm">{workshop.description}</p>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Wrench className="w-4 h-4" />
+                          <span className="capitalize">{workshop.workshop_type.replace(/_/g, " ")}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="w-4 h-4" />
+                          <span>{workshop.address}, {workshop.city}, {workshop.state}</span>
+                        </div>
+                        {workshop.phone_number && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Phone className="w-4 h-4" />
+                            <span>{workshop.phone_number}</span>
+                          </div>
+                        )}
+                        {workshop.website && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Globe className="w-4 h-4" />
+                            <a 
+                              href={workshop.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              Visit Website
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             )}
-          </div>
-          <div className="h-[600px] rounded-lg overflow-hidden">
-            <WorkshopMap
-              latitude={userLocation.latitude}
-              longitude={userLocation.longitude}
-              workshops={workshops || []}
-            />
           </div>
         </div>
       )}
