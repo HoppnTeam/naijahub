@@ -4,6 +4,7 @@ import { PostsList } from "./PostsList";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { getSubcategoryDescription } from "./utils";
 import WorkshopSearch from "@/components/workshops/WorkshopSearch";
+import { Post } from "@/types/post";
 
 interface Category {
   id: string;
@@ -29,11 +30,10 @@ export const RegularContent = ({
         .from("posts")
         .select(`
           *,
-          profiles!posts_user_id_profiles_fkey (username, avatar_url),
-          _count {
-            likes,
-            comments
-          }
+          profiles (username, avatar_url),
+          categories!posts_category_id_fkey (name),
+          likes (count),
+          comments (count)
         `);
 
       if (selectedSubcategory) {
@@ -46,7 +46,15 @@ export const RegularContent = ({
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match the Post type
+      return data?.map(post => ({
+        ...post,
+        _count: {
+          likes: post.likes?.[0]?.count || 0,
+          comments: post.comments?.[0]?.count || 0
+        }
+      })) as Post[];
     },
   });
 
