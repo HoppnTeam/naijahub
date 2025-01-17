@@ -1,6 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ScrollText, ThumbsUp, MessageSquare, Calendar } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { Profile } from "@/types/profile";
 
 interface ProfileStatsProps {
@@ -11,36 +9,25 @@ export const ProfileStats = ({ profile }: ProfileStatsProps) => {
   const stats = [
     {
       label: "Posts",
-      value: profile.posts?.length ?? 0,
-      icon: ScrollText,
+      value: profile.posts?.length || 0,
     },
     {
-      label: "Total Likes",
-      value: profile.posts?.reduce((acc, post) => acc + (post.likes?.length ?? 0), 0) ?? 0,
-      icon: ThumbsUp,
+      label: "Comments",
+      value: profile.posts?.reduce((acc, post) => acc + (post._count?.comments || 0), 0) || 0,
     },
     {
-      label: "Total Comments",
-      value: profile.posts?.reduce((acc, post) => acc + (post.comments?.length ?? 0), 0) ?? 0,
-      icon: MessageSquare,
-    },
-    {
-      label: "Member Since",
-      value: formatDistanceToNow(new Date(profile.created_at), { addSuffix: true }),
-      icon: Calendar,
+      label: "Likes Received",
+      value: profile.posts?.reduce((acc, post) => acc + (post._count?.likes || 0), 0) || 0,
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      {stats.map((stat) => (
-        <Card key={stat.label}>
-          <CardContent className="flex items-center p-4">
-            <stat.icon className="h-5 w-5 text-muted-foreground mr-2" />
-            <div>
-              <p className="text-sm font-medium">{stat.label}</p>
-              <p className="text-2xl font-bold">{stat.value}</p>
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      {stats.map((stat, index) => (
+        <Card key={index}>
+          <CardContent className="p-6">
+            <div className="text-2xl font-bold">{stat.value}</div>
+            <div className="text-sm text-muted-foreground">{stat.label}</div>
           </CardContent>
         </Card>
       ))}
