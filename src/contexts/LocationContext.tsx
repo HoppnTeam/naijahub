@@ -1,15 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-
-interface Location {
-  latitude: number;
-  longitude: number;
-  city?: string;
-  state?: string;
-}
+import { LocationCoordinates, LocationDetails, validateCoordinates, reverseGeocode } from "@/utils/location";
 
 interface LocationContextType {
-  location: Location | null;
+  location: LocationDetails | null;
   isLocating: boolean;
   error: string | null;
   refreshLocation: () => Promise<void>;
@@ -18,7 +12,7 @@ interface LocationContextType {
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<LocationDetails | null>(null);
   const [isLocating, setIsLocating] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -36,32 +30,22 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         });
       });
 
-      const { latitude, longitude } = position.coords;
+      const coordinates: LocationCoordinates = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
 
-      // Attempt to get city and state using reverse geocoding
-      try {
-        const response = await fetch(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`
-        );
-        const data = await response.json();
-        
-        const cityFeature = data.features?.find((f: any) => 
-          f.place_type.includes('place') || f.place_type.includes('locality')
-        );
-        const stateFeature = data.features?.find((f: any) => 
-          f.place_type.includes('region') || f.place_type.includes('state')
-        );
-
-        setLocation({
-          latitude,
-          longitude,
-          city: cityFeature?.text,
-          state: stateFeature?.text
-        });
-      } catch (error) {
-        // If reverse geocoding fails, still set the coordinates
-        setLocation({ latitude, longitude });
+      if (!validateCoordinates(coordinates)) {
+        throw new Error("Invalid coordinates received from geolocation service");
       }
+
+      const locationDetails = await reverseGeocode(coordinates);
+      
+      if (!locationDetails) {
+        throw new Error("Could not determine location details");
+      }
+
+      setLocation(locationDetails);
 
       toast({
         title: "Location detected",
