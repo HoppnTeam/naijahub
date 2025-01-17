@@ -117,9 +117,8 @@ export const WorkshopDetails = ({ workshop, isOpen, onClose }: WorkshopDetailsPr
 
           <div className="h-[400px]">
             <WorkshopMap 
-              latitude={workshop.latitude} 
-              longitude={workshop.longitude}
-              name={workshop.name}
+              latitude={workshop.latitude || 0} 
+              longitude={workshop.longitude || 0}
             />
           </div>
         </div>

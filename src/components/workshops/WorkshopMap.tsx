@@ -7,10 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 interface WorkshopMapProps {
   latitude: number;
   longitude: number;
-  workshops: Workshop[];
+  workshops?: Workshop[];
 }
 
-export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps) => {
+export const WorkshopMap = ({ latitude, longitude, workshops = [] }: WorkshopMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
@@ -53,8 +53,7 @@ export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps
         const popup = new mapboxgl.Popup({ offset: 25 })
           .setHTML(
             `<h3 class="font-semibold">${workshop.name}</h3>
-             <p class="text-sm">${workshop.address}</p>
-             <p class="text-sm">${workshop.distance?.toFixed(1)} miles away</p>`
+             <p class="text-sm">${workshop.address}</p>`
           );
 
         new mapboxgl.Marker({ color: '#32a852' })

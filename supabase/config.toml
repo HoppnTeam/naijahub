@@ -2,8 +2,6 @@ project_id = "ejltrhkhsvdtpxkhbher"
 
 [api]
 enabled = true
-[api.schema]
-enabled = true
 
 [functions]
 [functions.get-mapbox-token]
