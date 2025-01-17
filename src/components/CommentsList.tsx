@@ -18,7 +18,7 @@ interface Comment {
 
 interface CommentsListProps {
   comments?: Comment[];
-  listingId: string;
+  listingId?: string;
   onCommentAdded?: () => void;
 }
 
@@ -34,6 +34,8 @@ export const CommentsList = ({ comments: initialComments, listingId, onCommentAd
   }, [initialComments]);
 
   useEffect(() => {
+    if (!listingId) return;
+
     const channel = supabase
       .channel('schema-db-changes')
       .on(
