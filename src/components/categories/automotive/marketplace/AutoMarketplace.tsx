@@ -11,10 +11,12 @@ import { CreateListingForm } from "./CreateListingForm";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+type VehicleType = "car" | "motorcycle" | "tricycle" | "truck" | "bus" | "van" | "parts";
+
 export const AutoMarketplace = () => {
   const [view, setView] = useState<"grid" | "map">("grid");
   const [filters, setFilters] = useState({
-    vehicleType: "all",
+    vehicleType: "car" as VehicleType | "all",
     priceRange: [0, 1000000],
     distance: 50,
   });
