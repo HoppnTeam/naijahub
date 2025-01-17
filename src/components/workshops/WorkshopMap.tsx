@@ -17,8 +17,9 @@ export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps
   useEffect(() => {
     if (!mapContainer.current) return;
 
+    // Initialize map
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
-
+    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -48,6 +49,7 @@ export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps
       }
     });
 
+    // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     // Fit bounds to include all markers
@@ -62,6 +64,7 @@ export const WorkshopMap = ({ latitude, longitude, workshops }: WorkshopMapProps
       map.current.fitBounds(bounds, { padding: 50 });
     }
 
+    // Cleanup
     return () => {
       markers.current.forEach(marker => marker.remove());
       markers.current = [];

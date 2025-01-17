@@ -161,6 +161,65 @@ export type Database = {
         }
         Relationships: []
       }
+      car_reviews: {
+        Row: {
+          cons: string[] | null
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          make: string
+          model: string
+          pros: string[] | null
+          rating: number | null
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+          year: number
+        }
+        Insert: {
+          cons?: string[] | null
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          make: string
+          model: string
+          pros?: string[] | null
+          rating?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+          year: number
+        }
+        Update: {
+          cons?: string[] | null
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          make?: string
+          model?: string
+          pros?: string[] | null
+          rating?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_reviews_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Workshop } from '@/types/workshop';
@@ -29,7 +29,10 @@ const WorkshopSearch = () => {
         .not('latitude', 'is', null)
         .not('longitude', 'is', null);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching workshops:', error);
+        throw error;
+      }
 
       // Calculate distance and filter workshops within 30 miles
       const workshopsWithDistance = data
@@ -71,6 +74,7 @@ const WorkshopSearch = () => {
         setIsLocating(false);
       },
       (error) => {
+        console.error('Geolocation error:', error);
         toast({
           title: "Error",
           description: "Unable to get your location. Please try again.",
@@ -142,7 +146,7 @@ const WorkshopSearch = () => {
                       <CardTitle className="flex items-center justify-between">
                         <span>{workshop.name}</span>
                         <span className="text-sm text-muted-foreground">
-                          {workshop.distance.toFixed(1)} miles
+                          {workshop.distance?.toFixed(1)} miles
                         </span>
                       </CardTitle>
                     </CardHeader>
