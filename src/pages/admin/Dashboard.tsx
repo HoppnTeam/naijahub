@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChartBar, Users, FileText, Flag } from "lucide-react";
 import { UserManagementTable } from "@/components/admin/users/UserManagementTable";
+import { AggregatedNewsList } from "@/components/admin/news/AggregatedNewsList";
 
 export const AdminDashboard = () => {
   const { user } = useAuth();
@@ -69,14 +70,25 @@ export const AdminDashboard = () => {
           ))}
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>User Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <UserManagementTable />
-          </CardContent>
-        </Card>
+        <div className="grid gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>News Aggregation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AggregatedNewsList />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UserManagementTable />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AdminLayout>
   );
