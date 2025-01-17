@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostsList } from "./PostsList";
-import { ListingDetailsView } from "./ListingDetailsView";
 import { useParams, useNavigate } from "react-router-dom";
-import { SearchFilters, type SearchFilters as SearchFiltersType } from "./SearchFilters";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { useState } from "react";
 import { CreateListingForm } from "./forms/CreateListingForm";
+import { ListingDetailsView } from "./ListingDetailsView";
+import { MarketplaceLayout } from "./marketplace/MarketplaceLayout";
+import { MarketplaceListingsView } from "./marketplace/MarketplaceListingsView";
+import type { SearchFilters as SearchFiltersType } from "./SearchFilters";
 
 interface MarketplaceContentProps {
   searchQuery: string;
@@ -91,42 +90,14 @@ export const MarketplaceContent = ({ searchQuery }: MarketplaceContentProps) => 
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="lg:col-span-1">
-        <div className="mb-4">
-          <Button 
-            onClick={() => setShowCreateForm(true)}
-            className="w-full"
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create Listing
-          </Button>
-        </div>
-        <SearchFilters onFiltersChange={setFilters} />
-      </div>
-      
-      <div className="lg:col-span-3">
-        <Tabs defaultValue="vehicles" className="w-full">
-          <TabsList>
-            <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
-            <TabsTrigger value="parts">Parts</TabsTrigger>
-          </TabsList>
-          <TabsContent value="vehicles">
-            <PostsList 
-              listings={listingsData?.filter(l => l.section === 'vehicles')} 
-              searchQuery={searchQuery}
-              section="vehicles"
-            />
-          </TabsContent>
-          <TabsContent value="parts">
-            <PostsList 
-              listings={listingsData?.filter(l => l.section === 'parts')} 
-              searchQuery={searchQuery}
-              section="parts"
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+    <MarketplaceLayout
+      onCreateListing={() => setShowCreateForm(true)}
+      onFiltersChange={setFilters}
+    >
+      <MarketplaceListingsView 
+        listingsData={listingsData}
+        searchQuery={searchQuery}
+      />
+    </MarketplaceLayout>
   );
 };

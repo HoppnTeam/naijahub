@@ -1,91 +1,67 @@
+import { UploadCloud } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface ImageUploadProps {
-  onImageUploaded?: (url: string) => void;
-  onImagesChange?: (files: File[]) => void;
-  bucket?: string;
-  currentImageUrl?: string | null;
-  className?: string;
+  onImagesChange: (files: File[]) => void;
+  multiple?: boolean;
 }
 
-export const ImageUpload = ({ 
-  onImageUploaded, 
-  onImagesChange,
-  bucket = "post-images",
-  currentImageUrl,
-  className 
-}: ImageUploadProps) => {
-  const [isUploading, setIsUploading] = useState(false);
+export const ImageUpload = ({ onImagesChange, multiple = false }: ImageUploadProps) => {
+  const [dragActive, setDragActive] = useState(false);
 
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      setIsUploading(true);
-      const files = event.target.files;
-      if (!files) return;
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
 
-      if (onImagesChange) {
-        onImagesChange(Array.from(files));
-        return;
-      }
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
 
-      const file = files[0];
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${Math.random()}.${fileExt}`;
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const files = Array.from(e.dataTransfer.files);
+      onImagesChange(multiple ? files : [files[0]]);
+    }
+  };
 
-      const { error: uploadError, data } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath);
-
-      if (onImageUploaded) {
-        onImageUploaded(publicUrl);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setIsUploading(false);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      const files = Array.from(e.target.files);
+      onImagesChange(multiple ? files : [files[0]]);
     }
   };
 
   return (
-    <div className={`space-y-2 ${className || ''}`}>
-      <Label htmlFor="image">Image (optional)</Label>
-      <div className="flex items-center gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          className="w-[200px]"
-          disabled={isUploading}
-        >
-          <Label htmlFor="image" className="cursor-pointer">
-            {isUploading ? "Uploading..." : "Upload Image"}
-          </Label>
-        </Button>
-        <input
-          type="file"
-          id="image"
-          accept="image/*"
-          className="hidden"
-          onChange={handleUpload}
-          disabled={isUploading}
-          multiple={!!onImagesChange}
-        />
-      </div>
-      {currentImageUrl && (
-        <img
-          src={currentImageUrl}
-          alt="Preview"
-          className="mt-2 max-w-[200px] rounded-md"
-        />
-      )}
+    <div
+      className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
+        ${dragActive ? "border-primary bg-primary/10" : "border-muted-foreground/25"}
+        hover:border-primary hover:bg-primary/5`}
+      onDragEnter={handleDrag}
+      onDragLeave={handleDrag}
+      onDragOver={handleDrag}
+      onDrop={handleDrop}
+    >
+      <input
+        type="file"
+        accept="image/*"
+        multiple={multiple}
+        onChange={handleChange}
+        className="hidden"
+        id="image-upload"
+      />
+      <label htmlFor="image-upload" className="cursor-pointer">
+        <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
+        <p className="text-sm text-muted-foreground">
+          Drag and drop your {multiple ? "images" : "image"} here, or click to select
+        </p>
+      </label>
     </div>
   );
 };
