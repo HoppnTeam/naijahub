@@ -68,6 +68,41 @@ export const AutomotiveContent = ({
     }
   };
 
+  const { data: postsData } = useQuery({
+    queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
+    queryFn: async () => {
+      let query = supabase
+        .from("posts")
+        .select(`
+          *,
+          profiles!posts_user_id_profiles_fkey (username, avatar_url),
+          categories!posts_category_id_fkey (name),
+          likes (id),
+          comments (id)
+        `)
+        .eq("categories.name", "Automotive");
+
+      if (selectedSubcategory) {
+        query = query.eq("subcategory_id", selectedSubcategory);
+      }
+
+      if (searchQuery) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return data.map(post => ({
+        ...post,
+        _count: {
+          likes: post.likes?.length || 0,
+          comments: post.comments?.length || 0
+        }
+      }));
+    },
+  });
+
   return (
     <div className="space-y-6">
       {/* Subcategories Grid */}
@@ -131,7 +166,7 @@ export const AutomotiveContent = ({
       ) : (
         /* Posts Grid */
         <div className="space-y-4">
-          {posts?.length === 0 ? (
+          {postsData?.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8">
                 <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
@@ -144,7 +179,7 @@ export const AutomotiveContent = ({
               </CardContent>
             </Card>
           ) : (
-            posts?.map((post) => (
+            postsData?.map((post) => (
               <PostCard key={post.id} post={post} />
             ))
           )}
@@ -153,38 +188,3 @@ export const AutomotiveContent = ({
     </div>
   );
 };
-
-const { data: posts } = useQuery({
-  queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
-  queryFn: async () => {
-    let query = supabase
-      .from("posts")
-      .select(`
-        *,
-        profiles!posts_user_id_profiles_fkey (username, avatar_url),
-        categories!posts_category_id_fkey (name),
-        likes (id),
-        comments (id)
-      `)
-      .eq("categories.name", "Automotive");
-
-    if (selectedSubcategory) {
-      query = query.eq("subcategory_id", selectedSubcategory);
-    }
-
-    if (searchQuery) {
-      query = query.ilike("title", `%${searchQuery}%`);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    return data.map(post => ({
-      ...post,
-      _count: {
-        likes: post.likes?.length || 0,
-        comments: post.comments?.length || 0
-      }
-    }));
-  },
-});
