@@ -7,7 +7,7 @@ export const AdminMenuItem = () => {
   
   return (
     <DropdownMenuItem 
-      onClick={() => navigate("/admin/dashboard")}
+      onClick={() => navigate("/admin")}
       className="cursor-pointer flex items-center"
     >
       <LayoutDashboard className="mr-2 h-4 w-4" />
