@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { CreateComment } from "./comments/CreateComment";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Comment {
   id: string;
@@ -14,12 +18,64 @@ interface Comment {
 
 interface CommentsListProps {
   comments?: Comment[];
+  listingId: string;
+  onCommentAdded?: () => void;
 }
 
-export const CommentsList = ({ comments }: CommentsListProps) => {
+export const CommentsList = ({ comments: initialComments, listingId, onCommentAdded }: CommentsListProps) => {
+  const [comments, setComments] = useState<Comment[]>(initialComments || []);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setComments(initialComments || []);
+  }, [initialComments]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'auto_marketplace_comments',
+          filter: `listing_id=eq.${listingId}`,
+        },
+        async (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const { data: newComment } = await supabase
+              .from('auto_marketplace_comments')
+              .select(`
+                *,
+                profiles (
+                  username,
+                  avatar_url
+                )
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (newComment) {
+              setComments(prev => [newComment, ...prev]);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [listingId]);
+
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Comments</h2>
+      {user && (
+        <div className="mb-6">
+          <CreateComment listingId={listingId} onCommentCreated={onCommentAdded} />
+        </div>
+      )}
       <div className="space-y-4">
         {comments?.map((comment) => (
           <Card key={comment.id}>

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ export const ListingDetailsView = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ["auto_listing", id],
@@ -67,6 +68,10 @@ export const ListingDetailsView = () => {
       title: "Coming soon",
       description: "Contact functionality will be available soon",
     });
+  };
+
+  const handleCommentAdded = () => {
+    queryClient.invalidateQueries({ queryKey: ["listing_comments", id] });
   };
 
   if (isLoading) {
@@ -130,7 +135,11 @@ export const ListingDetailsView = () => {
               />
             </div>
           </div>
-          <CommentsList comments={comments} />
+          <CommentsList 
+            comments={comments} 
+            listingId={listing.id} 
+            onCommentAdded={handleCommentAdded}
+          />
         </CardContent>
       </Card>
     </div>
