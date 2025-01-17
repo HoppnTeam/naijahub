@@ -2,12 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostsList } from "./PostsList";
+import { ListingDetailsView } from "./ListingDetailsView";
+import { useParams } from "react-router-dom";
 
 interface MarketplaceContentProps {
   searchQuery: string;
 }
 
 export const MarketplaceContent = ({ searchQuery }: MarketplaceContentProps) => {
+  const { listingId } = useParams();
+
+  // If we have a listingId, show the details view
+  if (listingId) {
+    return <ListingDetailsView />;
+  }
+
   const { data: listingsData } = useQuery({
     queryKey: ["auto_marketplace", searchQuery],
     queryFn: async () => {
