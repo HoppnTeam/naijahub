@@ -23,7 +23,7 @@ export const MenuItems = ({ userId, profile, onSignOut }: MenuItemsProps) => {
         <span>Profile</span>
       </DropdownMenuItem>
       
-      {profile?.user_roles?.[0]?.role === "admin" && <AdminMenuItem />}
+      {profile?.user_roles && profile.user_roles[0]?.role === "admin" && <AdminMenuItem />}
       
       <DropdownMenuItem 
         onClick={onSignOut}
