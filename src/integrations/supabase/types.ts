@@ -236,6 +236,76 @@ export type Database = {
           },
         ]
       }
+      auto_marketplace_orders: {
+        Row: {
+          amount: number
+          buyer_id: string
+          created_at: string
+          delivery_method: string
+          delivery_status: string
+          id: string
+          listing_id: string
+          payment_method: string
+          payment_status: string
+          paystack_reference: string | null
+          seller_id: string
+          shipping_address: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          created_at?: string
+          delivery_method: string
+          delivery_status?: string
+          id?: string
+          listing_id: string
+          payment_method: string
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id: string
+          shipping_address?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          created_at?: string
+          delivery_method?: string
+          delivery_status?: string
+          id?: string
+          listing_id?: string
+          payment_method?: string
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id?: string
+          shipping_address?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_marketplace_orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "auto_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       auto_marketplace_reviews: {
         Row: {
           comment: string | null
