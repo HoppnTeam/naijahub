@@ -31,6 +31,11 @@ const WorkshopSearch = () => {
 
       if (error) {
         console.error('Error fetching workshops:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch workshops. Please try again.",
+          variant: "destructive",
+        });
         throw error;
       }
 
@@ -54,8 +59,11 @@ const WorkshopSearch = () => {
   });
 
   const getUserLocation = () => {
+    console.log('Getting user location...'); // Debug log
     setIsLocating(true);
+    
     if (!navigator.geolocation) {
+      console.log('Geolocation not supported'); // Debug log
       toast({
         title: "Error",
         description: "Geolocation is not supported by your browser",
@@ -67,20 +75,46 @@ const WorkshopSearch = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('Location obtained:', position.coords); // Debug log
         setUserLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
         setIsLocating(false);
+        toast({
+          title: "Success",
+          description: "Location found! Searching for nearby workshops...",
+        });
       },
       (error) => {
-        console.error('Geolocation error:', error);
+        console.error('Geolocation error:', error); // Debug log
+        let errorMessage = "Unable to get your location. ";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += "Please enable location access in your browser settings.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage += "Location request timed out.";
+            break;
+          default:
+            errorMessage += "Please try again.";
+        }
+        
         toast({
           title: "Error",
-          description: "Unable to get your location. Please try again.",
+          description: errorMessage,
           variant: "destructive",
         });
         setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
       }
     );
   };
