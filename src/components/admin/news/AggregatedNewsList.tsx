@@ -6,7 +6,7 @@ import { Post } from "@/types/post";
 import { NewsCard } from "./NewsCard";
 import { NewsFetchButton } from "./NewsFetchButton";
 
-interface NewsPost extends Omit<Post, 'categories'> {
+interface NewsPost extends Post {
   categories: {
     name: string;
   } | null;
@@ -27,9 +27,12 @@ export const AggregatedNewsList = () => {
         .eq("is_draft", true)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching draft posts:", error);
+        throw error;
+      }
 
-      return (data || []) as unknown as NewsPost[];
+      return data as NewsPost[];
     },
   });
 
@@ -45,6 +48,7 @@ export const AggregatedNewsList = () => {
 
       refetch();
     } catch (error) {
+      console.error("Error fetching new articles:", error);
       toast({
         title: "Error",
         description: "Failed to fetch new articles",
@@ -69,6 +73,7 @@ export const AggregatedNewsList = () => {
 
       refetch();
     } catch (error) {
+      console.error("Error publishing article:", error);
       toast({
         title: "Error",
         description: "Failed to publish article",

@@ -8,6 +8,12 @@ interface NewsCardProps {
 }
 
 export const NewsCard = ({ post, onPublish }: NewsCardProps) => {
+  const handleViewOriginal = () => {
+    if (post.source_url) {
+      window.open(post.source_url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -21,13 +27,17 @@ export const NewsCard = ({ post, onPublish }: NewsCardProps) => {
               src={post.image_url}
               alt={post.title}
               className="w-full h-48 object-cover rounded-md"
+              onError={(e) => {
+                e.currentTarget.src = "/placeholder.svg";
+                e.currentTarget.classList.add("bg-muted");
+              }}
             />
           )}
           <div className="flex justify-end gap-4">
             {post.source_url && (
               <Button
                 variant="outline"
-                onClick={() => window.open(post.source_url, "_blank")}
+                onClick={handleViewOriginal}
               >
                 View Original
               </Button>
