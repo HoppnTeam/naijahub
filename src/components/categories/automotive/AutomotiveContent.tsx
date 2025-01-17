@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Car } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import WorkshopSearch from "@/components/workshops/WorkshopSearch";
 import { SubcategoryButton } from "./SubcategoryButton";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { PostsList } from "./PostsList";
-import { getSubcategoryIcon, getSubcategoryDescription } from "./utils";
-import { AutoMarketplace } from "./marketplace/AutoMarketplace";
+import { getSubcategoryIcon, getSubcategoryDescription, getSubcategoryPath } from "./utils";
 
 interface Category {
   id: string;
@@ -27,6 +27,8 @@ export const AutomotiveContent = ({
   onSubcategoryChange,
   searchQuery 
 }: AutomotiveContentProps) => {
+  const navigate = useNavigate();
+
   const { data: postsData } = useQuery({
     queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
     queryFn: async () => {
@@ -62,27 +64,20 @@ export const AutomotiveContent = ({
     },
   });
 
-  const renderContent = () => {
-    if (!selectedSubcategory) {
-      return <PostsList posts={postsData} searchQuery={searchQuery} />;
-    }
-
-    const subcategory = subcategories?.find(s => s.id === selectedSubcategory);
-    if (!subcategory) return null;
-
-    switch (subcategory.name) {
-      case "Workshops & Services":
-        return <WorkshopSearch />;
-      case "Marketplace":
-        return <AutoMarketplace />;
-      default:
-        return <PostsList posts={postsData} searchQuery={searchQuery} />;
+  const handleSubcategoryClick = (subcategoryId: string | null, subcategoryName?: string) => {
+    onSubcategoryChange(subcategoryId);
+    
+    if (subcategoryName) {
+      const path = getSubcategoryPath(subcategoryName);
+      if (path) {
+        navigate(path);
+        return;
+      }
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Subcategories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <SubcategoryButton
           id={null}
@@ -90,7 +85,7 @@ export const AutomotiveContent = ({
           description="View all posts"
           icon={<Car className="h-5 w-5 flex-shrink-0" />}
           isSelected={selectedSubcategory === null}
-          onClick={() => onSubcategoryChange(null)}
+          onClick={() => handleSubcategoryClick(null)}
         />
         {subcategories?.map((subcategory) => (
           <SubcategoryButton
@@ -100,12 +95,11 @@ export const AutomotiveContent = ({
             description={getSubcategoryDescription(subcategory.name)}
             icon={getSubcategoryIcon(subcategory.name)}
             isSelected={selectedSubcategory === subcategory.id}
-            onClick={() => onSubcategoryChange(subcategory.id)}
+            onClick={() => handleSubcategoryClick(subcategory.id, subcategory.name)}
           />
         ))}
       </div>
 
-      {/* Selected Subcategory Header */}
       {selectedSubcategory && subcategories?.find(s => s.id === selectedSubcategory) && (
         <SubcategoryHeader
           name={subcategories.find(s => s.id === selectedSubcategory)?.name || ""}
@@ -113,7 +107,6 @@ export const AutomotiveContent = ({
         />
       )}
 
-      {/* Content Area */}
       {renderContent()}
     </div>
   );
