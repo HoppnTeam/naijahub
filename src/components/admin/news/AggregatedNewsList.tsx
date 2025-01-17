@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Post } from "@/types/post";
+import { NewsCard } from "./NewsCard";
+import { NewsFetchButton } from "./NewsFetchButton";
 
-// Define a more specific type for the categories response
 interface NewsPost extends Omit<Post, 'categories'> {
   categories: {
     name: string;
@@ -30,7 +29,6 @@ export const AggregatedNewsList = () => {
 
       if (error) throw error;
 
-      // First cast to unknown, then to our specific type to avoid type mismatch
       return (data || []) as unknown as NewsPost[];
     },
   });
@@ -83,10 +81,7 @@ export const AggregatedNewsList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Aggregated News</h2>
-        <Button onClick={fetchNewArticles} className="flex items-center gap-2">
-          <RefreshCw className="w-4 h-4" />
-          Fetch New Articles
-        </Button>
+        <NewsFetchButton onClick={fetchNewArticles} />
       </div>
 
       {isLoading ? (
@@ -96,36 +91,7 @@ export const AggregatedNewsList = () => {
       ) : (
         <div className="grid gap-6">
           {draftPosts?.map((post) => (
-            <Card key={post.id}>
-              <CardHeader>
-                <CardTitle className="text-xl">{post.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-muted-foreground">{post.content}</p>
-                  {post.image_url && (
-                    <img
-                      src={post.image_url}
-                      alt={post.title}
-                      className="w-full h-48 object-cover rounded-md"
-                    />
-                  )}
-                  <div className="flex justify-end gap-4">
-                    {post.source_url && (
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(post.source_url, "_blank")}
-                      >
-                        View Original
-                      </Button>
-                    )}
-                    <Button onClick={() => publishPost(post.id)}>
-                      Publish Article
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <NewsCard key={post.id} post={post} onPublish={publishPost} />
           ))}
         </div>
       )}
