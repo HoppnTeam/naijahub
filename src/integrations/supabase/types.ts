@@ -92,6 +92,87 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_marketplace_listings: {
+        Row: {
+          business_verified: boolean | null
+          condition: string
+          created_at: string
+          description: string
+          features: string[] | null
+          fuel_type: string | null
+          google_place_id: string | null
+          id: string
+          images: string[]
+          is_business: boolean | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          make: string | null
+          mileage: number | null
+          model: string | null
+          price: number
+          seller_id: string
+          status: string | null
+          title: string
+          transmission: string | null
+          updated_at: string
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          year: number | null
+        }
+        Insert: {
+          business_verified?: boolean | null
+          condition: string
+          created_at?: string
+          description: string
+          features?: string[] | null
+          fuel_type?: string | null
+          google_place_id?: string | null
+          id?: string
+          images?: string[]
+          is_business?: boolean | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          price: number
+          seller_id: string
+          status?: string | null
+          title: string
+          transmission?: string | null
+          updated_at?: string
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          year?: number | null
+        }
+        Update: {
+          business_verified?: boolean | null
+          condition?: string
+          created_at?: string
+          description?: string
+          features?: string[] | null
+          fuel_type?: string | null
+          google_place_id?: string | null
+          id?: string
+          images?: string[]
+          is_business?: boolean | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          price?: number
+          seller_id?: string
+          status?: string | null
+          title?: string
+          transmission?: string | null
+          updated_at?: string
+          vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
+          year?: number | null
+        }
+        Relationships: []
+      }
       automotive_workshops: {
         Row: {
           address: string
@@ -1008,6 +1089,14 @@ export type Database = {
       listing_status: "active" | "sold" | "pending" | "cancelled"
       payment_method: "online" | "cash_on_delivery" | "in_person"
       user_role: "user" | "moderator" | "admin"
+      vehicle_type:
+        | "car"
+        | "motorcycle"
+        | "tricycle"
+        | "truck"
+        | "bus"
+        | "van"
+        | "parts"
       workshop_type:
         | "mechanic"
         | "auto_electrician"
