@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CreateCommentProps {
   listingId: string;
@@ -13,16 +14,21 @@ export const CreateComment = ({ listingId, onCommentCreated }: CreateCommentProp
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() || !user) return;
 
     setIsSubmitting(true);
     try {
       const { error } = await supabase
         .from("auto_marketplace_comments")
-        .insert([{ listing_id: listingId, content }]);
+        .insert({
+          listing_id: listingId,
+          content,
+          user_id: user.id
+        });
 
       if (error) throw error;
 
