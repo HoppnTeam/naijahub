@@ -6,6 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Post } from "@/types/post";
 
+interface NewsPost extends Omit<Post, 'categories'> {
+  categories: {
+    name: string;
+  } | null;
+}
+
 export const AggregatedNewsList = () => {
   const { toast } = useToast();
 
@@ -22,7 +28,7 @@ export const AggregatedNewsList = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Post[];
+      return data as NewsPost[];
     },
   });
 
