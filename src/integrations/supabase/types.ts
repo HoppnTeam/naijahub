@@ -804,6 +804,7 @@ export type Database = {
           is_draft: boolean | null
           is_live: boolean | null
           pinned: boolean | null
+          scheduled_publish_date: string | null
           source_url: string | null
           subcategory_id: string | null
           title: string
@@ -819,6 +820,7 @@ export type Database = {
           is_draft?: boolean | null
           is_live?: boolean | null
           pinned?: boolean | null
+          scheduled_publish_date?: string | null
           source_url?: string | null
           subcategory_id?: string | null
           title: string
@@ -834,6 +836,7 @@ export type Database = {
           is_draft?: boolean | null
           is_live?: boolean | null
           pinned?: boolean | null
+          scheduled_publish_date?: string | null
           source_url?: string | null
           subcategory_id?: string | null
           title?: string

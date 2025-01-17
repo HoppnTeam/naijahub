@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useDraftNewsPosts } from "@/hooks/use-draft-news-posts";
 import { NewsHeader } from "./NewsHeader";
 import { NewsGrid } from "./NewsGrid";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -43,11 +43,12 @@ export const DraftNewsManager = () => {
     try {
       const updateData: any = {
         is_draft: false,
-        category_id: selectedCategory,
+        category_id: selectedCategory || null,
       };
 
       if (scheduledDate) {
         updateData.scheduled_publish_date = scheduledDate.toISOString();
+        updateData.is_draft = true; // Keep as draft if scheduled
       }
 
       const { error } = await supabase
@@ -60,7 +61,7 @@ export const DraftNewsManager = () => {
       toast({
         title: "Success",
         description: scheduledDate 
-          ? "Article has been scheduled for publishing" 
+          ? `Article has been scheduled for publishing on ${format(scheduledDate, 'PPP')}` 
           : "Article has been published",
       });
 
@@ -84,9 +85,17 @@ export const DraftNewsManager = () => {
           <Select
             value={selectedCategory}
             onValueChange={setSelectedCategory}
-            placeholder="Select category"
           >
-            {/* Add categories options here */}
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="news">News</SelectItem>
+              <SelectItem value="politics">Politics</SelectItem>
+              <SelectItem value="business">Business</SelectItem>
+              <SelectItem value="technology">Technology</SelectItem>
+              <SelectItem value="sports">Sports</SelectItem>
+            </SelectContent>
           </Select>
 
           <Popover>
@@ -102,7 +111,7 @@ export const DraftNewsManager = () => {
                 {scheduledDate ? format(scheduledDate, "PPP") : "Schedule post"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={scheduledDate}
