@@ -1,22 +1,26 @@
-import { useNavigate } from "react-router-dom";
-import { UserMenu } from "./UserMenu";
+import { LocationStatus } from "@/components/LocationStatus";
+import { Link } from "react-router-dom";
 
-export const Navigation = () => {
-  const navigate = useNavigate();
-
+export function Navigation() {
   return (
-    <nav className="bg-primary py-4 shadow-md">
-      <div className="container mx-auto px-4 flex items-center justify-between">
-        <h1 
-          onClick={() => navigate("/")} 
-          className="text-2xl font-bold text-white cursor-pointer font-poppins"
-        >
-          NaijaHub
-        </h1>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-4">
-          <UserMenu />
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <span className="font-bold">NaijaHub</span>
+          </Link>
+          <LocationStatus />
         </div>
+        
+        <nav className="flex items-center space-x-4">
+          <Link to="/" className="text-sm">Home</Link>
+          <Link to="/profile" className="text-sm">Profile</Link>
+          <Link to="/create-post" className="text-sm">Create Post</Link>
+          <Link to="/advertise" className="text-sm">Advertise</Link>
+          <Link to="/admin/dashboard" className="text-sm">Admin</Link>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
-};
+}

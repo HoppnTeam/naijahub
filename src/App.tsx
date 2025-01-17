@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Index from "@/pages/Index";
@@ -38,8 +39,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <Navigation />
-          <Routes>
+          <LocationProvider>
+            <Navigation />
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin/sign-in" element={<AdminSignIn />} />
@@ -78,9 +80,10 @@ function App() {
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
             <Route path="/advertise" element={<Advertise />} />
-          </Routes>
-          <Footer />
-          <Toaster />
+            </Routes>
+            <Footer />
+            <Toaster />
+          </LocationProvider>
         </AuthProvider>
       </Router>
     </QueryClientProvider>
