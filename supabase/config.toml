@@ -1,3 +1,10 @@
 project_id = "ejltrhkhsvdtpxkhbher"
-[functions.fetch-external-jobs]
+
+[api]
+enabled = true
+[api.schema]
+enabled = true
+
+[functions]
+[functions.get-mapbox-token]
 verify_jwt = false
