@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { StarIcon } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ReviewFormProps {
   listingId: string;
@@ -16,6 +17,7 @@ export const ReviewForm = ({ listingId, sellerId, onReviewSubmitted }: ReviewFor
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +30,21 @@ export const ReviewForm = ({ listingId, sellerId, onReviewSubmitted }: ReviewFor
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to submit a review",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("auto_marketplace_reviews").insert({
         listing_id: listingId,
         reviewed_id: sellerId,
+        reviewer_id: user.id,
         rating,
         comment: comment.trim() || null,
       });

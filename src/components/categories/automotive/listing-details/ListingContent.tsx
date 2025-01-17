@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { CommentsList } from "@/components/CommentsList";
 import { ListingHeader } from "./ListingHeader";
 import { ListingDetails } from "./ListingDetails";
 import { ContactButton } from "./ContactButton";
+import { ListingMedia } from "./ListingMedia";
+import { ListingReviews } from "./ListingReviews";
+import { ListingComments } from "./ListingComments";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
-import { ReviewForm } from "./ReviewForm";
-import { ReviewsList } from "./ReviewsList";
 import { Separator } from "@/components/ui/separator";
 
 interface ListingContentProps {
@@ -63,8 +63,6 @@ export const ListingContent = ({ listing, comments }: ListingContentProps) => {
     queryClient.invalidateQueries({ queryKey: ["listing_reviews", listing.id] });
   };
 
-  const canReview = user && user.id !== listing.seller_id;
-
   return (
     <Card>
       <CardHeader>
@@ -77,15 +75,10 @@ export const ListingContent = ({ listing, comments }: ListingContentProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {listing.images?.[0] && (
-            <div className="aspect-square overflow-hidden rounded-lg">
-              <img
-                src={listing.images[0]}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          <ListingMedia 
+            image={listing.images?.[0]} 
+            title={listing.title} 
+          />
           <div className="space-y-4">
             <ListingDetails
               condition={listing.condition}
@@ -108,23 +101,17 @@ export const ListingContent = ({ listing, comments }: ListingContentProps) => {
         
         <Separator />
         
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Reviews</h3>
-          {canReview && (
-            <ReviewForm
-              listingId={listing.id}
-              sellerId={listing.seller_id}
-              onReviewSubmitted={handleReviewSubmitted}
-            />
-          )}
-          <ReviewsList listingId={listing.id} />
-        </div>
+        <ListingReviews
+          listingId={listing.id}
+          sellerId={listing.seller_id}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
 
         <Separator />
         
-        <CommentsList 
-          comments={comments} 
-          listingId={listing.id} 
+        <ListingComments 
+          comments={comments}
+          listingId={listing.id}
           onCommentAdded={handleCommentAdded}
         />
       </CardContent>
