@@ -1,15 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { formatDistanceToNow } from "date-fns";
-import { MapPin, Calendar, MessageSquare, DollarSign, Info } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { CommentsList } from "@/components/CommentsList";
+import { ListingHeader } from "./listing-details/ListingHeader";
+import { ListingDetails } from "./listing-details/ListingDetails";
+import { ContactButton } from "./listing-details/ContactButton";
 
 export const ListingDetailsView = () => {
   const { id } = useParams();
@@ -65,7 +63,6 @@ export const ListingDetailsView = () => {
       });
       return;
     }
-    // Implement contact functionality
     toast({
       title: "Coming soon",
       description: "Contact functionality will be available soon",
@@ -96,26 +93,12 @@ export const ListingDetailsView = () => {
     <div className="container max-w-4xl py-8">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4 mb-4">
-            <Avatar>
-              <AvatarImage src={listing.profiles?.avatar_url ?? undefined} />
-              <AvatarFallback>
-                {listing.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold">{listing.profiles?.username}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(listing.created_at), {
-                  addSuffix: true,
-                })}
-              </p>
-            </div>
-          </div>
-          <CardTitle className="text-2xl mb-2">{listing.title}</CardTitle>
-          <div className="text-3xl font-bold text-primary">
-            ₦{listing.price.toLocaleString()}
-          </div>
+          <ListingHeader
+            title={listing.title}
+            price={listing.price}
+            seller={listing.profiles}
+            created_at={listing.created_at}
+          />
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -129,46 +112,22 @@ export const ListingDetailsView = () => {
               </div>
             )}
             <div className="space-y-4">
-              <Badge variant="secondary">{listing.condition}</Badge>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{listing.location}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  <span>{new Date(listing.created_at).toLocaleDateString()}</span>
-                </div>
-                {listing.section === "vehicles" && (
-                  <>
-                    {listing.make && listing.model && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Info className="w-4 h-4" />
-                        <span>
-                          {listing.make} {listing.model}{" "}
-                          {listing.year && `(${listing.year})`}
-                        </span>
-                      </div>
-                    )}
-                    {listing.mileage && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Info className="w-4 h-4" />
-                        <span>{listing.mileage.toLocaleString()} km</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-              <div className="prose max-w-none">
-                <h3>Description</h3>
-                <p>{listing.description}</p>
-              </div>
-              {!listing.is_business && user?.id !== listing.seller_id && (
-                <Button onClick={handleContact} className="w-full">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Contact Seller
-                </Button>
-              )}
+              <ListingDetails
+                condition={listing.condition}
+                location={listing.location}
+                created_at={listing.created_at}
+                make={listing.make}
+                model={listing.model}
+                year={listing.year}
+                mileage={listing.mileage}
+                section={listing.section}
+                description={listing.description}
+              />
+              <ContactButton
+                isOwner={user?.id === listing.seller_id}
+                isBusiness={listing.is_business}
+                onContact={handleContact}
+              />
             </div>
           </div>
           <CommentsList comments={comments} />
