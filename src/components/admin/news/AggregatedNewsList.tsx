@@ -32,7 +32,11 @@ export const AggregatedNewsList = () => {
         throw error;
       }
 
-      return data as NewsPost[];
+      // Explicitly type the return value and handle potential null values
+      return (data || []).map(post => ({
+        ...post,
+        categories: post.categories || null
+      })) as NewsPost[];
     },
   });
 
