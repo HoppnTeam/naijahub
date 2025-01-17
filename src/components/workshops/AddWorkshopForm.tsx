@@ -37,12 +37,25 @@ export const AddWorkshopForm = () => {
     
     setIsSubmitting(true);
     try {
+      // Ensure all required fields are present and match the database schema
       const workshopData = {
-        ...values,
+        name: values.name,
+        description: values.description,
+        workshop_type: values.workshop_type,
+        address: values.address,
+        city: values.city,
+        state: values.state,
+        phone_number: values.phone_number || null,
+        email: values.email || null,
+        website: values.website || null,
         user_id: user.id,
         rating: 0,
         review_count: 0,
         verified: false,
+        latitude: null,
+        longitude: null,
+        opening_hours: null,
+        services_offered: null
       };
 
       const { error } = await supabase
