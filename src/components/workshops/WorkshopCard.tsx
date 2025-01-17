@@ -1,6 +1,6 @@
 import { Workshop } from '@/types/workshop';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Phone, Globe, Wrench } from 'lucide-react';
+import { MapPin, Phone, Globe, Wrench, Star } from 'lucide-react';
 
 interface WorkshopCardProps {
   workshop: Workshop & { distance?: number };
@@ -19,14 +19,22 @@ export const WorkshopCard = ({ workshop }: WorkshopCardProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm">
-            <Wrench className="w-4 h-4" />
-            <span className="capitalize">{workshop.workshop_type.replace(/_/g, " ")}</span>
-          </div>
+          {workshop.workshop_type && (
+            <div className="flex items-center gap-2 text-sm">
+              <Wrench className="w-4 h-4" />
+              <span className="capitalize">{workshop.workshop_type.replace(/_/g, " ")}</span>
+            </div>
+          )}
           <div className="flex items-center gap-2 text-sm">
             <MapPin className="w-4 h-4" />
-            <span>{workshop.address}, {workshop.city}, {workshop.state}</span>
+            <span>{workshop.formatted_address || workshop.address}</span>
           </div>
+          {workshop.google_rating && (
+            <div className="flex items-center gap-2 text-sm">
+              <Star className="w-4 h-4 text-yellow-400" />
+              <span>{workshop.google_rating.toFixed(1)} ({workshop.google_reviews_count} reviews)</span>
+            </div>
+          )}
           {workshop.phone_number && (
             <div className="flex items-center gap-2 text-sm">
               <Phone className="w-4 h-4" />

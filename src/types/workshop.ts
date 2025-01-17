@@ -21,4 +21,11 @@ export interface Workshop {
   review_count: number;
   created_at: string;
   updated_at: string;
+  google_place_id?: string | null;
+  google_rating?: number | null;
+  google_reviews_count?: number | null;
+  formatted_address?: string | null;
+  place_types?: string[] | null;
+  business_status?: string | null;
+  photos_urls?: string[] | null;
 }

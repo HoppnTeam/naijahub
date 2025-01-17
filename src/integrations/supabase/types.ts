@@ -95,16 +95,23 @@ export type Database = {
       automotive_workshops: {
         Row: {
           address: string
+          business_status: string | null
           city: string
           created_at: string
           description: string | null
           email: string | null
+          formatted_address: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_reviews_count: number | null
           id: string
           latitude: number | null
           longitude: number | null
           name: string
           opening_hours: Json | null
           phone_number: string | null
+          photos_urls: string[] | null
+          place_types: string[] | null
           rating: number | null
           review_count: number | null
           services_offered: string[] | null
@@ -117,16 +124,23 @@ export type Database = {
         }
         Insert: {
           address: string
+          business_status?: string | null
           city: string
           created_at?: string
           description?: string | null
           email?: string | null
+          formatted_address?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           name: string
           opening_hours?: Json | null
           phone_number?: string | null
+          photos_urls?: string[] | null
+          place_types?: string[] | null
           rating?: number | null
           review_count?: number | null
           services_offered?: string[] | null
@@ -139,16 +153,23 @@ export type Database = {
         }
         Update: {
           address?: string
+          business_status?: string | null
           city?: string
           created_at?: string
           description?: string | null
           email?: string | null
+          formatted_address?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           name?: string
           opening_hours?: Json | null
           phone_number?: string | null
+          photos_urls?: string[] | null
+          place_types?: string[] | null
           rating?: number | null
           review_count?: number | null
           services_offered?: string[] | null

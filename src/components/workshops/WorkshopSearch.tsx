@@ -18,29 +18,56 @@ const WorkshopSearch = () => {
   const [isLocating, setIsLocating] = useState(false);
   const { toast } = useToast();
 
+  // Fetch both registered workshops and Google Places results
   const { data: workshops, isLoading } = useQuery({
     queryKey: ['nearby-workshops', userLocation],
     queryFn: async () => {
       if (!userLocation) return [];
 
-      const { data, error } = await supabase
+      // Fetch registered workshops from Supabase
+      const { data: registeredWorkshops, error: dbError } = await supabase
         .from('automotive_workshops')
         .select('*')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null);
 
-      if (error) {
-        console.error('Error fetching workshops:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch workshops. Please try again.",
-          variant: "destructive",
-        });
-        throw error;
+      if (dbError) {
+        console.error('Error fetching workshops:', dbError);
+        throw dbError;
       }
 
-      const workshopsWithDistance = data
-        .map((workshop) => ({
+      // Fetch workshops from Google Places API via Edge Function
+      const { data: googlePlacesData, error: placesError } = await supabase.functions
+        .invoke('search-nearby-workshops', {
+          body: { location: userLocation }
+        });
+
+      if (placesError) {
+        console.error('Error fetching from Google Places:', placesError);
+        throw placesError;
+      }
+
+      // Combine and deduplicate results
+      const allWorkshops = [
+        ...(registeredWorkshops || []),
+        ...(googlePlacesData?.workshops || [])
+      ];
+
+      // Remove duplicates based on Google Place ID if present
+      const uniqueWorkshops = allWorkshops.reduce((acc, current) => {
+        const x = acc.find(item => 
+          item.google_place_id && 
+          item.google_place_id === current.google_place_id
+        );
+        if (!x) {
+          return acc.concat([current]);
+        }
+        return acc;
+      }, [] as Workshop[]);
+
+      // Calculate distances and sort
+      return uniqueWorkshops
+        .map(workshop => ({
           ...workshop,
           distance: calculateDistance(
             userLocation.latitude,
@@ -49,10 +76,8 @@ const WorkshopSearch = () => {
             workshop.longitude!
           ),
         }))
-        .filter((workshop) => workshop.distance <= 50)
+        .filter(workshop => workshop.distance <= 50)
         .sort((a, b) => a.distance - b.distance);
-
-      return workshopsWithDistance;
     },
     enabled: !!userLocation,
   });
