@@ -9,6 +9,8 @@ export interface Post {
   subcategory_id?: string | null;
   pinned?: boolean | null;
   is_live?: boolean | null;
+  price?: number | null;
+  condition?: string | null;
   profiles?: {
     username: string;
     avatar_url?: string | null;

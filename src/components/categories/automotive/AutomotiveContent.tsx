@@ -34,7 +34,11 @@ export const AutomotiveContent = ({
         .from("posts")
         .select(`
           *,
-          profiles!posts_user_id_profiles_fkey (username, avatar_url)
+          profiles!posts_user_id_profiles_fkey (username, avatar_url),
+          _count {
+            likes,
+            comments
+          }
         `);
 
       if (selectedSubcategory) {
@@ -59,7 +63,7 @@ export const AutomotiveContent = ({
         .from("auto_marketplace_listings")
         .select(`
           *,
-          profiles (username, avatar_url)
+          profiles!auto_marketplace_listings_seller_id_profiles_fkey (username, avatar_url)
         `)
         .eq("status", "active")
         .order("created_at", { ascending: false });
