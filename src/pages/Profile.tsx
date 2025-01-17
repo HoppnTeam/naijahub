@@ -1,6 +1,4 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,39 +6,13 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
 import { OrdersList } from "@/components/marketplace/OrdersList";
-import { Profile as ProfileType } from "@/types/profile";
+import { useProfile } from "@/hooks/useProfile";
 
 const Profile = () => {
   const { id } = useParams();
   console.log("Profile ID from route:", id);
 
-  const { data: profile, isLoading, error } = useQuery({
-    queryKey: ["profile", id],
-    queryFn: async () => {
-      console.log("Fetching profile data for ID:", id);
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select(`
-          *,
-          posts (
-            *,
-            categories (name),
-            likes (user_id),
-            comments (id)
-          )
-        `)
-        .eq("user_id", id)
-        .single();
-
-      if (profileError) {
-        console.error("Profile fetch error:", profileError);
-        throw profileError;
-      }
-      
-      console.log("Fetched profile data:", profileData);
-      return profileData as ProfileType;
-    },
-  });
+  const { data: profile, isLoading, error } = useProfile(id);
 
   if (error) {
     console.error("Query error:", error);
