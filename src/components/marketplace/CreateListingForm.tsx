@@ -13,7 +13,11 @@ import { DeliveryMethodFields } from "./form/DeliveryMethodFields";
 const PAYMENT_METHODS = ["online", "cash_on_delivery", "in_person"] as const;
 const DELIVERY_METHODS = ["shipping", "pickup", "both"] as const;
 
-export const CreateListingForm = () => {
+interface CreateListingFormProps {
+  onSuccess?: () => void;
+}
+
+export const CreateListingForm = ({ onSuccess }: CreateListingFormProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -87,7 +91,11 @@ export const CreateListingForm = () => {
         description: "Your listing has been created",
       });
       
-      navigate("/categories/technology");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate("/categories/technology");
+      }
     } catch (error) {
       console.error("Error creating listing:", error);
       toast({

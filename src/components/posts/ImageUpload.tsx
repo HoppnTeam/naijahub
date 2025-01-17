@@ -19,6 +19,7 @@ export const ImageUpload = ({
   className = ""
 }: ImageUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export const ImageUpload = ({
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const files = Array.from(e.dataTransfer.files);
       onImagesChange(multiple ? files : [files[0]]);
+      setUploadedFiles(files.map(file => file.name));
     }
   };
 
@@ -46,6 +48,7 @@ export const ImageUpload = ({
     if (e.target.files && e.target.files[0]) {
       const files = Array.from(e.target.files);
       onImagesChange(multiple ? files : [files[0]]);
+      setUploadedFiles(files.map(file => file.name));
     }
   };
 
@@ -72,6 +75,16 @@ export const ImageUpload = ({
         <p className="text-sm text-muted-foreground">
           Drag and drop your {multiple ? "images" : "image"} here, or click to select
         </p>
+        {uploadedFiles.length > 0 && (
+          <div className="mt-2 text-sm text-green-600">
+            {uploadedFiles.length} {uploadedFiles.length === 1 ? "file" : "files"} selected:
+            <ul className="mt-1">
+              {uploadedFiles.map((fileName, index) => (
+                <li key={index}>{fileName}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {currentImageUrl && (
           <img 
             src={currentImageUrl} 
