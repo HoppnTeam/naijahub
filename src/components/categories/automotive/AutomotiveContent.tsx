@@ -76,6 +76,19 @@ export const AutomotiveContent = ({
     }
   };
 
+  const renderContent = () => {
+    if (!selectedSubcategory) {
+      return <PostsList posts={postsData} searchQuery={searchQuery} />;
+    }
+
+    const selectedSubcategoryData = subcategories?.find(s => s.id === selectedSubcategory);
+    if (selectedSubcategoryData?.name === "Marketplace") {
+      return null; // Navigation will handle this case
+    }
+
+    return <PostsList posts={postsData} searchQuery={searchQuery} />;
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
