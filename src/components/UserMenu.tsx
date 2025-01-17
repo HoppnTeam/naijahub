@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
+import { AdminMenuItem } from "@/components/admin/AdminMenuItem";
 import type { Database } from "@/integrations/supabase/types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
@@ -86,22 +87,16 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
-          <AvatarImage src={profile?.avatar_url ?? undefined} />
-          <AvatarFallback>
-            {profile?.username?.substring(0, 2).toUpperCase() ?? "U"}
-          </AvatarFallback>
-        </Avatar>
+        <ProfileAvatar 
+          avatarUrl={profile?.avatar_url} 
+          username={profile?.username}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem onClick={() => navigate(`/profile/${user.id}`)}>
           Profile
         </DropdownMenuItem>
-        {profile?.user_roles?.[0]?.role === "admin" && (
-          <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
-            Admin Dashboard
-          </DropdownMenuItem>
-        )}
+        {profile?.user_roles?.[0]?.role === "admin" && <AdminMenuItem />}
         <DropdownMenuItem 
           onClick={handleSignOut}
           className="text-red-600 focus:text-red-600"
