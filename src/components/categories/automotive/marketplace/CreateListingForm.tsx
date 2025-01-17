@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 const VEHICLE_TYPES = ["car", "motorcycle", "tricycle", "truck", "bus", "van", "parts"] as const;
 const CONDITIONS = ["New", "Like New", "Good", "Fair", "Poor"] as const;
@@ -30,6 +31,42 @@ export const CreateListingForm = () => {
   const [location, setLocation] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidatingLocation, setIsValidatingLocation] = useState(false);
+  const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  const validateLocation = async (locationString: string) => {
+    setIsValidatingLocation(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('geocode-location', {
+        body: { address: locationString }
+      });
+
+      if (error) throw error;
+
+      if (data && data.coordinates) {
+        setCoordinates(data.coordinates);
+        setLocation(data.formatted_address || locationString);
+        return true;
+      } else {
+        toast({
+          title: "Invalid Location",
+          description: "Please enter a valid Nigerian address",
+          variant: "destructive",
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error('Location validation error:', error);
+      toast({
+        title: "Location Validation Failed",
+        description: "Please try again or enter a different address",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsValidatingLocation(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +79,10 @@ export const CreateListingForm = () => {
       });
       return;
     }
+
+    // Validate location before proceeding
+    const isLocationValid = await validateLocation(location);
+    if (!isLocationValid) return;
 
     setIsLoading(true);
     
@@ -81,6 +122,8 @@ export const CreateListingForm = () => {
           year: year ? parseInt(year) : null,
           images: imageUrls,
           location,
+          latitude: coordinates?.latitude,
+          longitude: coordinates?.longitude,
         });
 
       if (error) throw error;
@@ -213,13 +256,21 @@ export const CreateListingForm = () => {
             
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Enter location"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Enter location in Nigeria"
+                  required
+                  className={isValidatingLocation ? "pr-10" : ""}
+                />
+                {isValidatingLocation && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
