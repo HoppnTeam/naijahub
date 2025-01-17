@@ -8,6 +8,9 @@ import { ListingDetailsView } from "./ListingDetailsView";
 import { MarketplaceLayout } from "./marketplace/MarketplaceLayout";
 import { MarketplaceListingsView } from "./marketplace/MarketplaceListingsView";
 import type { SearchFilters as SearchFiltersType } from "./SearchFilters";
+import type { Database } from "@/integrations/supabase/types";
+
+type VehicleType = Database["public"]["Enums"]["vehicle_type"];
 
 interface MarketplaceContentProps {
   searchQuery: string;
@@ -18,27 +21,6 @@ export const MarketplaceContent = ({ searchQuery }: MarketplaceContentProps) => 
   const navigate = useNavigate();
   const [filters, setFilters] = useState<SearchFiltersType>({});
   const [showCreateForm, setShowCreateForm] = useState(false);
-
-  // If we have a listingId, show the details view
-  if (listingId) {
-    return <ListingDetailsView />;
-  }
-
-  // If we're showing the create form
-  if (showCreateForm) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <Button 
-          variant="outline" 
-          onClick={() => setShowCreateForm(false)}
-          className="mb-6"
-        >
-          Back to Listings
-        </Button>
-        <CreateListingForm />
-      </div>
-    );
-  }
 
   const { data: listingsData } = useQuery({
     queryKey: ["auto_marketplace", searchQuery, filters],
@@ -68,7 +50,7 @@ export const MarketplaceContent = ({ searchQuery }: MarketplaceContentProps) => 
         query = query.eq("condition", filters.condition);
       }
       if (filters.vehicleType) {
-        query = query.eq("vehicle_type", filters.vehicleType);
+        query = query.eq("vehicle_type", filters.vehicleType as VehicleType);
       }
       if (filters.location) {
         query = query.ilike("location", `%${filters.location}%`);
@@ -88,6 +70,26 @@ export const MarketplaceContent = ({ searchQuery }: MarketplaceContentProps) => 
       return data;
     },
   });
+
+  // Render content based on current view
+  if (listingId) {
+    return <ListingDetailsView />;
+  }
+
+  if (showCreateForm) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <Button 
+          variant="outline" 
+          onClick={() => setShowCreateForm(false)}
+          className="mb-6"
+        >
+          Back to Listings
+        </Button>
+        <CreateListingForm />
+      </div>
+    );
+  }
 
   return (
     <MarketplaceLayout

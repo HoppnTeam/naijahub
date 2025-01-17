@@ -4,9 +4,20 @@ import { useState } from "react";
 export interface ImageUploadProps {
   onImagesChange: (files: File[]) => void;
   multiple?: boolean;
+  currentImageUrl?: string;
+  onImageUploaded?: (url: string) => void;
+  bucket?: string;
+  className?: string;
 }
 
-export const ImageUpload = ({ onImagesChange, multiple = false }: ImageUploadProps) => {
+export const ImageUpload = ({ 
+  onImagesChange, 
+  multiple = false,
+  currentImageUrl,
+  onImageUploaded,
+  bucket = "post-images",
+  className = ""
+}: ImageUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -42,7 +53,7 @@ export const ImageUpload = ({ onImagesChange, multiple = false }: ImageUploadPro
     <div
       className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
         ${dragActive ? "border-primary bg-primary/10" : "border-muted-foreground/25"}
-        hover:border-primary hover:bg-primary/5`}
+        hover:border-primary hover:bg-primary/5 ${className}`}
       onDragEnter={handleDrag}
       onDragLeave={handleDrag}
       onDragOver={handleDrag}
@@ -61,6 +72,13 @@ export const ImageUpload = ({ onImagesChange, multiple = false }: ImageUploadPro
         <p className="text-sm text-muted-foreground">
           Drag and drop your {multiple ? "images" : "image"} here, or click to select
         </p>
+        {currentImageUrl && (
+          <img 
+            src={currentImageUrl} 
+            alt="Current" 
+            className="mt-4 max-h-32 mx-auto"
+          />
+        )}
       </label>
     </div>
   );
