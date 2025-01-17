@@ -153,3 +153,38 @@ export const AutomotiveContent = ({
     </div>
   );
 };
+
+const { data: posts } = useQuery({
+  queryKey: ["posts", "automotive", searchQuery, selectedSubcategory],
+  queryFn: async () => {
+    let query = supabase
+      .from("posts")
+      .select(`
+        *,
+        profiles!posts_user_id_profiles_fkey (username, avatar_url),
+        categories!posts_category_id_fkey (name),
+        likes (id),
+        comments (id)
+      `)
+      .eq("categories.name", "Automotive");
+
+    if (selectedSubcategory) {
+      query = query.eq("subcategory_id", selectedSubcategory);
+    }
+
+    if (searchQuery) {
+      query = query.ilike("title", `%${searchQuery}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    return data.map(post => ({
+      ...post,
+      _count: {
+        likes: post.likes?.length || 0,
+        comments: post.comments?.length || 0
+      }
+    }));
+  },
+});

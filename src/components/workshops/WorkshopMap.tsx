@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Workshop } from '@/types/workshop';
+import { useToast } from '@/hooks/use-toast';
 
 interface WorkshopMapProps {
   latitude: number;
@@ -14,56 +15,80 @@ export const WorkshopMap = ({ latitude, longitude, workshops = [], name }: Works
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    // Initialize map
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
+    const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
     
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [longitude, latitude],
-      zoom: 11
-    });
-
-    // Add user location marker
-    new mapboxgl.Marker({ color: '#FF0000' })
-      .setLngLat([longitude, latitude])
-      .setPopup(new mapboxgl.Popup().setHTML(name ? `<h3>${name}</h3>` : '<h3>Your Location</h3>'))
-      .addTo(map.current);
-
-    // Add workshop markers
-    if (workshops.length > 0) {
-      workshops.forEach((workshop) => {
-        if (workshop.latitude && workshop.longitude) {
-          const marker = new mapboxgl.Marker({ color: '#32a852' })
-            .setLngLat([workshop.longitude, workshop.latitude])
-            .setPopup(
-              new mapboxgl.Popup().setHTML(`
-                <h3>${workshop.name}</h3>
-                ${workshop.distance ? `<p>${workshop.distance.toFixed(1)} miles away</p>` : ''}
-              `)
-            )
-            .addTo(map.current!);
-          markers.current.push(marker);
-        }
+    if (!mapboxToken) {
+      toast({
+        title: "Map Error",
+        description: "Mapbox token is missing. Please contact support.",
+        variant: "destructive",
       });
-
-      // Fit bounds to include all markers
-      const bounds = new mapboxgl.LngLatBounds();
-      bounds.extend([longitude, latitude]); // Include user location
-      workshops.forEach((workshop) => {
-        if (workshop.latitude && workshop.longitude) {
-          bounds.extend([workshop.longitude, workshop.latitude]);
-        }
-      });
-      map.current.fitBounds(bounds, { padding: 50 });
+      return;
     }
 
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    // Initialize map
+    mapboxgl.accessToken = mapboxToken;
+    
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [longitude, latitude],
+        zoom: 11
+      });
+
+      // Add user location marker
+      new mapboxgl.Marker({ color: '#FF0000' })
+        .setLngLat([longitude, latitude])
+        .setPopup(new mapboxgl.Popup().setHTML(name ? `<h3>${name}</h3>` : '<h3>Your Location</h3>'))
+        .addTo(map.current);
+
+      // Add workshop markers
+      if (workshops.length > 0) {
+        workshops.forEach((workshop) => {
+          if (workshop.latitude && workshop.longitude) {
+            const marker = new mapboxgl.Marker({ color: '#32a852' })
+              .setLngLat([workshop.longitude, workshop.latitude])
+              .setPopup(
+                new mapboxgl.Popup().setHTML(`
+                  <h3>${workshop.name}</h3>
+                  ${workshop.distance ? `<p>${workshop.distance.toFixed(1)} miles away</p>` : ''}
+                `)
+              )
+              .addTo(map.current!);
+            markers.current.push(marker);
+          }
+        });
+
+        // Fit bounds to include all markers
+        if (workshops.length > 0) {
+          const bounds = new mapboxgl.LngLatBounds();
+          bounds.extend([longitude, latitude]); // Include user location
+          workshops.forEach((workshop) => {
+            if (workshop.latitude && workshop.longitude) {
+              bounds.extend([workshop.longitude, workshop.latitude]);
+            }
+          });
+          map.current.fitBounds(bounds, { padding: 50 });
+        }
+      }
+
+      // Add navigation controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    } catch (error) {
+      console.error('Map initialization error:', error);
+      toast({
+        title: "Map Error",
+        description: "Failed to initialize map. Please try again later.",
+        variant: "destructive",
+      });
+    }
 
     // Cleanup
     return () => {
@@ -71,7 +96,7 @@ export const WorkshopMap = ({ latitude, longitude, workshops = [], name }: Works
       markers.current = [];
       map.current?.remove();
     };
-  }, [latitude, longitude, workshops, name]);
+  }, [latitude, longitude, workshops, name, toast]);
 
   return <div ref={mapContainer} className="h-full rounded-lg" />;
 };
