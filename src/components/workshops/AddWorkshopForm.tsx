@@ -37,15 +37,17 @@ export const AddWorkshopForm = () => {
     
     setIsSubmitting(true);
     try {
+      const workshopData = {
+        ...values,
+        user_id: user.id,
+        rating: 0,
+        review_count: 0,
+        verified: false,
+      };
+
       const { error } = await supabase
         .from("automotive_workshops")
-        .insert({
-          ...values,
-          user_id: user.id,
-          rating: 0,
-          review_count: 0,
-          verified: false,
-        });
+        .insert(workshopData);
 
       if (error) throw error;
 

@@ -68,7 +68,10 @@ export const WorkshopsList = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="md:w-64"
         />
-        <Select value={selectedType} onValueChange={setSelectedType}>
+        <Select 
+          value={selectedType} 
+          onValueChange={(value: WorkshopType) => setSelectedType(value)}
+        >
           <SelectTrigger className="md:w-48">
             <SelectValue placeholder="Workshop Type" />
           </SelectTrigger>
