@@ -1,5 +1,9 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 interface ReverseGeocodeRequest {
   latitude: number;
@@ -7,7 +11,7 @@ interface ReverseGeocodeRequest {
 }
 
 serve(async (req) => {
-  // Handle CORS
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -24,10 +28,14 @@ serve(async (req) => {
       throw new Error('Google Places API key not configured');
     }
 
+    console.log(`Reverse geocoding coordinates: ${latitude}, ${longitude}`);
+
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_PLACES_API_KEY}`;
     
     const response = await fetch(url);
     const data = await response.json();
+
+    console.log('Google Places API response:', data);
 
     if (data.status !== 'OK') {
       throw new Error(`Reverse geocoding failed: ${data.status}`);
@@ -53,11 +61,15 @@ serve(async (req) => {
       }
     });
 
+    console.log('Returning location data:', location);
+
     return new Response(JSON.stringify(location), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error) {
+    console.error('Error in reverse-geocode function:', error);
+    
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
