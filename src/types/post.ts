@@ -9,6 +9,8 @@ export interface Post {
   subcategory_id?: string | null;
   pinned?: boolean | null;
   is_live?: boolean | null;
+  is_draft?: boolean | null;
+  source_url?: string | null;
   price?: number | null;
   condition?: string | null;
   profiles?: {
@@ -18,7 +20,7 @@ export interface Post {
   categories?: {
     name: string;
   };
-  _count: {
+  _count?: {
     likes: number;
     comments: number;
   };

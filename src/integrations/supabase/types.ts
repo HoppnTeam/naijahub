@@ -801,8 +801,10 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_draft: boolean | null
           is_live: boolean | null
           pinned: boolean | null
+          source_url: string | null
           subcategory_id: string | null
           title: string
           updated_at: string
@@ -814,8 +816,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_draft?: boolean | null
           is_live?: boolean | null
           pinned?: boolean | null
+          source_url?: string | null
           subcategory_id?: string | null
           title: string
           updated_at?: string
@@ -827,8 +831,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_draft?: boolean | null
           is_live?: boolean | null
           pinned?: boolean | null
+          source_url?: string | null
           subcategory_id?: string | null
           title?: string
           updated_at?: string

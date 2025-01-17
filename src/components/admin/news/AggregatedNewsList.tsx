@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, RefreshCw } from "lucide-react";
+import { Post } from "@/types/post";
 
 export const AggregatedNewsList = () => {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export const AggregatedNewsList = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Post[];
     },
   });
 
@@ -101,12 +102,14 @@ export const AggregatedNewsList = () => {
                     />
                   )}
                   <div className="flex justify-end gap-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => window.open(post.source_url, "_blank")}
-                    >
-                      View Original
-                    </Button>
+                    {post.source_url && (
+                      <Button
+                        variant="outline"
+                        onClick={() => window.open(post.source_url, "_blank")}
+                      >
+                        View Original
+                      </Button>
+                    )}
                     <Button onClick={() => publishPost(post.id)}>
                       Publish Article
                     </Button>
