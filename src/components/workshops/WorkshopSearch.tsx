@@ -39,7 +39,7 @@ const WorkshopSearch = () => {
         throw error;
       }
 
-      // Calculate distance and filter workshops within 30 miles
+      // Calculate distance and filter workshops within 50 kilometers
       const workshopsWithDistance = data
         .map((workshop) => ({
           ...workshop,
@@ -50,7 +50,7 @@ const WorkshopSearch = () => {
             workshop.longitude!
           ),
         }))
-        .filter((workshop) => workshop.distance <= 30)
+        .filter((workshop) => workshop.distance <= 50) // 50km radius
         .sort((a, b) => a.distance - b.distance);
 
       return workshopsWithDistance;
@@ -119,9 +119,9 @@ const WorkshopSearch = () => {
     );
   };
 
-  // Haversine formula to calculate distance between two points
+  // Haversine formula to calculate distance between two points in kilometers
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 3959; // Earth's radius in miles
+    const R = 6371; // Earth's radius in kilometers
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -158,7 +158,7 @@ const WorkshopSearch = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">
-              Workshops within 30 miles {workshops?.length ? `(${workshops.length} found)` : ''}
+              Workshops within 50 kilometers {workshops?.length ? `(${workshops.length} found)` : ''}
             </h2>
             {isLoading ? (
               <div className="flex items-center justify-center p-8">
@@ -168,7 +168,7 @@ const WorkshopSearch = () => {
               <Card>
                 <CardContent className="p-6">
                   <p className="text-center text-muted-foreground">
-                    No workshops found within 30 miles of your location
+                    No workshops found within 50 kilometers of your location
                   </p>
                 </CardContent>
               </Card>
@@ -180,7 +180,7 @@ const WorkshopSearch = () => {
                       <CardTitle className="flex items-center justify-between">
                         <span>{workshop.name}</span>
                         <span className="text-sm text-muted-foreground">
-                          {workshop.distance?.toFixed(1)} miles
+                          {workshop.distance?.toFixed(1)} km
                         </span>
                       </CardTitle>
                     </CardHeader>
