@@ -22,7 +22,7 @@ export const AggregatedNewsList = () => {
         .from("posts")
         .select(`
           *,
-          categories (name)
+          categories:category_id (name)
         `)
         .eq("is_draft", true)
         .order("created_at", { ascending: false });
