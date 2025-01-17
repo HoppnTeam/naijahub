@@ -16,7 +16,7 @@ export const useDraftNewsPosts = () => {
         .from("posts")
         .select(`
           *,
-          categories:category_id (name)
+          categories:category_id!posts_category_id_fkey (name)
         `)
         .eq("is_draft", true)
         .order("created_at", { ascending: false });
