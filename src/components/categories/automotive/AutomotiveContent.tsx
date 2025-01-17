@@ -6,6 +6,7 @@ import { SubcategoryButton } from "./SubcategoryButton";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { PostsList } from "./PostsList";
 import { getSubcategoryIcon, getSubcategoryDescription } from "./utils";
+import { AutoMarketplace } from "./marketplace/AutoMarketplace";
 
 interface Category {
   id: string;
@@ -61,6 +62,24 @@ export const AutomotiveContent = ({
     },
   });
 
+  const renderContent = () => {
+    if (!selectedSubcategory) {
+      return <PostsList posts={postsData} searchQuery={searchQuery} />;
+    }
+
+    const subcategory = subcategories?.find(s => s.id === selectedSubcategory);
+    if (!subcategory) return null;
+
+    switch (subcategory.name) {
+      case "Workshops & Services":
+        return <WorkshopSearch />;
+      case "Marketplace":
+        return <AutoMarketplace />;
+      default:
+        return <PostsList posts={postsData} searchQuery={searchQuery} />;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Subcategories Grid */}
@@ -95,12 +114,7 @@ export const AutomotiveContent = ({
       )}
 
       {/* Content Area */}
-      {selectedSubcategory && 
-       subcategories?.find(s => s.id === selectedSubcategory)?.name === "Workshops & Services" ? (
-        <WorkshopSearch />
-      ) : (
-        <PostsList posts={postsData} searchQuery={searchQuery} />
-      )}
+      {renderContent()}
     </div>
   );
 };
