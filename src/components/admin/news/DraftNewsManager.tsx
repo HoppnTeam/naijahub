@@ -4,13 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useDraftNewsPosts } from "@/hooks/use-draft-news-posts";
 import { NewsHeader } from "./NewsHeader";
 import { NewsGrid } from "./NewsGrid";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CategorySelect } from "./CategorySelect";
+import { DateScheduler } from "./DateScheduler";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export const DraftNewsManager = () => {
   const { toast } = useToast();
@@ -82,52 +78,14 @@ export const DraftNewsManager = () => {
       
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Select
-            value={selectedCategory}
-            onValueChange={setSelectedCategory}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="news">News</SelectItem>
-              <SelectItem value="politics">Politics</SelectItem>
-              <SelectItem value="business">Business</SelectItem>
-              <SelectItem value="technology">Technology</SelectItem>
-              <SelectItem value="sports">Sports</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "justify-start text-left font-normal",
-                  !scheduledDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {scheduledDate ? format(scheduledDate, "PPP") : "Schedule post"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={scheduledDate}
-                onSelect={setScheduledDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Button 
-            variant="outline"
-            onClick={() => setScheduledDate(undefined)}
-            className="ml-2"
-          >
-            Clear Schedule
-          </Button>
+          <CategorySelect 
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+          <DateScheduler
+            scheduledDate={scheduledDate}
+            onScheduledDateChange={setScheduledDate}
+          />
         </div>
 
         <NewsHeader onFetchArticles={fetchNewArticles} />
