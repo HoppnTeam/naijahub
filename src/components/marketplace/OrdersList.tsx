@@ -2,6 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMarketplaceOrders } from "@/hooks/use-marketplace-orders";
 import { OrdersListContent } from "./OrdersListContent";
+import { ListingsManagement } from "./ListingsManagement";
 
 export const OrdersList = () => {
   const { user } = useAuth();
@@ -20,8 +21,9 @@ export const OrdersList = () => {
     <Tabs defaultValue="all" className="w-full">
       <TabsList className="w-full justify-start">
         <TabsTrigger value="all">All Orders</TabsTrigger>
-        <TabsTrigger value="tech">Tech Marketplace</TabsTrigger>
-        <TabsTrigger value="auto">Auto Marketplace</TabsTrigger>
+        <TabsTrigger value="tech">Tech Orders</TabsTrigger>
+        <TabsTrigger value="auto">Auto Orders</TabsTrigger>
+        <TabsTrigger value="listings">My Listings</TabsTrigger>
       </TabsList>
 
       <TabsContent value="all" className="space-y-6">
@@ -46,6 +48,10 @@ export const OrdersList = () => {
           marketplace="Auto" 
           userId={user?.id || ""}
         />
+      </TabsContent>
+
+      <TabsContent value="listings" className="space-y-6">
+        <ListingsManagement userId={user?.id || ""} />
       </TabsContent>
     </Tabs>
   );
