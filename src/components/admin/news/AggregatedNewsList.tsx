@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Post } from "@/types/post";
 
+// Define a more specific type for the categories response
 interface NewsPost extends Omit<Post, 'categories'> {
   categories: {
     name: string;
@@ -28,7 +29,25 @@ export const AggregatedNewsList = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as NewsPost[];
+      
+      // Explicitly type the response and ensure it matches the NewsPost interface
+      const typedData = (data || []) as Array<{
+        id: string;
+        title: string;
+        content: string;
+        image_url: string | null;
+        created_at: string;
+        user_id: string;
+        category_id: string | null;
+        subcategory_id: string | null;
+        pinned: boolean | null;
+        is_live: boolean | null;
+        is_draft: boolean | null;
+        source_url: string | null;
+        categories: { name: string } | null;
+      }>;
+
+      return typedData;
     },
   });
 
