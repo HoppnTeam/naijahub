@@ -18,11 +18,9 @@ export const DraftNewsManager = () => {
   const fetchNewArticles = async () => {
     try {
       setIsFetching(true);
-      console.log("Fetching new articles...");
+      console.log("Triggering news fetch from APIs...");
       
-      const { data, error } = await supabase.functions.invoke("fetch-nigerian-news", {
-        body: { limit: 10 }
-      });
+      const { data, error } = await supabase.functions.invoke("fetch-nigerian-news");
 
       if (error) {
         console.error("Error from edge function:", error);
@@ -33,7 +31,7 @@ export const DraftNewsManager = () => {
 
       toast({
         title: "Success",
-        description: "New articles have been fetched and stored",
+        description: data.message || "New articles have been fetched and stored",
       });
 
       // Refetch the draft posts to update the UI

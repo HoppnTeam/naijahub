@@ -1,12 +1,10 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 import { corsHeaders } from '../_shared/cors.ts'
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const realTimeNewsApiKey = Deno.env.get('REALTIME_NEWS_API_KEY')!
-const reutersApiKey = Deno.env.get('REUTERS_API_KEY')!
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const REALTIME_NEWS_API_KEY = Deno.env.get('REALTIME_NEWS_API_KEY')
+const REUTERS_API_KEY = Deno.env.get('REUTERS_API_KEY')
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
@@ -15,93 +13,83 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Starting news fetch process...')
-    console.log('Using Real-Time News API key:', realTimeNewsApiKey ? 'Present' : 'Missing')
+    console.log('Starting news fetch operation...')
+
+    // Initialize Supabase client with service role key for admin access
+    const supabase = createClient(
+      SUPABASE_URL!,
+      SUPABASE_SERVICE_ROLE_KEY!
+    )
 
     // Fetch news from Real-Time News API
-    const realTimeNewsResponse = await fetch(
+    const realtimeNewsResponse = await fetch(
       'https://real-time-news-data.p.rapidapi.com/search?query=Nigeria&country=NG&lang=en',
       {
         headers: {
-          'X-RapidAPI-Key': realTimeNewsApiKey,
+          'X-RapidAPI-Key': REALTIME_NEWS_API_KEY!,
           'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
         }
       }
     )
 
-    if (!realTimeNewsResponse.ok) {
-      const errorText = await realTimeNewsResponse.text()
-      console.error('Real-Time News API error response:', errorText)
-      throw new Error(`Real-Time News API error: ${realTimeNewsResponse.statusText}`)
+    if (!realtimeNewsResponse.ok) {
+      throw new Error(`Real-Time News API error: ${realtimeNewsResponse.statusText}`)
     }
 
-    const realTimeNewsData = await realTimeNewsResponse.json()
-    console.log(`Fetched ${realTimeNewsData.data?.length || 0} articles from Real-Time News API`)
+    const realtimeNewsData = await realtimeNewsResponse.json()
+    console.log(`Fetched ${realtimeNewsData.data?.length || 0} articles from Real-Time News API`)
 
-    // Get news category ID
-    const { data: newsCategory } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('name', 'News')
-      .single()
-
-    if (!newsCategory?.id) {
-      throw new Error('News category not found')
-    }
-
-    // Process Real-Time News articles
-    const articles = (realTimeNewsData.data || []).map((article: any) => ({
+    // Process and store articles
+    const articles = realtimeNewsData.data || []
+    const processedArticles = articles.map((article: any) => ({
       title: article.title,
-      content: article.description,
-      image_url: article.image_url,
+      content: article.content || article.description,
       source_url: article.link,
+      image_url: article.image_url,
       is_draft: true,
-      category_id: newsCategory.id,
-      created_at: new Date().toISOString()
+      category_id: null, // Will be set by admin
+      user_id: null // System generated content
     }))
 
-    console.log(`Attempting to insert ${articles.length} articles...`)
-
-    // Insert articles into database using the unique constraint
-    const { error: insertError } = await supabase
+    // Batch insert articles into Supabase
+    const { data, error } = await supabase
       .from('posts')
       .upsert(
-        articles,
-        {
-          onConflict: 'title',
-          ignoreDuplicates: true
+        processedArticles,
+        { 
+          onConflict: 'source_url',
+          ignoreDuplicates: true 
         }
       )
 
-    if (insertError) {
-      console.error('Error inserting articles:', insertError)
-      throw insertError
+    if (error) {
+      throw error
     }
 
-    console.log('Articles inserted successfully')
+    console.log(`Successfully stored ${processedArticles.length} articles in Supabase`)
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: `Successfully processed ${articles.length} articles` 
+      JSON.stringify({
+        success: true,
+        message: `Fetched and stored ${processedArticles.length} articles`
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+        status: 200,
+      },
     )
 
   } catch (error) {
-    console.error('Error in fetch-nigerian-news function:', error)
-    
+    console.error('Error in fetch-nigerian-news:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error.message || 'An error occurred while fetching news' 
+      JSON.stringify({
+        success: false,
+        error: error.message
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
-      }
+        status: 500,
+      },
     )
   }
 })
