@@ -4,5 +4,5 @@ project_id = "ejltrhkhsvdtpxkhbher"
 enabled = true
 
 [functions]
-[functions.get-mapbox-token]
+[functions.fetch-nigerian-news]
 verify_jwt = false
