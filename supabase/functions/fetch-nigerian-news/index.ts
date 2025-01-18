@@ -130,13 +130,16 @@ Deno.serve(async (req) => {
       };
     });
 
-    // Insert articles into database
+    // Insert articles into database using the new unique constraint
     const { data: insertedArticles, error } = await supabase
       .from('posts')
-      .upsert(articlesWithCategories, {
-        onConflict: 'title',
-        ignoreDuplicates: true
-      });
+      .upsert(
+        articlesWithCategories,
+        { 
+          onConflict: 'title,source_url',
+          ignoreDuplicates: true
+        }
+      );
 
     if (error) {
       throw error;
