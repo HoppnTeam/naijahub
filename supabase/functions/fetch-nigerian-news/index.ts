@@ -16,6 +16,7 @@ Deno.serve(async (req) => {
 
   try {
     console.log('Starting news fetch process...')
+    console.log('Using Real-Time News API key:', realTimeNewsApiKey ? 'Present' : 'Missing')
 
     // Fetch news from Real-Time News API
     const realTimeNewsResponse = await fetch(
@@ -29,54 +30,13 @@ Deno.serve(async (req) => {
     )
 
     if (!realTimeNewsResponse.ok) {
-      console.error('Real-Time News API error:', await realTimeNewsResponse.text())
+      const errorText = await realTimeNewsResponse.text()
+      console.error('Real-Time News API error response:', errorText)
       throw new Error(`Real-Time News API error: ${realTimeNewsResponse.statusText}`)
     }
 
     const realTimeNewsData = await realTimeNewsResponse.json()
     console.log(`Fetched ${realTimeNewsData.data?.length || 0} articles from Real-Time News API`)
-
-    // Fetch news from Reuters API
-    const reutersResponse = await fetch(
-      'https://reuters-business-and-financial-news.p.rapidapi.com/article-date/01-01-2024',
-      {
-        headers: {
-          'X-RapidAPI-Key': reutersApiKey,
-          'X-RapidAPI-Host': 'reuters-business-and-financial-news.p.rapidapi.com'
-        }
-      }
-    )
-
-    if (!reutersResponse.ok) {
-      console.error('Reuters API error:', await reutersResponse.text())
-      throw new Error(`Reuters API error: ${reutersResponse.statusText}`)
-    }
-
-    const reutersData = await reutersResponse.json()
-    console.log(`Fetched ${reutersData.length || 0} articles from Reuters API`)
-
-    // Process Real-Time News articles
-    const realTimeArticles = (realTimeNewsData.data || []).map((article: any) => ({
-      title: article.title,
-      content: article.description,
-      image_url: article.image_url,
-      source_url: article.link,
-      is_draft: true,
-      created_at: new Date().toISOString()
-    }))
-
-    // Process Reuters articles
-    const reutersArticles = (reutersData || []).map((article: any) => ({
-      title: article.title,
-      content: article.description,
-      image_url: article.image,
-      source_url: article.url,
-      is_draft: true,
-      created_at: new Date().toISOString()
-    }))
-
-    // Combine articles from both sources
-    const allArticles = [...realTimeArticles, ...reutersArticles]
 
     // Get news category ID
     const { data: newsCategory } = await supabase
@@ -89,21 +49,26 @@ Deno.serve(async (req) => {
       throw new Error('News category not found')
     }
 
-    // Add category ID to articles
-    const articlesWithCategories = allArticles.map(article => ({
-      ...article,
-      category_id: newsCategory.id
+    // Process Real-Time News articles
+    const articles = (realTimeNewsData.data || []).map((article: any) => ({
+      title: article.title,
+      content: article.description,
+      image_url: article.image_url,
+      source_url: article.link,
+      is_draft: true,
+      category_id: newsCategory.id,
+      created_at: new Date().toISOString()
     }))
 
-    console.log(`Attempting to insert ${articlesWithCategories.length} articles...`)
+    console.log(`Attempting to insert ${articles.length} articles...`)
 
     // Insert articles into database using the unique constraint
-    const { data: insertedArticles, error: insertError } = await supabase
+    const { error: insertError } = await supabase
       .from('posts')
       .upsert(
-        articlesWithCategories,
+        articles,
         {
-          onConflict: 'title,source_url',
+          onConflict: 'title',
           ignoreDuplicates: true
         }
       )
@@ -118,7 +83,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: `Successfully processed ${articlesWithCategories.length} articles` 
+        message: `Successfully processed ${articles.length} articles` 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
