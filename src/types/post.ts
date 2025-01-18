@@ -13,6 +13,7 @@ export interface Post {
   source_url?: string | null;
   price?: number | null;
   condition?: string | null;
+  scheduled_publish_date?: string | null;
   profiles?: {
     username: string;
     avatar_url?: string | null;
