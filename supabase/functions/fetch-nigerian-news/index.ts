@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
     )
 
     if (!realTimeNewsResponse.ok) {
+      console.error('Real-Time News API error:', await realTimeNewsResponse.text())
       throw new Error(`Real-Time News API error: ${realTimeNewsResponse.statusText}`)
     }
 
@@ -47,6 +48,7 @@ Deno.serve(async (req) => {
     )
 
     if (!reutersResponse.ok) {
+      console.error('Reuters API error:', await reutersResponse.text())
       throw new Error(`Reuters API error: ${reutersResponse.statusText}`)
     }
 
