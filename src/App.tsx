@@ -29,6 +29,7 @@ import { TravelCreatePost } from "@/components/posts/travel/TravelCreatePost";
 import Advertise from "@/pages/Advertise";
 import { BusinessCategoryCreatePost } from "@/components/posts/business/BusinessCategoryCreatePost";
 import { AgricultureCreatePost } from "@/components/posts/agriculture/AgricultureCreatePost";
+import { NewsDrafts } from "@/pages/admin/NewsDrafts";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -44,7 +45,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin/sign-in" element={<AdminSignIn />} />
             <Route 
-              path="/admin/dashboard" 
+              path="/admin" 
               element={
                 <ProtectedAdminRoute>
                   <AdminDashboard />
@@ -56,6 +57,14 @@ function App() {
               element={
                 <ProtectedAdminRoute>
                   <AdsManagement />
+                </ProtectedAdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/news-drafts" 
+              element={
+                <ProtectedAdminRoute>
+                  <NewsDrafts />
                 </ProtectedAdminRoute>
               } 
             />
