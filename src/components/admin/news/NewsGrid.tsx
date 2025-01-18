@@ -17,9 +17,17 @@ export const NewsGrid = ({ posts, isLoading, onPublish }: NewsGridProps) => {
     );
   }
 
+  if (!posts?.length) {
+    return (
+      <div className="text-center text-muted-foreground">
+        No draft articles found. Click "Fetch New Articles" to get started.
+      </div>
+    );
+  }
+
   return (
-    <div className="grid gap-6">
-      {posts?.map((post) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => (
         <NewsCard key={post.id} post={post} onPublish={onPublish} />
       ))}
     </div>
