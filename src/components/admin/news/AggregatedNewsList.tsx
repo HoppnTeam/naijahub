@@ -3,14 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useDraftNewsPosts } from "@/hooks/use-draft-news-posts";
 import { NewsHeader } from "./NewsHeader";
 import { NewsGrid } from "./NewsGrid";
+import { useState } from "react";
 
 export const AggregatedNewsList = () => {
   const { toast } = useToast();
   const { data: draftPosts, isLoading, refetch } = useDraftNewsPosts();
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchNewArticles = async () => {
     try {
+      setIsFetching(true);
       const { error } = await supabase.functions.invoke("fetch-nigerian-news");
+      
       if (error) throw error;
 
       toast({
@@ -26,6 +30,8 @@ export const AggregatedNewsList = () => {
         description: "Failed to fetch new articles",
         variant: "destructive",
       });
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -56,10 +62,13 @@ export const AggregatedNewsList = () => {
 
   return (
     <div className="space-y-6">
-      <NewsHeader onFetchArticles={fetchNewArticles} />
+      <NewsHeader 
+        onFetchArticles={fetchNewArticles} 
+        isFetching={isFetching} 
+      />
       <NewsGrid 
         posts={draftPosts} 
-        isLoading={isLoading} 
+        isLoading={isLoading || isFetching} 
         onPublish={publishPost} 
       />
     </div>

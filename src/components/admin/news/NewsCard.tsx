@@ -2,6 +2,7 @@ import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface NewsCardProps {
   post: Post;
@@ -13,8 +14,15 @@ export const NewsCard = ({ post, onPublish }: NewsCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl">{post.title}</CardTitle>
-        <div className="text-sm text-muted-foreground">
-          {formatDate(post.created_at)}
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">
+            {formatDate(post.created_at)}
+          </div>
+          {post.categories?.name && (
+            <Badge variant="secondary">
+              {post.categories.name}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>
