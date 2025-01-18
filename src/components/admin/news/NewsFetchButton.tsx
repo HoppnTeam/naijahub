@@ -1,18 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 
 interface NewsFetchButtonProps {
   onClick: () => Promise<void>;
+  isLoading: boolean;
 }
 
-export const NewsFetchButton = ({ onClick }: NewsFetchButtonProps) => {
+export const NewsFetchButton = ({ onClick, isLoading }: NewsFetchButtonProps) => {
   return (
     <Button 
       onClick={onClick} 
       className="flex items-center gap-2"
+      disabled={isLoading}
     >
-      <RefreshCw className="w-4 h-4" />
-      Fetch New Articles
+      {isLoading ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <RefreshCw className="w-4 h-4" />
+      )}
+      {isLoading ? 'Fetching Articles...' : 'Fetch New Articles'}
     </Button>
   );
 };

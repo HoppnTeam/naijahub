@@ -13,25 +13,40 @@ export const DraftNewsManager = () => {
   const { data: draftPosts, isLoading, refetch } = useDraftNewsPosts();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [scheduledDate, setScheduledDate] = useState<Date>();
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchNewArticles = async () => {
     try {
-      const { error } = await supabase.functions.invoke("fetch-nigerian-news");
-      if (error) throw error;
+      setIsFetching(true);
+      console.log("Fetching new articles...");
+      
+      const { data, error } = await supabase.functions.invoke("fetch-nigerian-news", {
+        body: { limit: 10 }
+      });
+
+      if (error) {
+        console.error("Error from edge function:", error);
+        throw error;
+      }
+
+      console.log("Fetch response:", data);
 
       toast({
         title: "Success",
         description: "New articles have been fetched and stored",
       });
 
-      refetch();
+      // Refetch the draft posts to update the UI
+      await refetch();
     } catch (error) {
       console.error("Error fetching news articles:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch new articles",
+        description: "Failed to fetch new articles. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -88,10 +103,10 @@ export const DraftNewsManager = () => {
           />
         </div>
 
-        <NewsHeader onFetchArticles={fetchNewArticles} />
+        <NewsHeader onFetchArticles={fetchNewArticles} isFetching={isFetching} />
         <NewsGrid 
           posts={draftPosts} 
-          isLoading={isLoading} 
+          isLoading={isLoading || isFetching} 
           onPublish={publishPost}
         />
       </div>
