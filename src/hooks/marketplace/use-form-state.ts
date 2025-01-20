@@ -10,6 +10,7 @@ export const useFormState = () => {
   const [location, setLocation] = useState("");
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("shipping");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   return {
     formData: {
@@ -29,6 +30,8 @@ export const useFormState = () => {
       setPaymentMethods,
       deliveryMethod,
       setDeliveryMethod,
+      selectedFiles,
+      setSelectedFiles,
     }
   };
 };
