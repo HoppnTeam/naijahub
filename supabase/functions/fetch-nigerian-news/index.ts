@@ -1,7 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 
-const REALTIME_NEWS_API_KEY = Deno.env.get('REALTIME_NEWS_API_KEY')
 const REUTERS_API_KEY = Deno.env.get('REUTERS_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -21,31 +20,31 @@ Deno.serve(async (req) => {
       SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // Fetch news from Real-Time News API
-    const realtimeNewsResponse = await fetch(
-      'https://real-time-news-data.p.rapidapi.com/search?query=Nigeria&country=NG&lang=en',
+    // Fetch news from Reuters API
+    const reutersResponse = await fetch(
+      'https://api.reuters.com/v2/news/top-news?language=en&region=ng',
       {
         headers: {
-          'X-RapidAPI-Key': REALTIME_NEWS_API_KEY!,
-          'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
+          'Authorization': `Bearer ${REUTERS_API_KEY}`,
+          'Accept': 'application/json'
         }
       }
     )
 
-    if (!realtimeNewsResponse.ok) {
-      throw new Error(`Real-Time News API error: ${realtimeNewsResponse.statusText}`)
+    if (!reutersResponse.ok) {
+      throw new Error(`Reuters API error: ${reutersResponse.statusText}`)
     }
 
-    const realtimeNewsData = await realtimeNewsResponse.json()
-    console.log(`Fetched ${realtimeNewsData.data?.length || 0} articles from Real-Time News API`)
+    const reutersData = await reutersResponse.json()
+    console.log(`Fetched ${reutersData.articles?.length || 0} articles from Reuters API`)
 
     // Process and store articles
-    const articles = realtimeNewsData.data || []
+    const articles = reutersData.articles || []
     const processedArticles = articles.map((article: any) => ({
-      title: article.title,
-      content: article.content || article.description,
-      source_url: article.link,
-      image_url: article.image_url,
+      title: article.headline || article.title,
+      content: article.body || article.description,
+      source_url: article.url,
+      image_url: article.media?.[0]?.url,
       is_draft: true,
       category_id: null, // Will be set by admin
       user_id: null // System generated content
