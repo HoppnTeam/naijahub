@@ -1,0 +1,141 @@
+{
+  "project": {
+    "name": "NaijaHub",
+    "description": "Premier online platform connecting Nigerians worldwide",
+    "version": "1.0.0"
+  },
+  "branding": {
+    "colors": {
+      "primary": "#32a852",
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "accent": "#E2725B"
+    },
+    "typography": {
+      "headings": "Poppins",
+      "subheadings": "Lato",
+      "body": "Inter"
+    }
+  },
+  "architecture": {
+    "frontend": {
+      "framework": "React 18+",
+      "styling": "Tailwind CSS",
+      "components": "shadcn/ui",
+      "stateManagement": "@tanstack/react-query",
+      "routing": "react-router-dom"
+    },
+    "backend": {
+      "platform": "Supabase",
+      "database": "PostgreSQL",
+      "auth": "Supabase Auth",
+      "storage": "Supabase Storage",
+      "functions": "Edge Functions"
+    }
+  },
+  "externalIntegrations": {
+    "newsAggregation": {
+      "provider": "RapidAPI",
+      "endpoints": [
+        "Nigerian News API",
+        "JSearch for Tech Jobs"
+      ]
+    },
+    "maps": {
+      "provider": "Mapbox",
+      "features": [
+        "Workshop locations",
+        "Marketplace item locations"
+      ]
+    },
+    "places": {
+      "provider": "Google Places API",
+      "features": [
+        "Business verification",
+        "Location autocomplete"
+      ]
+    }
+  },
+  "codeStyles": {
+    "typescript": {
+      "strict": true,
+      "noImplicitAny": true
+    },
+    "react": {
+      "componentStructure": "functional",
+      "stateManagement": "hooks"
+    },
+    "naming": {
+      "components": "PascalCase",
+      "functions": "camelCase",
+      "files": "kebab-case"
+    }
+  },
+  "features": {
+    "categories": [
+      "News & Politics",
+      "Entertainment",
+      "Technology",
+      "Sports",
+      "Business",
+      "Health",
+      "Agriculture",
+      "Travel",
+      "Culture",
+      "Automotive"
+    ],
+    "core": [
+      "Authentication",
+      "User Profiles",
+      "Posts",
+      "Comments",
+      "Likes",
+      "Categories",
+      "Admin Dashboard"
+    ],
+    "marketplace": [
+      "Tech Items",
+      "Automotive",
+      "General Items"
+    ]
+  },
+  "security": {
+    "authentication": "required",
+    "roles": [
+      "admin",
+      "moderator",
+      "user"
+    ],
+    "rls": true
+  },
+  "requiredSecrets": {
+    "supabase": [
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY"
+    ],
+    "external": [
+      "RAPID_API_KEY",
+      "MAPBOX_TOKEN",
+      "GOOGLE_PLACES_API_KEY",
+      "REALTIME_NEWS_API_KEY"
+    ]
+  },
+  "deployment": {
+    "platform": "Vercel recommended",
+    "environment": "Node.js",
+    "requirements": {
+      "node": ">=18.0.0",
+      "npm": ">=8.0.0"
+    }
+  },
+  "testing": {
+    "framework": "Vitest recommended",
+    "coverage": "80% minimum"
+  },
+  "documentation": {
+    "components": "Required",
+    "apis": "Required",
+    "setup": "Required"
+  }
+}
