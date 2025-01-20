@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useFormState } from "@/hooks/marketplace/use-form-state";
+import { useFormState, FormStateData } from "@/hooks/marketplace/use-form-state";
 import { BasicInfoFields } from "./BasicInfoFields";
 import { ProductDetailsFields } from "./ProductDetailsFields";
 import { DeliveryMethodFields } from "./DeliveryMethodFields";
