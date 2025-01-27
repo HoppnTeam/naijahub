@@ -796,15 +796,20 @@ export type Database = {
       }
       posts: {
         Row: {
+          age_range: string | null
           category_id: string | null
           content: string
           created_at: string
           id: string
           image_url: string | null
+          interests: string[] | null
           is_draft: boolean | null
           is_live: boolean | null
+          location_preference: string | null
           pinned: boolean | null
+          relationship_type: string | null
           scheduled_publish_date: string | null
+          seeking_gender: string | null
           source_url: string | null
           subcategory_id: string | null
           title: string
@@ -812,15 +817,20 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          age_range?: string | null
           category_id?: string | null
           content: string
           created_at?: string
           id?: string
           image_url?: string | null
+          interests?: string[] | null
           is_draft?: boolean | null
           is_live?: boolean | null
+          location_preference?: string | null
           pinned?: boolean | null
+          relationship_type?: string | null
           scheduled_publish_date?: string | null
+          seeking_gender?: string | null
           source_url?: string | null
           subcategory_id?: string | null
           title: string
@@ -828,15 +838,20 @@ export type Database = {
           user_id: string
         }
         Update: {
+          age_range?: string | null
           category_id?: string | null
           content?: string
           created_at?: string
           id?: string
           image_url?: string | null
+          interests?: string[] | null
           is_draft?: boolean | null
           is_live?: boolean | null
+          location_preference?: string | null
           pinned?: boolean | null
+          relationship_type?: string | null
           scheduled_publish_date?: string | null
+          seeking_gender?: string | null
           source_url?: string | null
           subcategory_id?: string | null
           title?: string
