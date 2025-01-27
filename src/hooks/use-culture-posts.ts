@@ -40,7 +40,7 @@ export const useCulturePosts = (mainCategory: Category | undefined) => {
         .select(`
           *,
           profiles (username, avatar_url),
-          categories (name),
+          categories!posts_category_id_fkey (name),
           likes (id),
           comments (id)
         `)

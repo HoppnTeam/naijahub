@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { PostForm } from "@/components/posts/PostForm";
+import { PostForm } from "@/components/posts/news-politics/PostForm";
 
 interface CultureCreatePostProps {
   categoryId: string;
