@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CultureHeader } from "@/components/categories/culture/CultureHeader";
@@ -6,6 +7,8 @@ import { CultureSidebar } from "@/components/categories/culture/CultureSidebar";
 import { BackNavigation } from "@/components/BackNavigation";
 
 const Culture = () => {
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
   const { data: categories } = useQuery({
     queryKey: ["culture-categories"],
     queryFn: async () => {
@@ -34,10 +37,17 @@ const Culture = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-9">
           <CultureHeader />
-          <CultureContent categories={categories} />
+          <CultureContent 
+            categories={categories} 
+            isCreateDialogOpen={isCreateDialogOpen}
+            setIsCreateDialogOpen={setIsCreateDialogOpen}
+          />
         </div>
         <div className="lg:col-span-3">
-          <CultureSidebar />
+          <CultureSidebar 
+            isCreateDialogOpen={isCreateDialogOpen}
+            setIsCreateDialogOpen={setIsCreateDialogOpen}
+          />
         </div>
       </div>
     </div>

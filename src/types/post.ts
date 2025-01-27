@@ -14,6 +14,11 @@ export interface Post {
   price?: number | null;
   condition?: string | null;
   scheduled_publish_date?: string | null;
+  seeking_gender?: string | null;
+  age_range?: string | null;
+  relationship_type?: string | null;
+  location_preference?: string | null;
+  interests?: string[] | null;
   profiles?: {
     username: string;
     avatar_url?: string | null;

@@ -64,6 +64,9 @@ export const CreatePersonalAd = () => {
     setIsLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
       // Get the Culture & Personals category and Personal Ads subcategory
       const { data: categoryData } = await supabase
         .from('categories')
@@ -80,9 +83,9 @@ export const CreatePersonalAd = () => {
 
       const { error } = await supabase.from('posts').insert({
         ...formData,
+        user_id: user.id,
         category_id: categoryData?.id,
         subcategory_id: subcategoryData?.id,
-        interests: formData.interests,
       });
 
       if (error) throw error;
