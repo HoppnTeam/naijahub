@@ -26,10 +26,15 @@ export const CultureContent = ({ categories }: CultureContentProps) => {
         <CulturePostGrid posts={posts} />
       </TabsContent>
 
-      {categories?.subcategories?.map((category) => (
-        <TabsContent key={category.id} value={category.id} className="mt-6">
+      {["cultural-highlights", "personal-ads", "festivals", "languages", "history", "fashion"].map((tab) => (
+        <TabsContent key={tab} value={tab} className="mt-6">
           <CulturePostGrid 
-            posts={posts?.filter((post) => post.subcategory_id === category.id)} 
+            posts={posts?.filter((post) => {
+              const subcategory = categories?.subcategories.find(
+                (cat) => cat.name.toLowerCase().replace(/\s+/g, '-') === tab
+              );
+              return post.subcategory_id === subcategory?.id;
+            })} 
           />
         </TabsContent>
       ))}

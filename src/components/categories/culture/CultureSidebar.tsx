@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Calendar, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const CultureSidebar = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-6">
       <Card>
@@ -13,7 +16,10 @@ export const CultureSidebar = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Button className="w-full" variant="outline">
+          <Button 
+            className="w-full" 
+            onClick={() => navigate("/create-personal-ad")}
+          >
             <Users className="mr-2 h-4 w-4" />
             Create Personal Ad
           </Button>
