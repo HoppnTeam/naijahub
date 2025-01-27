@@ -6,6 +6,7 @@ import { SportsCategoryCreatePost } from "@/components/posts/sports/SportsCatego
 import { BusinessCategoryCreatePost } from "@/components/posts/business/BusinessCategoryCreatePost";
 import { HealthCreatePost } from "@/components/posts/health/HealthCreatePost";
 import { AgricultureCreatePost } from "@/components/posts/agriculture/AgricultureCreatePost";
+import { CultureCreatePost } from "@/components/posts/culture/CultureCreatePost";
 
 export default function CreatePost() {
   const location = useLocation();
@@ -27,6 +28,8 @@ export default function CreatePost() {
         return <HealthCreatePost categoryId={categoryId} />;
       case "Agriculture":
         return <AgricultureCreatePost />;
+      case "Culture & Personals":
+        return <CultureCreatePost categoryId={categoryId} />;
       default:
         return (
           <div className="container py-8">
