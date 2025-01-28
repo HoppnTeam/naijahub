@@ -17,12 +17,20 @@ interface PostFormProps {
   }) => void;
   isLoading: boolean;
   categoryName: string;
+  selectedSubcategoryId?: string;
+  onSubcategoryChange?: (value: string) => void;
 }
 
-export const PostForm = ({ onSubmit, isLoading, categoryName }: PostFormProps) => {
+export const PostForm = ({ 
+  onSubmit, 
+  isLoading, 
+  categoryName,
+  selectedSubcategoryId = "",
+  onSubcategoryChange = () => {},
+}: PostFormProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
+  const [subcategoryId, setSubcategoryId] = useState(selectedSubcategoryId);
   const [isLive, setIsLive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -41,7 +49,10 @@ export const PostForm = ({ onSubmit, isLoading, categoryName }: PostFormProps) =
     <form onSubmit={handleSubmit} className="space-y-6">
       <CategorySelect
         selectedSubcategoryId={subcategoryId}
-        onSubcategoryChange={setSubcategoryId}
+        onSubcategoryChange={(value) => {
+          setSubcategoryId(value);
+          onSubcategoryChange(value);
+        }}
         categoryName={categoryName}
       />
       

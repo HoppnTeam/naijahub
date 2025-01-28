@@ -17,7 +17,9 @@ export const CultureCreatePost = ({ categoryId }: CultureCreatePostProps) => {
   const handleSubmit = async (formData: {
     title: string;
     content: string;
-    image_url?: string;
+    subcategoryId: string;
+    isLive: boolean;
+    selectedFiles: File[];
   }) => {
     try {
       setIsLoading(true);
@@ -38,10 +40,10 @@ export const CultureCreatePost = ({ categoryId }: CultureCreatePostProps) => {
       const { error } = await supabase.from("posts").insert({
         title: formData.title,
         content: formData.content,
-        image_url: formData.image_url,
         user_id: user.id,
         category_id: categoryId,
-        subcategory_id: selectedSubcategoryId,
+        subcategory_id: formData.subcategoryId,
+        is_live: formData.isLive,
       });
 
       if (error) throw error;
@@ -69,6 +71,7 @@ export const CultureCreatePost = ({ categoryId }: CultureCreatePostProps) => {
       <h1 className="text-3xl font-bold mb-6">Create Culture Post</h1>
       <PostForm
         onSubmit={handleSubmit}
+        isLoading={isLoading}
         categoryName="Culture & Personals"
         selectedSubcategoryId={selectedSubcategoryId}
         onSubcategoryChange={setSelectedSubcategoryId}
