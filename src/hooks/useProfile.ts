@@ -8,6 +8,7 @@ export const useProfile = (userId?: string) => {
     queryFn: async () => {
       if (!userId) return null;
       
+      // First get the profile with posts
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select(`
@@ -17,6 +18,8 @@ export const useProfile = (userId?: string) => {
             title,
             content,
             created_at,
+            category_id,
+            image_url,
             comments (count),
             likes (count)
           ),
@@ -32,7 +35,19 @@ export const useProfile = (userId?: string) => {
         throw profileError;
       }
 
-      return profileData as Profile | null;
+      // Transform the data to include the counts in the expected format
+      const transformedProfile = profileData ? {
+        ...profileData,
+        posts: profileData.posts?.map(post => ({
+          ...post,
+          _count: {
+            comments: post.comments?.count || 0,
+            likes: post.likes?.count || 0
+          }
+        }))
+      } : null;
+
+      return transformedProfile as Profile | null;
     },
     enabled: !!userId,
   });
