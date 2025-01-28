@@ -17,10 +17,8 @@ export const useProfile = (userId?: string) => {
             title,
             content,
             created_at,
-            _count (
-              comments,
-              likes
-            )
+            comments (count),
+            likes (count)
           ),
           user_roles (
             role

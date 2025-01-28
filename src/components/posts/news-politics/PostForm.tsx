@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ImageUpload } from "../ImageUpload";
-import { LiveDiscussionToggle } from "../LiveDiscussionToggle";
-import { CategorySelect } from "../CategorySelect";
+import { CategorySelect } from "@/components/posts/CategorySelect";
+import { ImageUpload } from "@/components/posts/ImageUpload";
+import { LiveDiscussionToggle } from "@/components/posts/LiveDiscussionToggle";
 
 interface PostFormProps {
   onSubmit: (formData: {
@@ -34,7 +33,7 @@ export const PostForm = ({
   const [isLive, setIsLive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       title,
@@ -55,40 +54,38 @@ export const PostForm = ({
         }}
         categoryName={categoryName}
       />
-      
-      <div className="space-y-2">
-        <Label htmlFor="title">Headline</Label>
+
+      <div className="space-y-4">
         <Input
-          id="title"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter your headline"
           required
         />
-      </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="content">Content</Label>
+
         <Textarea
-          id="content"
+          placeholder="Write your post content here..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Write your post content here..."
-          className="min-h-[200px]"
           required
+          className="min-h-[200px]"
         />
+
+        <ImageUpload
+          onFilesSelected={setSelectedFiles}
+          maxFiles={5}
+          accept="image/*"
+        />
+
+        <LiveDiscussionToggle
+          isLive={isLive}
+          onToggle={() => setIsLive(!isLive)}
+        />
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Creating..." : "Create Post"}
+        </Button>
       </div>
-
-      <ImageUpload onImagesChange={setSelectedFiles} />
-
-      <LiveDiscussionToggle
-        isLive={isLive}
-        onLiveChange={setIsLive}
-      />
-      
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Creating..." : "Create Post"}
-      </Button>
     </form>
   );
 };
