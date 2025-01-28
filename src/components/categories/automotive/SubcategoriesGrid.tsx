@@ -41,15 +41,6 @@ export const SubcategoriesGrid = ({
           onClick={() => onSubcategoryChange(subcategory.id)}
         />
       ))}
-
-      <SubcategoryButton
-        id="marketplace"
-        name="Auto Marketplace"
-        description="Buy and sell vehicles and parts"
-        icon={<Car className="h-5 w-5 flex-shrink-0" />}
-        isSelected={selectedSubcategory === "marketplace"}
-        onClick={() => onSubcategoryChange("marketplace")}
-      />
     </div>
   );
 };
