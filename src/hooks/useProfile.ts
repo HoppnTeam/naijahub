@@ -20,18 +20,18 @@ export const useProfile = (userId?: string) => {
             created_at,
             category_id,
             image_url,
-            comments (count),
-            likes (count)
+            comments:comments(count),
+            likes:likes(count)
           ),
           user_roles (
             role
           )
         `)
         .eq("user_id", userId)
-        .maybeSingle();
-      
+        .single();
+
       if (profileError) {
-        console.error("Profile query error:", profileError);
+        console.error("Error fetching profile:", profileError);
         throw profileError;
       }
 
@@ -41,8 +41,8 @@ export const useProfile = (userId?: string) => {
         posts: profileData.posts?.map(post => ({
           ...post,
           _count: {
-            comments: post.comments?.count || 0,
-            likes: post.likes?.count || 0
+            comments: post.comments?.[0]?.count || 0,
+            likes: post.likes?.[0]?.count || 0
           }
         }))
       } : null;
