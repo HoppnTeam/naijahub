@@ -12,7 +12,17 @@ export const useProfile = (userId?: string) => {
         .from("profiles")
         .select(`
           *,
-          user_roles!inner (
+          posts (
+            id,
+            title,
+            content,
+            created_at,
+            _count (
+              comments,
+              likes
+            )
+          ),
+          user_roles (
             role
           )
         `)
