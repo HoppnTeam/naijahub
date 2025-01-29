@@ -27,6 +27,7 @@ import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 import { TechnologyCreatePost } from "@/components/posts/technology/TechnologyCreatePost";
 import { TravelCreatePost } from "@/components/posts/travel/TravelCreatePost";
 import Advertise from "@/pages/Advertise";
+import Contact from "@/pages/Contact";
 import { BusinessCategoryCreatePost } from "@/components/posts/business/BusinessCategoryCreatePost";
 import { AgricultureCreatePost } from "@/components/posts/agriculture/AgricultureCreatePost";
 import { NewsDrafts } from "@/pages/admin/NewsDrafts";
@@ -87,8 +88,9 @@ function App() {
             <Route path="/categories/travel/create" element={<TravelCreatePost />} />
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
-            <Route path="/categories/automotive/create" element={<AutomotiveCreatePost />} />
+            <Route path="/categories/automotive/create" element={<AutomotiveCreatePost categoryId={""} />} />
             <Route path="/advertise" element={<Advertise />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
           <Footer />
           <Toaster />

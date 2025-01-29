@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Info, Link as LinkIcon } from "lucide-react";
+import { Info, Link as LinkIcon, Mail } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -34,6 +34,15 @@ export const Footer = () => {
                 >
                   <LinkIcon className="w-4 h-4" />
                   Advertise with Us
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/contact" 
+                  className="text-[#8E9196] hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  Contact Us
                 </Link>
               </li>
             </ul>
