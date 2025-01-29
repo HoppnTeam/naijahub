@@ -19,6 +19,11 @@ export const SubcategoriesGrid = ({
   selectedSubcategory,
   onSubcategoryChange,
 }: SubcategoriesGridProps) => {
+  // Filter out any subcategory that has "Auto Marketplace" as its name
+  const filteredSubcategories = subcategories?.filter(
+    (subcategory) => subcategory.name.toLowerCase() !== "auto marketplace"
+  );
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <SubcategoryButton
@@ -30,7 +35,7 @@ export const SubcategoriesGrid = ({
         onClick={() => onSubcategoryChange(null)}
       />
       
-      {subcategories?.map((subcategory) => (
+      {filteredSubcategories?.map((subcategory) => (
         <SubcategoryButton
           key={subcategory.id}
           id={subcategory.id}
