@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { PlusCircle, ShieldCheck } from "lucide-react";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { Post } from "@/types/post";
 import { AdPlacement } from "@/components/ads/AdPlacement";
@@ -73,20 +71,6 @@ const Index = () => {
         
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Welcome to NaijaHub</h1>
-          <div className="flex gap-4">
-            <Button onClick={() => navigate("/create-post")} className="gap-2">
-              <PlusCircle className="w-5 h-5" />
-              Create Post
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/admin/sign-in")}
-              className="gap-2"
-            >
-              <ShieldCheck className="w-5 h-5" />
-              Admin Sign In
-            </Button>
-          </div>
         </div>
 
         <CategoryTabs
