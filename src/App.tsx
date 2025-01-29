@@ -30,6 +30,7 @@ import Advertise from "@/pages/Advertise";
 import { BusinessCategoryCreatePost } from "@/components/posts/business/BusinessCategoryCreatePost";
 import { AgricultureCreatePost } from "@/components/posts/agriculture/AgricultureCreatePost";
 import { NewsDrafts } from "@/pages/admin/NewsDrafts";
+import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -86,6 +87,7 @@ function App() {
             <Route path="/categories/travel/create" element={<TravelCreatePost />} />
             <Route path="/categories/culture" element={<Culture />} />
             <Route path="/categories/automotive" element={<Automotive />} />
+            <Route path="/categories/automotive/create" element={<AutomotiveCreatePost />} />
             <Route path="/advertise" element={<Advertise />} />
           </Routes>
           <Footer />
