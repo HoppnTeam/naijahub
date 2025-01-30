@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostsList } from "./PostsList";
 import { SubcategoryHeader } from "./SubcategoryHeader";
 import { getSubcategoryDescription } from "./utils";
-import WorkshopSearch from "@/components/workshops/WorkshopSearch";
+import { Card, CardContent } from "@/components/ui/card";
 import { Post } from "@/types/post";
 
 interface Category {
@@ -61,7 +61,17 @@ export const RegularContent = ({
   const selectedSubcategoryData = subcategories?.find(s => s.id === selectedSubcategory);
 
   if (selectedSubcategoryData?.name === "Workshops & Services") {
-    return <WorkshopSearch />;
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <h3 className="text-2xl font-semibold mb-2">Coming Soon!</h3>
+          <p className="text-muted-foreground text-center max-w-md">
+            We're working on bringing you a comprehensive directory of automotive workshops and services. 
+            Stay tuned for this exciting feature!
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
