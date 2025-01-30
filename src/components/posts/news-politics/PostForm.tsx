@@ -72,15 +72,14 @@ export const PostForm = ({
         />
 
         <ImageUpload
-          selectedFiles={selectedFiles}
-          onChange={setSelectedFiles}
+          onImagesChange={setSelectedFiles}
           maxFiles={5}
           accept="image/*"
         />
 
         <LiveDiscussionToggle
           isLive={isLive}
-          onChange={() => setIsLive(!isLive)}
+          onLiveChange={(checked) => setIsLive(checked)}
         />
 
         <Button type="submit" disabled={isLoading}>

@@ -8,6 +8,8 @@ export interface ImageUploadProps {
   onImageUploaded?: (url: string) => void;
   bucket?: string;
   className?: string;
+  maxFiles?: number;
+  accept?: string;
 }
 
 export const ImageUpload = ({ 
@@ -16,7 +18,9 @@ export const ImageUpload = ({
   currentImageUrl,
   onImageUploaded,
   bucket = "post-images",
-  className = ""
+  className = "",
+  maxFiles = 1,
+  accept = "image/*"
 }: ImageUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -38,6 +42,10 @@ export const ImageUpload = ({
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const files = Array.from(e.dataTransfer.files);
+      if (maxFiles && files.length > maxFiles) {
+        alert(`Maximum ${maxFiles} files allowed`);
+        return;
+      }
       onImagesChange(multiple ? files : [files[0]]);
       setUploadedFiles(files.map(file => file.name));
     }
@@ -47,6 +55,10 @@ export const ImageUpload = ({
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       const files = Array.from(e.target.files);
+      if (maxFiles && files.length > maxFiles) {
+        alert(`Maximum ${maxFiles} files allowed`);
+        return;
+      }
       onImagesChange(multiple ? files : [files[0]]);
       setUploadedFiles(files.map(file => file.name));
     }
@@ -64,7 +76,7 @@ export const ImageUpload = ({
     >
       <input
         type="file"
-        accept="image/*"
+        accept={accept}
         multiple={multiple}
         onChange={handleChange}
         className="hidden"

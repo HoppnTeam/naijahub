@@ -9,30 +9,35 @@ import { AgricultureCreatePost } from "@/components/posts/agriculture/Agricultur
 import { CultureCreatePost } from "@/components/posts/culture/CultureCreatePost";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 
+interface LocationState {
+  category?: string;
+  categoryId?: string;
+}
+
 export default function CreatePost() {
   const location = useLocation();
-  const { category, categoryId } = location.state || {};
+  const { category, categoryId } = (location.state as LocationState) || {};
 
   const renderCategoryForm = () => {
     switch (category) {
       case "News & Politics":
-        return <NewsAndPoliticsCreatePost categoryId={categoryId} />;
+        return <NewsAndPoliticsCreatePost />;
       case "Entertainment":
         return <EntertainmentCreatePost />;
       case "Technology":
-        return <TechnologyCreatePost categoryId={categoryId} />;
+        return <TechnologyCreatePost />;
       case "Sports":
-        return <SportsCategoryCreatePost categoryId={categoryId} />;
+        return <SportsCategoryCreatePost />;
       case "Business":
-        return <BusinessCategoryCreatePost categoryId={categoryId} />;
+        return <BusinessCategoryCreatePost />;
       case "Health":
-        return <HealthCreatePost categoryId={categoryId} />;
+        return <HealthCreatePost />;
       case "Agriculture":
         return <AgricultureCreatePost />;
       case "Culture & Personals":
-        return <CultureCreatePost categoryId={categoryId} />;
+        return <CultureCreatePost />;
       case "Automotive":
-        return <AutomotiveCreatePost categoryId={categoryId} />;
+        return <AutomotiveCreatePost />;
       default:
         return (
           <div className="container py-8">
