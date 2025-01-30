@@ -31,13 +31,13 @@ export default function CreatePost() {
       case "Business":
         return <BusinessCategoryCreatePost />;
       case "Health":
-        return <HealthCreatePost />;
+        return categoryId ? <HealthCreatePost categoryId={categoryId} /> : null;
       case "Agriculture":
         return <AgricultureCreatePost />;
       case "Culture & Personals":
         return <CultureCreatePost />;
       case "Automotive":
-        return <AutomotiveCreatePost />;
+        return categoryId ? <AutomotiveCreatePost categoryId={categoryId} /> : null;
       default:
         return (
           <div className="container py-8">

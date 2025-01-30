@@ -15,6 +15,7 @@ import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { RouteObject } from "react-router-dom";
+import ContentGuidelines from "@/pages/ContentGuidelines";
 
 export const categoryRoutes: RouteObject[] = [
   { path: "/categories/news-politics", element: <NewsAndPolitics /> },
@@ -32,5 +33,6 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/travel/create", element: <TravelCreatePost /> },
   { path: "/categories/culture", element: <Culture /> },
   { path: "/categories/automotive", element: <Automotive /> },
-  { path: "/categories/automotive/create", element: <AutomotiveCreatePost /> }
+  { path: "/categories/automotive/create", element: <AutomotiveCreatePost categoryId="automotive" /> },
+  { path: "/content-guidelines", element: <ContentGuidelines /> }
 ];

@@ -1,22 +1,24 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Suspense } from "react";
 
 const ContentGuidelines = () => {
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-primary mb-6">NaijaHub Content Guidelines</h1>
-      
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <p className="text-lg text-muted-foreground mb-4">
-            Welcome to NaijaHub's Content Guidelines. These guidelines are designed to ensure our community remains 
-            respectful, informative, and valuable for all Nigerians worldwide.
-          </p>
-        </CardContent>
-      </Card>
+    <Suspense fallback={<div className="container mx-auto py-8 px-4">Loading...</div>}>
+      <div className="container mx-auto py-8 px-4">
+        <h1 className="text-3xl font-bold text-primary mb-6">NaijaHub Content Guidelines</h1>
+        
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <p className="text-lg text-muted-foreground mb-4">
+              Welcome to NaijaHub's Content Guidelines. These guidelines are designed to ensure our community remains 
+              respectful, informative, and valuable for all Nigerians worldwide.
+            </p>
+          </CardContent>
+        </Card>
 
-      <ScrollArea className="h-[600px] rounded-md border p-6">
+        <ScrollArea className="h-[600px] rounded-md border p-6">
         <div className="space-y-8">
           {/* General Principles */}
           <section>
@@ -106,8 +108,9 @@ const ContentGuidelines = () => {
             </p>
           </section>
         </div>
-      </ScrollArea>
-    </div>
+        </ScrollArea>
+      </div>
+    </Suspense>
   );
 };
 
