@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { EntertainmentHeader } from "@/components/categories/entertainment/EntertainmentHeader";
 import { EntertainmentSidebar } from "@/components/categories/entertainment/EntertainmentSidebar";
 import { CelebrityCorner } from "@/components/categories/entertainment/CelebrityCorner";
@@ -79,20 +77,6 @@ const Entertainment = () => {
           onSubcategorySelect={handleSubcategorySelect}
           selectedSubcategoryId={selectedSubcategoryId}
         />
-      </div>
-
-      <div className="mt-8 border-t pt-6">
-        <div className="flex justify-between items-center">
-          <div className="space-x-4">
-            <Button variant="link">Content Guidelines</Button>
-            <Button variant="link">Submit Content</Button>
-            <Button variant="link">Entertainment News</Button>
-          </div>
-          <Button variant="outline">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Start Discussion
-          </Button>
-        </div>
       </div>
     </div>
   );

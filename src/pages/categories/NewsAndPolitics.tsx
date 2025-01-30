@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageSquare, Radio } from "lucide-react";
+import { Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
@@ -175,20 +175,6 @@ const NewsAndPolitics = () => {
           subcategories={categories?.subcategories} 
           onSubcategorySelect={setSelectedSubcategoryId}
         />
-      </div>
-
-      <div className="mt-8 border-t pt-6">
-        <div className="flex justify-between items-center">
-          <div className="space-x-4">
-            <Button variant="link">Report Issue</Button>
-            <Button variant="link">Help Center</Button>
-            <Button variant="link">Community Guidelines</Button>
-          </div>
-          <Button variant="outline" onClick={handleCreatePost}>
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Start Discussion
-          </Button>
-        </div>
       </div>
     </div>
   );
