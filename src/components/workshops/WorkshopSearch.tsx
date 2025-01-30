@@ -36,16 +36,23 @@ const WorkshopSearch = () => {
         throw dbError;
       }
 
+      console.log('Registered workshops:', registeredWorkshops);
+
       // Fetch workshops from Google Places API via Edge Function
       const { data: googlePlacesData, error: placesError } = await supabase.functions
         .invoke('search-nearby-workshops', {
-          body: { location: userLocation }
+          body: { 
+            location: userLocation,
+            radius: 50000 // 50km in meters
+          }
         });
 
       if (placesError) {
         console.error('Error fetching from Google Places:', placesError);
         throw placesError;
       }
+
+      console.log('Google Places data:', googlePlacesData);
 
       // Combine and deduplicate results
       const allWorkshops = [
@@ -65,8 +72,10 @@ const WorkshopSearch = () => {
         return acc;
       }, [] as Workshop[]);
 
+      console.log('Combined workshops before filtering:', uniqueWorkshops);
+
       // Calculate distances and sort
-      return uniqueWorkshops
+      const workshopsWithDistance = uniqueWorkshops
         .map(workshop => ({
           ...workshop,
           distance: calculateDistance(
@@ -77,7 +86,11 @@ const WorkshopSearch = () => {
           ),
         }))
         .filter(workshop => workshop.distance <= 50)
-        .sort((a, b) => a.distance - b.distance);
+        .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+
+      console.log('Final workshops list:', workshopsWithDistance);
+
+      return workshopsWithDistance;
     },
     enabled: !!userLocation,
   });
