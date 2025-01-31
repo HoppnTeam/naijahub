@@ -3,15 +3,11 @@ import { MarketplaceListItem } from "./MarketplaceListItem";
 interface MarketplaceListProps {
   listings: any[];
   isLoading: boolean;
-  likedListings?: string[];
-  onLikeToggle?: () => void;
 }
 
 export const MarketplaceList = ({ 
   listings, 
   isLoading,
-  likedListings = [],
-  onLikeToggle
 }: MarketplaceListProps) => {
   if (isLoading) {
     return <div>Loading...</div>;
@@ -27,8 +23,6 @@ export const MarketplaceList = ({
         <MarketplaceListItem 
           key={listing.id} 
           listing={listing}
-          isLiked={likedListings.includes(listing.id)}
-          onLikeToggle={onLikeToggle}
         />
       ))}
     </div>
