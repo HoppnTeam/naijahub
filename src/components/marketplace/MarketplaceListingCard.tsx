@@ -49,18 +49,22 @@ export const MarketplaceListingCard = ({
     setIsLiking(true);
     try {
       if (isLiked) {
-        await supabase
+        const { error } = await supabase
           .from('tech_marketplace_likes')
           .delete()
           .eq('listing_id', listing.id)
           .eq('user_id', user.id);
+          
+        if (error) throw error;
       } else {
-        await supabase
+        const { error } = await supabase
           .from('tech_marketplace_likes')
           .insert({
             listing_id: listing.id,
             user_id: user.id
           });
+          
+        if (error) throw error;
       }
       onLikeToggle?.();
     } catch (error) {

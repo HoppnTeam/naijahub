@@ -15,7 +15,7 @@ export const MarketplaceListings = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: listings, isLoading } = useQuery({
+  const { data: listings, isLoading, refetch } = useQuery({
     queryKey: ["marketplace-listings", selectedCategory, searchQuery],
     queryFn: async () => {
       let query = supabase
@@ -35,6 +35,21 @@ export const MarketplaceListings = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  const { data: likedListings } = useQuery({
+    queryKey: ["liked-listings", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('tech_marketplace_likes')
+        .select('listing_id')
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      return data.map(like => like.listing_id);
+    },
+    enabled: !!user,
   });
 
   const handleCreateClick = () => {
@@ -72,6 +87,8 @@ export const MarketplaceListings = () => {
       <MarketplaceList 
         listings={listings} 
         isLoading={isLoading}
+        likedListings={likedListings}
+        onLikeToggle={refetch}
       />
     </div>
   );

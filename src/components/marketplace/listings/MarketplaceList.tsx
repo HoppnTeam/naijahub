@@ -5,9 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 interface MarketplaceListProps {
   listings: any[];
   isLoading: boolean;
+  likedListings?: string[];
+  onLikeToggle?: () => void;
 }
 
-export const MarketplaceList = ({ listings, isLoading }: MarketplaceListProps) => {
+export const MarketplaceList = ({ 
+  listings, 
+  isLoading,
+  likedListings = [],
+  onLikeToggle
+}: MarketplaceListProps) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -19,7 +26,12 @@ export const MarketplaceList = ({ listings, isLoading }: MarketplaceListProps) =
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {listings.map((listing) => (
-        <MarketplaceListItem key={listing.id} listing={listing} />
+        <MarketplaceListItem 
+          key={listing.id} 
+          listing={listing}
+          isLiked={likedListings.includes(listing.id)}
+          onLikeToggle={onLikeToggle}
+        />
       ))}
     </div>
   );
