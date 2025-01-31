@@ -16,40 +16,43 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <Navigation />
-          <Routes>
-            {/* Main Routes */}
-            {mainRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
+          <div className="min-h-screen flex flex-col">
+            <Navigation />
+            <main className="flex-grow">
+              <Routes>
+                {/* Main Routes */}
+                {mainRoutes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
 
-            {/* Admin Routes */}
-            {adminRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
+                {/* Admin Routes */}
+                {adminRoutes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
 
-            {/* Category Routes */}
-            {categoryRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-          </Routes>
-          <Footer />
-          <Toaster />
-        </AuthProvider>
-      </Router>
-    </QueryClientProvider>
+                {/* Category Routes */}
+                {categoryRoutes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
+            </main>
+            <Footer />
+            <Toaster />
+          </AuthProvider>
+        </Router>
+      </QueryClientProvider>
   );
 }
 

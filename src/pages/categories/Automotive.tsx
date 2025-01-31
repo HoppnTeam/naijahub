@@ -34,7 +34,10 @@ const Automotive = () => {
   return (
     <div className="container mx-auto py-8">
       <BackNavigation />
-      <AutomotiveHeader onSearch={setSearchQuery} />
+      <AutomotiveHeader 
+        onSearch={setSearchQuery} 
+        subcategoryId={selectedSubcategory}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
           <AutomotiveContent 
