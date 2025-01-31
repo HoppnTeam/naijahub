@@ -1046,6 +1046,35 @@ export type Database = {
           },
         ]
       }
+      tech_marketplace_likes: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_marketplace_likes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "tech_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tech_marketplace_listings: {
         Row: {
           category: string

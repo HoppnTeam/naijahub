@@ -1,5 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { WorkshopMap } from "@/components/workshops/WorkshopMap";
 
 interface MarketplaceListItemProps {
   listing: {
@@ -15,6 +20,28 @@ interface MarketplaceListItemProps {
 }
 
 export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const { data: isLiked, refetch: refetchLike } = useQuery({
+    queryKey: ['listing-like', listing.id, user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      const { data } = await supabase
+        .from('tech_marketplace_likes')
+        .select('id')
+        .eq('listing_id', listing.id)
+        .eq('user_id', user.id)
+        .single();
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  const handleClick = () => {
+    navigate(`/marketplace/${listing.id}`);
+  };
+
   return (
     <Card className="h-full">
       {listing.images && listing.images[0] && (
@@ -33,16 +60,26 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {listing.description}
-          </p>
-          <div className="text-sm text-muted-foreground">
-            <p>Location: {listing.location}</p>
-            <p>Condition: {listing.condition}</p>
-            {listing.profiles?.username && (
-              <p>Seller: {listing.profiles.username}</p>
-            )}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {listing.description}
+            </p>
+            <div className="text-sm text-muted-foreground">
+              <p>Location: {listing.location}</p>
+              <p>Condition: {listing.condition}</p>
+              {listing.profiles?.username && (
+                <p>Seller: {listing.profiles.username}</p>
+              )}
+            </div>
+          </div>
+          
+          {/* Map integration */}
+          <div className="h-48 w-full rounded-lg overflow-hidden">
+            <WorkshopMap 
+              latitude={6.5244} // Default to Lagos coordinates if not provided
+              longitude={3.3792}
+            />
           </div>
         </div>
       </CardContent>
