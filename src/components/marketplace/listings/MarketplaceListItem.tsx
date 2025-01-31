@@ -17,26 +17,13 @@ interface MarketplaceListItemProps {
     location: string;
     profiles?: { username: string };
   };
+  isLiked?: boolean;
+  onLikeToggle?: () => void;
 }
 
-export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
+export const MarketplaceListItem = ({ listing, isLiked, onLikeToggle }: MarketplaceListItemProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  const { data: isLiked, refetch: refetchLike } = useQuery({
-    queryKey: ['listing-like', listing.id, user?.id],
-    queryFn: async () => {
-      if (!user) return false;
-      const { data } = await supabase
-        .from('tech_marketplace_likes')
-        .select('id')
-        .eq('listing_id', listing.id)
-        .eq('user_id', user.id)
-        .single();
-      return !!data;
-    },
-    enabled: !!user,
-  });
 
   const handleClick = () => {
     navigate(`/marketplace/${listing.id}`);
@@ -74,10 +61,9 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
             </div>
           </div>
           
-          {/* Map integration */}
           <div className="h-48 w-full rounded-lg overflow-hidden">
             <WorkshopMap 
-              latitude={6.5244} // Default to Lagos coordinates if not provided
+              latitude={6.5244}
               longitude={3.3792}
             />
           </div>
