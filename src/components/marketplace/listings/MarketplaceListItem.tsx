@@ -15,6 +15,8 @@ interface MarketplaceListItemProps {
     images: string[];
     condition: string;
     location: string;
+    latitude?: number;
+    longitude?: number;
     profiles?: { username: string };
   };
 }
@@ -53,12 +55,14 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
             sellerUsername={listing.profiles?.username}
           />
           
-          <div className="h-48 w-full rounded-lg overflow-hidden">
-            <WorkshopMap 
-              latitude={6.5244}
-              longitude={3.3792}
-            />
-          </div>
+          {listing.latitude && listing.longitude && (
+            <div className="h-48 w-full rounded-lg overflow-hidden">
+              <WorkshopMap 
+                latitude={listing.latitude}
+                longitude={listing.longitude}
+              />
+            </div>
+          )}
 
           <LikeButton listingId={listing.id} />
         </div>

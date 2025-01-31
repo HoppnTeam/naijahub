@@ -134,6 +134,35 @@ export type Database = {
           },
         ]
       }
+      auto_marketplace_likes: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_marketplace_likes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "auto_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auto_marketplace_listings: {
         Row: {
           business_verified: boolean | null

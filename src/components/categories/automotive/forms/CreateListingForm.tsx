@@ -19,6 +19,29 @@ export const CreateListingForm = () => {
   const { toast } = useToast();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<{latitude: number; longitude: number} | null>(null);
+
+  // Get user's location when component mounts
+  useState(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast({
+            title: "Location Error",
+            description: "Could not get your location. Please enter it manually.",
+            variant: "destructive",
+          });
+        }
+      );
+    }
+  });
 
   const handleSubmit = async (formData: any, section: 'vehicles' | 'parts') => {
     if (!user) {
@@ -53,7 +76,7 @@ export const CreateListingForm = () => {
         imageUrls.push(publicUrl);
       }
 
-      // Create listing
+      // Create listing with location data
       const { error } = await supabase
         .from("auto_marketplace_listings")
         .insert({
@@ -61,6 +84,8 @@ export const CreateListingForm = () => {
           images: imageUrls,
           section,
           status: 'active',
+          latitude: userLocation?.latitude,
+          longitude: userLocation?.longitude,
           ...formData
         });
 
