@@ -18,7 +18,7 @@ export const mainRoutes = [
     element: <Auth />,
   },
   {
-    path: "/profile",
+    path: "/profile/:id",
     element: <Profile />,
   },
   {

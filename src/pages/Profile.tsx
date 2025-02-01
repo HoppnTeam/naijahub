@@ -1,3 +1,7 @@
+// ⚠️ WARNING: This file contains critical user profile functionality.
+// DO NOT MODIFY without explicit user request and thorough testing.
+// Last restored: [Current Date]
+
 import { useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
