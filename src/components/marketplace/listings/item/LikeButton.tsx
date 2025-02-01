@@ -9,9 +9,15 @@ import { useToast } from "@/hooks/use-toast";
 
 interface LikeButtonProps {
   listingId: string;
+  isLiked?: boolean;
+  onToggle?: () => void;
 }
 
-export const LikeButton = ({ listingId }: LikeButtonProps) => {
+export const LikeButton = ({ 
+  listingId,
+  isLiked = false,
+  onToggle 
+}: LikeButtonProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLiking, setIsLiking] = useState(false);
@@ -70,6 +76,7 @@ export const LikeButton = ({ listingId }: LikeButtonProps) => {
           });
       }
       await refetchLike();
+      onToggle?.();
     } catch (error) {
       console.error('Error toggling like:', error);
       toast({
