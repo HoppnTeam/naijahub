@@ -3,8 +3,6 @@ import { formatCurrency } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { WorkshopMap } from "@/components/workshops/WorkshopMap";
 import { LikeButton } from "./item/LikeButton";
-import { ListingImage } from "./item/ListingImage";
-import { ListingDetails } from "./item/ListingDetails";
 
 interface MarketplaceListItemProps {
   listing: {
@@ -19,9 +17,15 @@ interface MarketplaceListItemProps {
     longitude?: number;
     profiles?: { username: string };
   };
+  isLiked?: boolean;
+  onLikeToggle?: () => void;
 }
 
-export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
+export const MarketplaceListItem = ({ 
+  listing,
+  isLiked = false,
+  onLikeToggle 
+}: MarketplaceListItemProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -31,10 +35,13 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
   return (
     <Card className="h-full relative group" onClick={handleClick}>
       {listing.images && listing.images[0] && (
-        <ListingImage 
-          imageUrl={listing.images[0]} 
-          title={listing.title} 
-        />
+        <div className="aspect-square w-full overflow-hidden">
+          <img
+            src={listing.images[0]}
+            alt={listing.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
       )}
       
       <CardHeader className="space-y-2">
@@ -46,14 +53,15 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
 
       <CardContent>
         <div className="space-y-4">
-          <ListingDetails 
-            title={listing.title}
-            description={listing.description}
-            price={listing.price}
-            condition={listing.condition}
-            location={listing.location}
-            sellerUsername={listing.profiles?.username}
-          />
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {listing.description}
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{listing.condition}</span>
+              <span className="text-sm text-muted-foreground">{listing.location}</span>
+            </div>
+          </div>
           
           {listing.latitude && listing.longitude && (
             <div className="h-48 w-full rounded-lg overflow-hidden">
@@ -64,7 +72,11 @@ export const MarketplaceListItem = ({ listing }: MarketplaceListItemProps) => {
             </div>
           )}
 
-          <LikeButton listingId={listing.id} />
+          <LikeButton 
+            listingId={listing.id} 
+            isLiked={isLiked}
+            onToggle={onLikeToggle}
+          />
         </div>
       </CardContent>
     </Card>

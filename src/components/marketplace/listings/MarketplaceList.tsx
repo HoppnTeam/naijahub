@@ -4,7 +4,7 @@ interface MarketplaceListProps {
   listings: any[];
   isLoading: boolean;
   likedListings?: string[];
-  onLikeToggle?: (listingId: string) => void;
+  onLikeToggle?: () => void;
 }
 
 export const MarketplaceList = ({ 

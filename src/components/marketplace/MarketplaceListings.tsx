@@ -62,6 +62,10 @@ export const MarketplaceListings = () => {
     }
   };
 
+  const handleLikeToggle = async () => {
+    await refetch();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
@@ -88,7 +92,7 @@ export const MarketplaceListings = () => {
         listings={listings} 
         isLoading={isLoading}
         likedListings={likedListings}
-        onLikeToggle={refetch}
+        onLikeToggle={handleLikeToggle}
       />
     </div>
   );
