@@ -33,7 +33,7 @@ export const MarketplaceListItem = ({
   };
 
   return (
-    <Card className="h-full relative group" onClick={handleClick}>
+    <Card className="h-full relative group cursor-pointer" onClick={handleClick}>
       {listing.images && listing.images[0] && (
         <div className="aspect-square w-full overflow-hidden">
           <img
@@ -73,7 +73,7 @@ export const MarketplaceListItem = ({
           )}
 
           <LikeButton 
-            listingId={listing.id} 
+            listingId={listing.id}
             isLiked={isLiked}
             onToggle={onLikeToggle}
           />
