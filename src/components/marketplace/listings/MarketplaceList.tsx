@@ -1,5 +1,4 @@
 import { MarketplaceListItem } from "./MarketplaceListItem";
-import { BrowserRouter as Router } from "react-router-dom";
 
 interface MarketplaceListProps {
   listings: any[];
