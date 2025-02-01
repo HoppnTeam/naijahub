@@ -50,9 +50,10 @@ function App() {
             </main>
             <Footer />
             <Toaster />
-          </AuthProvider>
-        </Router>
-      </QueryClientProvider>
+          </div>
+        </AuthProvider>
+      </Router>
+    </QueryClientProvider>
   );
 }
 
