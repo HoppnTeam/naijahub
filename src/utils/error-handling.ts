@@ -27,6 +27,30 @@ export const handleSupabaseError = (error: PostgrestError | null) => {
   return message;
 };
 
+export const handleMarketplaceError = (error: Error, context: string) => {
+  console.error(`Marketplace ${context} error:`, error);
+
+  const marketplaceErrors: Record<string, string> = {
+    "listing_not_found": "The listing you're looking for doesn't exist.",
+    "invalid_price": "Please enter a valid price.",
+    "images_required": "At least one image is required.",
+    "invalid_category": "Please select a valid category.",
+    "location_required": "Location is required.",
+    "unauthorized": "You need to be signed in to perform this action.",
+    "forbidden": "You don't have permission to perform this action.",
+  };
+
+  const message = marketplaceErrors[error.message] || "An unexpected error occurred with the marketplace.";
+  
+  toast({
+    title: "Marketplace Error",
+    description: message,
+    variant: "destructive",
+  });
+
+  return message;
+};
+
 export const handleAuthError = (error: Error) => {
   console.error("Auth error:", error);
 

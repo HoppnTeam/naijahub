@@ -8,6 +8,7 @@ import { adminRoutes } from "@/routes/adminRoutes";
 import { categoryRoutes } from "@/routes/categoryRoutes";
 import { mainRoutes } from "@/routes/mainRoutes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { useToast } from "@/hooks/use-toast";
 
 // Create a client with error handling
 const queryClient = new QueryClient({
@@ -16,15 +17,19 @@ const queryClient = new QueryClient({
       retry: 1,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000,
-      onError: (error) => {
-        console.error("Query error:", error);
-      },
+      meta: {
+        errorHandler: (error: Error) => {
+          console.error("Query error:", error);
+        }
+      }
     },
     mutations: {
       retry: 1,
-      onError: (error) => {
-        console.error("Mutation error:", error);
-      },
+      meta: {
+        errorHandler: (error: Error) => {
+          console.error("Mutation error:", error);
+        }
+      }
     },
   },
 });
