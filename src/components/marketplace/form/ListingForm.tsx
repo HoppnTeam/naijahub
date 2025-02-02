@@ -1,17 +1,46 @@
 import { Button } from "@/components/ui/button";
-import { useFormState, FormStateData } from "@/hooks/marketplace/use-form-state";
+import { useFormState } from "@/hooks/marketplace/use-form-state";
 import { BasicInfoFields } from "./BasicInfoFields";
 import { ProductDetailsFields } from "./ProductDetailsFields";
 import { DeliveryMethodFields } from "./DeliveryMethodFields";
 import { ImageUpload } from "@/components/posts/ImageUpload";
+import { useEffect } from "react";
 
 interface ListingFormProps {
   onSubmit: (formData: any) => void;
   isLoading: boolean;
+  initialData?: {
+    title: string;
+    description: string;
+    price: number;
+    condition: string;
+    category: string;
+    location: string;
+    payment_methods: string[];
+    delivery_method: string;
+    images: string[];
+  };
 }
 
-export const ListingForm = ({ onSubmit, isLoading }: ListingFormProps) => {
-  const { formData } = useFormState();
+export const ListingForm = ({ onSubmit, isLoading, initialData }: ListingFormProps) => {
+  const { formData, setFormData } = useFormState();
+
+  // Populate form with initial data when editing
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title,
+        description: initialData.description,
+        price: initialData.price.toString(),
+        condition: initialData.condition,
+        category: initialData.category,
+        location: initialData.location,
+        paymentMethods: initialData.payment_methods,
+        deliveryMethod: initialData.delivery_method,
+        selectedFiles: initialData.images,
+      });
+    }
+  }, [initialData, setFormData]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,9 +51,9 @@ export const ListingForm = ({ onSubmit, isLoading }: ListingFormProps) => {
       condition: formData.condition,
       category: formData.category,
       location: formData.location,
-      paymentMethods: formData.paymentMethods,
-      deliveryMethod: formData.deliveryMethod,
-      selectedFiles: formData.selectedFiles,
+      payment_methods: formData.paymentMethods,
+      delivery_method: formData.deliveryMethod,
+      images: formData.selectedFiles,
     });
   };
 
@@ -58,10 +87,11 @@ export const ListingForm = ({ onSubmit, isLoading }: ListingFormProps) => {
       <ImageUpload 
         onImagesChange={formData.setSelectedFiles}
         multiple
+        existingImages={formData.selectedFiles}
       />
       
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Creating..." : "Create Listing"}
+        {isLoading ? "Saving..." : initialData ? "Update Listing" : "Create Listing"}
       </Button>
     </form>
   );
