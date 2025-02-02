@@ -23,7 +23,7 @@ interface ListingDetailsDialogProps {
     longitude?: number;
     seller?: {
       username?: string;
-      email?: string;
+      user_id?: string;
     };
   };
 }
@@ -60,6 +60,7 @@ export const ListingDetailsDialog = ({
             <SellerActions 
               seller={listing.seller}
               title={listing.title}
+              listingId={listing.id}
             />
           )}
         </div>

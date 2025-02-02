@@ -1,17 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Info } from "lucide-react";
+import { MessageSquare, ShoppingCart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { ChatDialog } from "./ChatDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SellerActionsProps {
   seller?: {
     username?: string;
-    email?: string;
+    user_id?: string;
   };
   title: string;
+  listingId: string;
 }
 
-export const SellerActions = ({ seller, title }: SellerActionsProps) => {
+export const SellerActions = ({ seller, title, listingId }: SellerActionsProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleBuyNow = () => {
     toast({
@@ -21,17 +27,26 @@ export const SellerActions = ({ seller, title }: SellerActionsProps) => {
     });
   };
 
-  const handleContactSeller = () => {
-    if (!seller?.email) {
+  const handleOpenChat = () => {
+    if (!user) {
       toast({
-        title: "Contact Information Unavailable",
-        description: "The seller's contact information is not available.",
+        title: "Sign in required",
+        description: "Please sign in to chat with the seller",
         variant: "destructive"
       });
       return;
     }
 
-    window.location.href = `mailto:${seller.email}?subject=Inquiry about: ${title}`;
+    if (user.id === seller?.user_id) {
+      toast({
+        title: "Cannot message yourself",
+        description: "This is your own listing",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsChatOpen(true);
   };
 
   return (
@@ -47,20 +62,30 @@ export const SellerActions = ({ seller, title }: SellerActionsProps) => {
             onClick={handleBuyNow}
             className="w-full sm:w-auto"
           >
-            <ShoppingCart className="mr-2" />
+            <ShoppingCart className="mr-2 h-4 w-4" />
             Buy Now
           </Button>
           
           <Button 
             variant="outline"
-            onClick={handleContactSeller}
+            onClick={handleOpenChat}
             className="w-full sm:w-auto"
           >
-            <Info className="mr-2" />
-            More Info
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Chat with Seller
           </Button>
         </div>
       </div>
+
+      <ChatDialog
+        open={isChatOpen}
+        onOpenChange={setIsChatOpen}
+        listing={{
+          id: listingId,
+          title,
+          seller
+        }}
+      />
     </div>
   );
 };
