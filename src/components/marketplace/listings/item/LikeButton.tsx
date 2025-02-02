@@ -28,14 +28,14 @@ export const LikeButton = ({
       if (!user) return { isLiked: false, count: 0 };
       
       const { data: likeStatus } = await supabase
-        .from('auto_marketplace_likes')
+        .from('tech_marketplace_likes')
         .select('id')
         .eq('listing_id', listingId)
         .eq('user_id', user.id)
         .maybeSingle();
 
       const { count } = await supabase
-        .from('auto_marketplace_likes')
+        .from('tech_marketplace_likes')
         .select('id', { count: 'exact' })
         .eq('listing_id', listingId);
 
@@ -63,13 +63,13 @@ export const LikeButton = ({
     try {
       if (likeData?.isLiked) {
         await supabase
-          .from('auto_marketplace_likes')
+          .from('tech_marketplace_likes')
           .delete()
           .eq('listing_id', listingId)
           .eq('user_id', user.id);
       } else {
         await supabase
-          .from('auto_marketplace_likes')
+          .from('tech_marketplace_likes')
           .insert({
             listing_id: listingId,
             user_id: user.id
