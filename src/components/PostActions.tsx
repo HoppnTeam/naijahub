@@ -15,7 +15,7 @@ export const PostActions = ({
   onLike,
 }: PostActionsProps) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between mt-4">
       <Button
         variant="ghost"
         size="sm"
