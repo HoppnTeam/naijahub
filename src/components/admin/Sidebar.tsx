@@ -7,14 +7,12 @@ import {
   Settings,
   List,
   LayoutDashboard,
-  Newspaper,
 } from "lucide-react";
 
 const navigation = [
   { name: "Overview", to: "/admin", icon: ChartBar },
   { name: "Users", to: "/admin/users", icon: Users },
   { name: "Posts", to: "/admin/posts", icon: FileText },
-  { name: "News Drafts", to: "/admin/news-drafts", icon: Newspaper },
   { name: "Reports", to: "/admin/reports", icon: Flag },
   { name: "Categories", to: "/admin/categories", icon: List },
   { name: "Ads Management", to: "/admin/ads", icon: LayoutDashboard },
