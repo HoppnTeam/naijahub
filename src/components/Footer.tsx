@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Info, Link as LinkIcon, Mail } from "lucide-react";
+import { ReportIssueDialog } from "./ReportIssueDialog";
 
 export const Footer = () => {
   return (
@@ -44,6 +45,9 @@ export const Footer = () => {
                   <Mail className="w-4 h-4" />
                   Contact Us
                 </Link>
+              </li>
+              <li>
+                <ReportIssueDialog />
               </li>
             </ul>
           </div>

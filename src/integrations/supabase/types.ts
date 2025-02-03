@@ -747,6 +747,51 @@ export type Database = {
         }
         Relationships: []
       }
+      issue_reports: {
+        Row: {
+          category: Database["public"]["Enums"]["report_category"]
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string | null
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["report_category"]
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["report_category"]
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -1468,6 +1513,12 @@ export type Database = {
       delivery_method: "shipping" | "pickup" | "both"
       listing_status: "active" | "sold" | "pending" | "cancelled"
       payment_method: "online" | "cash_on_delivery" | "in_person"
+      report_category:
+        | "content"
+        | "transaction"
+        | "app_improvement"
+        | "user_related"
+        | "general"
       user_role: "user" | "moderator" | "admin"
       vehicle_type:
         | "car"
