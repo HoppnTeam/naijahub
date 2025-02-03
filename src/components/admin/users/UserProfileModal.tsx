@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,25 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { UserDetailsTab } from "./UserDetailsTab";
+import { UserActivityTab } from "./UserActivityTab";
 import type { Database } from "@/integrations/supabase/types";
+import type { Profile } from "@/types/profile";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
-
-type Profile = {
-  id: string;
-  user_id: string;
-  username: string;
-  status: string;
-  created_at: string;
-  user_roles: { role: UserRole }[];
-};
 
 interface UserProfileModalProps {
   user: Profile;
@@ -108,6 +95,34 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      setIsUpdating(true);
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("user_id", user.user_id);
+
+      if (error) throw error;
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const { data: activities, isLoading } = useQuery({
     queryKey: ["user-activities", user.user_id],
     queryFn: async () => {
@@ -135,65 +150,26 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
             <TabsTrigger value="activity">Activity Log</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="space-y-4">
-            <div className="grid gap-4">
-              <div>
-                <label className="text-sm font-medium">Status</label>
-                <Select
-                  value={user.status}
-                  onValueChange={handleStatusChange}
-                  disabled={isUpdating}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Role</label>
-                <Select
-                  value={user.user_roles?.[0]?.role || "user"}
-                  onValueChange={handleRoleChange}
-                  disabled={isUpdating}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <TabsContent value="details">
+            <UserDetailsTab
+              user={user}
+              isUpdating={isUpdating}
+              onStatusChange={handleStatusChange}
+              onRoleChange={handleRoleChange}
+            />
+            <div className="mt-4 flex justify-end">
+              <Button
+                variant="destructive"
+                onClick={handleDeleteUser}
+                disabled={isUpdating}
+              >
+                Delete User
+              </Button>
             </div>
           </TabsContent>
 
           <TabsContent value="activity">
-            {isLoading ? (
-              <div>Loading activity log...</div>
-            ) : (
-              <div className="space-y-4">
-                {activities?.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-center justify-between border-b pb-2"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">{activity.action}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(activity.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <UserActivityTab activities={activities} isLoading={isLoading} />
           </TabsContent>
         </Tabs>
       </DialogContent>
