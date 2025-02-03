@@ -18,9 +18,11 @@ const ISSUE_CATEGORIES = [
   { value: "general", label: "General Issues" }
 ] as const;
 
+type IssueCategory = typeof ISSUE_CATEGORIES[number]["value"];
+
 export const ReportIssueDialog = () => {
   const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<IssueCategory>("content");
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +75,7 @@ export const ReportIssueDialog = () => {
       });
 
       setOpen(false);
-      setCategory("");
+      setCategory("content");
       setSubject("");
       setDescription("");
       setSelectedImage([]);
@@ -103,7 +105,7 @@ export const ReportIssueDialog = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory} required>
+            <Select value={category} onValueChange={(value: IssueCategory) => setCategory(value)} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select issue category" />
               </SelectTrigger>
