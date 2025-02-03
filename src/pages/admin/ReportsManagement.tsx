@@ -15,16 +15,16 @@ import { Badge } from "@/components/ui/badge";
 type IssueReport = {
   id: string;
   user_id: string;
-  category: string;
+  category: "content" | "transaction" | "app_improvement" | "user_related" | "general";
   subject: string;
   description: string;
-  image_url?: string;
+  image_url?: string | null;
   status: string;
   created_at: string;
-  resolved_by?: string;
-  resolution_notes?: string;
-  resolved_at?: string;
-  profiles: {
+  resolved_by?: string | null;
+  resolution_notes?: string | null;
+  resolved_at?: string | null;
+  user: {
     username: string;
   };
 };
@@ -41,7 +41,7 @@ export const ReportsManagement = () => {
         .from("issue_reports")
         .select(`
           *,
-          profiles:user_id (username)
+          user:user_id (username)
         `)
         .order("created_at", { ascending: false });
 
@@ -91,7 +91,7 @@ export const ReportsManagement = () => {
       cell: ({ row }) => format(new Date(row.original.created_at), "MMM d, yyyy"),
     },
     {
-      accessorKey: "profiles.username",
+      accessorKey: "user.username",
       header: "Reporter",
     },
     {
@@ -109,7 +109,7 @@ export const ReportsManagement = () => {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => (
-        <Badge variant={row.original.status === "pending" ? "secondary" : "success"}>
+        <Badge variant={row.original.status === "pending" ? "secondary" : "outline"}>
           {row.original.status}
         </Badge>
       ),
