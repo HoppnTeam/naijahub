@@ -1,25 +1,43 @@
-import { AdminDashboard } from "@/pages/admin/Dashboard";
-import { AdsManagement } from "@/pages/admin/AdsManagement";
-import { ReportsManagement } from "@/pages/admin/ReportsManagement";
-import AdminSignIn from "@/pages/admin/SignIn";
-import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
+import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
+import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
+
+const Dashboard = lazy(() => import("@/pages/admin/Dashboard"));
+const UsersManagement = lazy(() => import("@/pages/admin/UsersManagement"));
+const ReportsManagement = lazy(() => import("@/pages/admin/ReportsManagement"));
+const AdsManagement = lazy(() => import("@/pages/admin/AdsManagement"));
+const PostModeration = lazy(() => import("@/pages/admin/PostModeration"));
+const AdminSignIn = lazy(() => import("@/pages/admin/SignIn"));
 
 export const adminRoutes: RouteObject[] = [
   {
-    path: "/admin/sign-in",
-    element: <AdminSignIn />
-  },
-  {
     path: "/admin",
-    element: <ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>
+    element: <ProtectedAdminRoute />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "users",
+        element: <UsersManagement />,
+      },
+      {
+        path: "posts",
+        element: <PostModeration />,
+      },
+      {
+        path: "reports",
+        element: <ReportsManagement />,
+      },
+      {
+        path: "ads",
+        element: <AdsManagement />,
+      },
+    ],
   },
   {
-    path: "/admin/ads",
-    element: <ProtectedAdminRoute><AdsManagement /></ProtectedAdminRoute>
+    path: "/admin/sign-in",
+    element: <AdminSignIn />,
   },
-  {
-    path: "/admin/reports",
-    element: <ProtectedAdminRoute><ReportsManagement /></ProtectedAdminRoute>
-  }
 ];

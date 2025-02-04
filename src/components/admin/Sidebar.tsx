@@ -12,7 +12,7 @@ import {
 const navigation = [
   { name: "Overview", to: "/admin", icon: ChartBar },
   { name: "Users", to: "/admin/users", icon: Users },
-  { name: "Posts", to: "/admin/posts", icon: FileText },
+  { name: "Content Moderation", to: "/admin/posts", icon: FileText },
   { name: "Reports", to: "/admin/reports", icon: Flag },
   { name: "Categories", to: "/admin/categories", icon: List },
   { name: "Ads Management", to: "/admin/ads", icon: LayoutDashboard },

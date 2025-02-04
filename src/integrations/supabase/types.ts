@@ -956,6 +956,56 @@ export type Database = {
           },
         ]
       }
+      post_violations: {
+        Row: {
+          action_taken: string | null
+          created_at: string | null
+          description: string | null
+          detected_at: string | null
+          id: string
+          post_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+          violation_type: Database["public"]["Enums"]["violation_type"]
+        }
+        Insert: {
+          action_taken?: string | null
+          created_at?: string | null
+          description?: string | null
+          detected_at?: string | null
+          id?: string
+          post_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          violation_type: Database["public"]["Enums"]["violation_type"]
+        }
+        Update: {
+          action_taken?: string | null
+          created_at?: string | null
+          description?: string | null
+          detected_at?: string | null
+          id?: string
+          post_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          violation_type?: Database["public"]["Enums"]["violation_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_violations_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           age_range: string | null
@@ -1528,6 +1578,14 @@ export type Database = {
         | "bus"
         | "van"
         | "parts"
+      violation_type:
+        | "hate_speech"
+        | "inappropriate_content"
+        | "spam"
+        | "misinformation"
+        | "harassment"
+        | "violence"
+        | "other"
       workshop_type:
         | "mechanic"
         | "auto_electrician"
