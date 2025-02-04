@@ -1,54 +1,32 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
-import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ChartBar, Users, FileText, Flag } from "lucide-react";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { UserManagementTable } from "@/components/admin/users/UserManagementTable";
+import { ChartBar, Users, FileText, Flag } from "lucide-react";
 
-export const AdminDashboard = () => {
-  const { user } = useAuth();
+const metrics = [
+  {
+    title: "Total Users",
+    value: "1,234",
+    icon: Users,
+  },
+  {
+    title: "Active Posts",
+    value: "456",
+    icon: FileText,
+  },
+  {
+    title: "Reports",
+    value: "23",
+    icon: Flag,
+  },
+  {
+    title: "Categories",
+    value: "10",
+    icon: ChartBar,
+  },
+];
 
-  const { data: userRole } = useQuery({
-    queryKey: ["userRole", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user?.id)
-        .single();
-      return data?.role;
-    },
-  });
-
-  if (!user || userRole !== "admin") {
-    return <Navigate to="/" replace />;
-  }
-
-  const metrics = [
-    {
-      title: "Total Users",
-      value: "1,234",
-      icon: Users,
-    },
-    {
-      title: "Active Posts",
-      value: "456",
-      icon: FileText,
-    },
-    {
-      title: "Reports",
-      value: "23",
-      icon: Flag,
-    },
-    {
-      title: "Categories",
-      value: "10",
-      icon: ChartBar,
-    },
-  ];
-
+export const Dashboard = () => {
   return (
     <AdminLayout>
       <div className="p-6">

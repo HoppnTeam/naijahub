@@ -11,7 +11,9 @@ const AdminSignIn = lazy(() => import("@/pages/admin/SignIn"));
 export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
-    element: <ProtectedAdminRoute children={undefined} />,
+    element: <ProtectedAdminRoute>
+      <></>
+    </ProtectedAdminRoute>,
     children: [
       {
         index: true,
