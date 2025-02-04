@@ -20,16 +20,16 @@ export const BusinessResources = () => {
       icon: <Building2 className="w-5 h-5" />,
       items: [
         { 
-          name: "CAC Business Registration Guide", 
-          link: "https://www.cac.gov.ng/registration-guidelines/" 
+          name: "CAC Business Registration", 
+          link: "https://www.cac.gov.ng" 
         },
         { 
-          name: "FIRS Tax Compliance", 
-          link: "https://www.firs.gov.ng/tax-compliance/" 
+          name: "FIRS Tax Services", 
+          link: "https://www.firs.gov.ng" 
         },
         { 
-          name: "Export Documentation", 
-          link: "https://www.nepc.gov.ng/export-procedures" 
+          name: "NEPC Export Guide", 
+          link: "https://www.nepc.gov.ng" 
         }
       ]
     },
@@ -38,16 +38,16 @@ export const BusinessResources = () => {
       icon: <FileText className="w-5 h-5" />,
       items: [
         { 
-          name: "Starting a Business in Nigeria", 
-          link: "https://www.cbn.gov.ng/devfin/entrepreneurship.asp" 
+          name: "CBN Entrepreneurship Guide", 
+          link: "https://www.cbn.gov.ng" 
         },
         { 
-          name: "SME Funding Options", 
-          link: "https://www.boi.ng/sme-loans/" 
+          name: "Bank of Industry", 
+          link: "https://www.boi.ng" 
         },
         { 
-          name: "Business Plan Templates", 
-          link: "https://smedan.gov.ng/business-plans/" 
+          name: "SMEDAN Resources", 
+          link: "https://smedan.gov.ng" 
         }
       ]
     },
@@ -56,16 +56,16 @@ export const BusinessResources = () => {
       icon: <Award className="w-5 h-5" />,
       items: [
         { 
-          name: "SMEDAN Resources", 
-          link: "https://smedan.gov.ng/resources/" 
+          name: "SMEDAN Portal", 
+          link: "https://smedan.gov.ng" 
         },
         { 
-          name: "BOI Loan Programs", 
-          link: "https://www.boi.ng/apply-loan/" 
+          name: "BOI Services", 
+          link: "https://www.boi.ng" 
         },
         { 
-          name: "NEXIM Bank Services", 
-          link: "https://neximbank.com.ng/products-services/" 
+          name: "NEXIM Bank", 
+          link: "https://neximbank.com.ng" 
         }
       ]
     }
