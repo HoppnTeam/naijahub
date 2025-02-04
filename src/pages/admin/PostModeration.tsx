@@ -17,6 +17,7 @@ type PostViolation = {
   id: string;
   post_id: string;
   post: {
+    id: string;
     title: string;
     content: string;
     profiles: {
@@ -45,6 +46,7 @@ const PostModeration = () => {
         .select(`
           *,
           post:posts (
+            id,
             title,
             content,
             profiles (username)
