@@ -2,25 +2,20 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 
-const Dashboard = lazy(() => import("@/pages/admin/Dashboard"));
-const UsersManagement = lazy(() => import("@/pages/admin/UsersManagement"));
-const ReportsManagement = lazy(() => import("@/pages/admin/ReportsManagement"));
-const AdsManagement = lazy(() => import("@/pages/admin/AdsManagement"));
+const Dashboard = lazy(() => import("@/pages/admin/Dashboard").then(module => ({ default: module.Dashboard })));
+const ReportsManagement = lazy(() => import("@/pages/admin/ReportsManagement").then(module => ({ default: module.ReportsManagement })));
+const AdsManagement = lazy(() => import("@/pages/admin/AdsManagement").then(module => ({ default: module.AdsManagement })));
 const PostModeration = lazy(() => import("@/pages/admin/PostModeration"));
 const AdminSignIn = lazy(() => import("@/pages/admin/SignIn"));
 
 export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
-    element: <ProtectedAdminRoute />,
+    element: <ProtectedAdminRoute children={undefined} />,
     children: [
       {
         index: true,
         element: <Dashboard />,
-      },
-      {
-        path: "users",
-        element: <UsersManagement />,
       },
       {
         path: "posts",

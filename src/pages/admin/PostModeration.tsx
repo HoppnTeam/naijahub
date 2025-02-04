@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 type PostViolation = {
   id: string;
+  post_id: string;
   post: {
     title: string;
     content: string;
@@ -30,7 +31,7 @@ type PostViolation = {
   action_taken: string | null;
 };
 
-export const PostModeration = () => {
+const PostModeration = () => {
   const [selectedViolation, setSelectedViolation] = useState<PostViolation | null>(null);
   const [actionNotes, setActionNotes] = useState("");
   const [selectedAction, setSelectedAction] = useState<string>("");
@@ -220,3 +221,5 @@ export const PostModeration = () => {
     </AdminLayout>
   );
 };
+
+export default PostModeration;

@@ -10,6 +10,7 @@ export type Profile = {
   bio: string | null;
   created_at: string;
   updated_at: string;
+  status: string | null;
   user_roles: { role: UserRole }[];
 };
 
