@@ -1,37 +1,14 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { DataTable } from "@/components/ui/data-table";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-
-type IssueReport = {
-  id: string;
-  user_id: string;
-  category: "content" | "transaction" | "app_improvement" | "user_related" | "general";
-  subject: string;
-  description: string;
-  image_url?: string | null;
-  status: string;
-  created_at: string;
-  resolved_by?: string | null;
-  resolution_notes?: string | null;
-  resolved_at?: string | null;
-  user: {
-    username: string;
-  };
-};
+import { ReportsTable } from "@/components/reports/ReportsTable";
+import { ReportDetailsDialog } from "@/components/reports/ReportDetailsDialog";
+import type { IssueReport } from "@/components/reports/types";
 
 export const ReportsManagement = () => {
   const [selectedReport, setSelectedReport] = useState<IssueReport | null>(null);
-  const [resolutionNotes, setResolutionNotes] = useState("");
   const { toast } = useToast();
 
   const { data: reports, isLoading, refetch } = useQuery({
@@ -50,7 +27,7 @@ export const ReportsManagement = () => {
     },
   });
 
-  const handleResolveReport = async () => {
+  const handleResolveReport = async (resolutionNotes: string) => {
     if (!selectedReport) return;
 
     try {
@@ -72,7 +49,6 @@ export const ReportsManagement = () => {
       });
 
       setSelectedReport(null);
-      setResolutionNotes("");
       refetch();
     } catch (error) {
       console.error("Error resolving report:", error);
@@ -84,51 +60,6 @@ export const ReportsManagement = () => {
     }
   };
 
-  const columns: ColumnDef<IssueReport>[] = [
-    {
-      accessorKey: "created_at",
-      header: "Date",
-      cell: ({ row }) => format(new Date(row.original.created_at), "MMM d, yyyy"),
-    },
-    {
-      accessorKey: "user.username",
-      header: "Reporter",
-    },
-    {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => (
-        <span className="capitalize">{row.original.category}</span>
-      ),
-    },
-    {
-      accessorKey: "subject",
-      header: "Subject",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <Badge variant={row.original.status === "pending" ? "secondary" : "outline"}>
-          {row.original.status}
-        </Badge>
-      ),
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setSelectedReport(row.original)}
-          disabled={row.original.status === "resolved"}
-        >
-          View Details
-        </Button>
-      ),
-    },
-  ];
-
   return (
     <AdminLayout>
       <div className="p-6">
@@ -136,73 +67,17 @@ export const ReportsManagement = () => {
           <h1 className="text-2xl font-bold">Issue Reports</h1>
         </div>
 
-        <DataTable
-          columns={columns}
-          data={reports || []}
+        <ReportsTable
+          reports={reports || []}
           isLoading={isLoading}
+          onViewDetails={setSelectedReport}
         />
 
-        <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Issue Report Details</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <div>
-                <Label>Category</Label>
-                <p className="capitalize">{selectedReport?.category}</p>
-              </div>
-
-              <div>
-                <Label>Subject</Label>
-                <p>{selectedReport?.subject}</p>
-              </div>
-
-              <div>
-                <Label>Description</Label>
-                <p className="whitespace-pre-wrap">{selectedReport?.description}</p>
-              </div>
-
-              {selectedReport?.image_url && (
-                <div>
-                  <Label>Attached Image</Label>
-                  <img
-                    src={selectedReport.image_url}
-                    alt="Report attachment"
-                    className="mt-2 max-h-[300px] rounded-md"
-                  />
-                </div>
-              )}
-
-              {selectedReport?.status === "pending" && (
-                <div className="space-y-2">
-                  <Label htmlFor="resolution">Resolution Notes</Label>
-                  <Textarea
-                    id="resolution"
-                    value={resolutionNotes}
-                    onChange={(e) => setResolutionNotes(e.target.value)}
-                    placeholder="Enter resolution notes..."
-                    className="min-h-[100px]"
-                  />
-                  <Button onClick={handleResolveReport} className="w-full">
-                    Mark as Resolved
-                  </Button>
-                </div>
-              )}
-
-              {selectedReport?.status === "resolved" && (
-                <div>
-                  <Label>Resolution Notes</Label>
-                  <p className="whitespace-pre-wrap">{selectedReport.resolution_notes}</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Resolved on {format(new Date(selectedReport.resolved_at!), "MMM d, yyyy")}
-                  </p>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ReportDetailsDialog
+          report={selectedReport}
+          onClose={() => setSelectedReport(null)}
+          onResolve={handleResolveReport}
+        />
       </div>
     </AdminLayout>
   );
