@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
-import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { Dashboard } from "@/pages/admin/Dashboard";
 import { AdminUsers } from "@/pages/admin/AdminUsers";
 import { AdminPosts } from "@/pages/admin/AdminPosts";
 import { AdminCategories } from "@/pages/admin/AdminCategories";
@@ -19,7 +18,7 @@ export const adminRoutes = [
     children: [
       {
         path: "",
-        element: <AdminDashboard />,
+        element: <Dashboard />,
       },
       {
         path: "users",
