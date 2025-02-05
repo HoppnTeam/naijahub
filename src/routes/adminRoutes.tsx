@@ -7,6 +7,7 @@ const Dashboard = lazy(() => import("@/pages/admin/Dashboard").then(module => ({
 const ReportsManagement = lazy(() => import("@/pages/admin/ReportsManagement").then(module => ({ default: module.ReportsManagement })));
 const AdsManagement = lazy(() => import("@/pages/admin/AdsManagement").then(module => ({ default: module.AdsManagement })));
 const PostModeration = lazy(() => import("@/pages/admin/PostModeration"));
+const CategoriesManagement = lazy(() => import("@/pages/admin/CategoriesManagement"));
 const AdminSignIn = lazy(() => import("@/pages/admin/SignIn").then(module => ({ default: module.default })));
 
 export const adminRoutes: RouteObject[] = [
@@ -30,6 +31,16 @@ export const adminRoutes: RouteObject[] = [
       <ProtectedAdminRoute>
         <AdminLayout>
           <ReportsManagement />
+        </AdminLayout>
+      </ProtectedAdminRoute>
+    )
+  },
+  {
+    path: "/admin/categories",
+    element: (
+      <ProtectedAdminRoute>
+        <AdminLayout>
+          <CategoriesManagement />
         </AdminLayout>
       </ProtectedAdminRoute>
     )
