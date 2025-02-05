@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ViolationTable } from "@/components/admin/post-moderation/ViolationTable";
 import { ReviewViolationDialog } from "@/components/admin/post-moderation/ReviewViolationDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { PostViolation } from "@/components/admin/post-moderation/types";
 
 const PostModeration = () => {
@@ -81,27 +82,36 @@ const PostModeration = () => {
     setSelectedAction("");
   };
 
+  const LoadingFallback = () => (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-[200px]" />
+      <Skeleton className="h-[400px] w-full" />
+    </div>
+  );
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Content Moderation</h1>
       </div>
 
-      <ViolationTable
-        violations={violations || []}
-        isLoading={isLoading}
-        onReviewClick={setSelectedViolation}
-      />
+      <Suspense fallback={<LoadingFallback />}>
+        <ViolationTable
+          violations={violations || []}
+          isLoading={isLoading}
+          onReviewClick={setSelectedViolation}
+        />
 
-      <ReviewViolationDialog
-        violation={selectedViolation}
-        actionNotes={actionNotes}
-        selectedAction={selectedAction}
-        onActionNotesChange={setActionNotes}
-        onActionChange={setSelectedAction}
-        onClose={handleCloseDialog}
-        onSubmit={handleReviewViolation}
-      />
+        <ReviewViolationDialog
+          violation={selectedViolation}
+          actionNotes={actionNotes}
+          selectedAction={selectedAction}
+          onActionNotesChange={setActionNotes}
+          onActionChange={setSelectedAction}
+          onClose={handleCloseDialog}
+          onSubmit={handleReviewViolation}
+        />
+      </Suspense>
     </div>
   );
 };
