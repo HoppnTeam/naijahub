@@ -4,16 +4,53 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ViolationTable } from "@/components/admin/post-moderation/ViolationTable";
 import { ReviewViolationDialog } from "@/components/admin/post-moderation/ReviewViolationDialog";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/admin/LoadingState";
 import type { PostViolation } from "@/components/admin/post-moderation/types";
 
+const ModeratorContent = ({
+  onReviewClick,
+}: {
+  onReviewClick: (violation: PostViolation) => void;
+}) => {
+  const { data: violations, isLoading } = useQuery({
+    queryKey: ["post-violations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("post_violations")
+        .select(`
+          *,
+          post:posts (
+            id,
+            title,
+            content,
+            profiles (username)
+          )
+        `)
+        .order("detected_at", { ascending: false });
+
+      if (error) throw error;
+      return data as PostViolation[];
+    },
+  });
+
+  return (
+    <ViolationTable
+      violations={violations || []}
+      isLoading={isLoading}
+      onReviewClick={onReviewClick}
+    />
+  );
+};
+
 const PostModeration = () => {
-  const [selectedViolation, setSelectedViolation] = useState<PostViolation | null>(null);
+  const [selectedViolation, setSelectedViolation] = useState<PostViolation | null>(
+    null
+  );
   const [actionNotes, setActionNotes] = useState("");
   const [selectedAction, setSelectedAction] = useState<string>("");
   const { toast } = useToast();
 
-  const { data: violations, isLoading, refetch } = useQuery({
+  const { refetch } = useQuery({
     queryKey: ["post-violations"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -82,36 +119,25 @@ const PostModeration = () => {
     setSelectedAction("");
   };
 
-  const LoadingFallback = () => (
-    <div className="space-y-4">
-      <Skeleton className="h-8 w-[200px]" />
-      <Skeleton className="h-[400px] w-full" />
-    </div>
-  );
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Content Moderation</h1>
       </div>
 
-      <Suspense fallback={<LoadingFallback />}>
-        <ViolationTable
-          violations={violations || []}
-          isLoading={isLoading}
-          onReviewClick={setSelectedViolation}
-        />
-
-        <ReviewViolationDialog
-          violation={selectedViolation}
-          actionNotes={actionNotes}
-          selectedAction={selectedAction}
-          onActionNotesChange={setActionNotes}
-          onActionChange={setSelectedAction}
-          onClose={handleCloseDialog}
-          onSubmit={handleReviewViolation}
-        />
+      <Suspense fallback={<LoadingState />}>
+        <ModeratorContent onReviewClick={setSelectedViolation} />
       </Suspense>
+
+      <ReviewViolationDialog
+        violation={selectedViolation}
+        actionNotes={actionNotes}
+        selectedAction={selectedAction}
+        onActionNotesChange={setActionNotes}
+        onActionChange={setSelectedAction}
+        onClose={handleCloseDialog}
+        onSubmit={handleReviewViolation}
+      />
     </div>
   );
 };

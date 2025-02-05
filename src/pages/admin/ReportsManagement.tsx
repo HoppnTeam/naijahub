@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -10,9 +11,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { LoadingState } from "@/components/admin/LoadingState";
 import type { IssueReport } from "@/components/reports/types";
 
-export const ReportsManagement = () => {
+const ReportsContent = () => {
   const { data: reports } = useQuery({
     queryKey: ["issue-reports"],
     queryFn: async () => {
@@ -43,51 +45,59 @@ export const ReportsManagement = () => {
   };
 
   return (
+    <div className="bg-white rounded-lg shadow">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Reporter</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {reports?.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-4">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+          {reports?.map((report) => (
+            <TableRow key={report.id}>
+              <TableCell>
+                {format(new Date(report.created_at), "MMM d, yyyy")}
+              </TableCell>
+              <TableCell>{report.profiles.username}</TableCell>
+              <TableCell className="capitalize">{report.category}</TableCell>
+              <TableCell>{report.subject}</TableCell>
+              <TableCell>
+                <Badge
+                  className={`${getStatusColor(report.status)} border-none`}
+                  variant="outline"
+                >
+                  {report.status}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+export const ReportsManagement = () => {
+  return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Issue Reports</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Reporter</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {reports?.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-4">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-            {reports?.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell>
-                  {format(new Date(report.created_at), "MMM d, yyyy")}
-                </TableCell>
-                <TableCell>{report.profiles.username}</TableCell>
-                <TableCell className="capitalize">{report.category}</TableCell>
-                <TableCell>{report.subject}</TableCell>
-                <TableCell>
-                  <Badge
-                    className={`${getStatusColor(report.status)} border-none`}
-                    variant="outline"
-                  >
-                    {report.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <Suspense fallback={<LoadingState />}>
+        <ReportsContent />
+      </Suspense>
     </div>
   );
 };
