@@ -1,17 +1,19 @@
-import { useState } from "react";
-import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { ReportsTable } from "@/components/reports/ReportsTable";
-import { ReportDetailsDialog } from "@/components/reports/ReportDetailsDialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 import type { IssueReport } from "@/components/reports/types";
 
 export const ReportsManagement = () => {
-  const [selectedReport, setSelectedReport] = useState<IssueReport | null>(null);
-  const { toast } = useToast();
-
-  const { data: reports, isLoading, refetch } = useQuery({
+  const { data: reports } = useQuery({
     queryKey: ["issue-reports"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,68 +25,69 @@ export const ReportsManagement = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-
-      return data.map((report) => ({
-        ...report,
-        user: {
-          username: report.profiles.username
-        }
-      })) as IssueReport[];
+      return data as IssueReport[];
     },
   });
 
-  const handleResolveReport = async (resolutionNotes: string) => {
-    if (!selectedReport) return;
-
-    try {
-      const { error } = await supabase
-        .from("issue_reports")
-        .update({
-          status: "resolved",
-          resolution_notes: resolutionNotes,
-          resolved_at: new Date().toISOString(),
-          resolved_by: (await supabase.auth.getUser()).data.user?.id,
-        })
-        .eq("id", selectedReport.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Report resolved successfully",
-        description: "The issue has been marked as resolved.",
-      });
-
-      setSelectedReport(null);
-      refetch();
-    } catch (error) {
-      console.error("Error resolving report:", error);
-      toast({
-        variant: "destructive",
-        title: "Error resolving report",
-        description: "Please try again later.",
-      });
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "resolved":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
-    <AdminLayout>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Issue Reports</h1>
-        </div>
-
-        <ReportsTable
-          reports={reports || []}
-          isLoading={isLoading}
-          onViewDetails={setSelectedReport}
-        />
-
-        <ReportDetailsDialog
-          report={selectedReport}
-          onClose={() => setSelectedReport(null)}
-          onResolve={handleResolveReport}
-        />
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Issue Reports</h1>
       </div>
-    </AdminLayout>
+
+      <div className="bg-white rounded-lg shadow">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Reporter</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Subject</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {reports?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-4">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+            {reports?.map((report) => (
+              <TableRow key={report.id}>
+                <TableCell>
+                  {format(new Date(report.created_at), "MMM d, yyyy")}
+                </TableCell>
+                <TableCell>{report.profiles.username}</TableCell>
+                <TableCell className="capitalize">{report.category}</TableCell>
+                <TableCell>{report.subject}</TableCell>
+                <TableCell>
+                  <Badge
+                    className={`${getStatusColor(report.status)} border-none`}
+                    variant="outline"
+                  >
+                    {report.status}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 };
