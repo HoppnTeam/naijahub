@@ -5,7 +5,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
 import { ViolationTable } from "@/components/admin/post-moderation/ViolationTable";
 import { ReviewViolationDialog } from "@/components/admin/post-moderation/ReviewViolationDialog";
-import { PostViolation } from "@/components/admin/post-moderation/types";
+import type { PostViolation } from "@/components/admin/post-moderation/types";
 
 const PostModeration = () => {
   const [selectedViolation, setSelectedViolation] = useState<PostViolation | null>(null);
