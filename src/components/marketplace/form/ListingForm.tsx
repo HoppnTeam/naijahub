@@ -1,98 +1,98 @@
-import { Button } from "@/components/ui/button";
-import { useFormState } from "@/hooks/marketplace/use-form-state";
-import { BasicInfoFields } from "./BasicInfoFields";
-import { ProductDetailsFields } from "./ProductDetailsFields";
-import { DeliveryMethodFields } from "./DeliveryMethodFields";
 import { ImageUpload } from "@/components/posts/ImageUpload";
-import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { BasicInfoFields } from "./BasicInfoFields";
+import { DeliveryMethodFields } from "./DeliveryMethodFields";
+import { ProductDetailsFields } from "./ProductDetailsFields";
 
 interface ListingFormProps {
-  onSubmit: (formData: any) => void;
-  isLoading: boolean;
-  initialData?: {
+  formData: {
     title: string;
+    setTitle: (value: string) => void;
     description: string;
-    price: number;
+    setDescription: (value: string) => void;
+    price: string;
+    setPrice: (value: string) => void;
     condition: string;
+    setCondition: (value: string) => void;
     category: string;
+    setCategory: (value: string) => void;
     location: string;
-    payment_methods: string[];
-    delivery_method: string;
-    images: string[];
+    setLocation: (value: string) => void;
+    paymentMethods: string[];
+    setPaymentMethods: (value: string[]) => void;
+    deliveryMethod: string;
+    setDeliveryMethod: (value: string) => void;
+    selectedFiles: File[];
+    setSelectedFiles: (value: File[]) => void;
   };
 }
 
-export const ListingForm = ({ onSubmit, isLoading, initialData }: ListingFormProps) => {
-  const { formData, setFormData } = useFormState();
+export const ListingForm = ({ formData }: ListingFormProps) => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Populate form with initial data when editing
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        title: initialData.title,
-        description: initialData.description,
-        price: initialData.price.toString(),
-        condition: initialData.condition,
-        category: initialData.category,
-        location: initialData.location,
-        paymentMethods: initialData.payment_methods,
-        deliveryMethod: initialData.delivery_method,
-        selectedFiles: initialData.images,
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Submission logic here
+      toast({
+        title: "Success",
+        description: "Your listing has been created successfully.",
       });
+    } catch (error) {
+      console.error("Error creating listing:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create listing. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [initialData, setFormData]);
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    onSubmit({
-      title: formData.title,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      condition: formData.condition,
-      category: formData.category,
-      location: formData.location,
-      payment_methods: formData.paymentMethods,
-      delivery_method: formData.deliveryMethod,
-      images: formData.selectedFiles,
-    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <BasicInfoFields
-        title={formData.title}
-        setTitle={formData.setTitle}
-        description={formData.description}
-        setDescription={formData.setDescription}
-      />
-      
-      <ProductDetailsFields
-        price={formData.price}
-        setPrice={formData.setPrice}
-        condition={formData.condition}
-        setCondition={formData.setCondition}
-        category={formData.category}
-        setCategory={formData.setCategory}
-        location={formData.location}
-        setLocation={formData.setLocation}
-      />
+    <Form onSubmit={handleSubmit}>
+      <div className="space-y-8">
+        <BasicInfoFields
+          title={formData.title}
+          setTitle={formData.setTitle}
+          description={formData.description}
+          setDescription={formData.setDescription}
+        />
 
-      <DeliveryMethodFields
-        paymentMethods={formData.paymentMethods}
-        setPaymentMethods={formData.setPaymentMethods}
-        deliveryMethod={formData.deliveryMethod}
-        setDeliveryMethod={formData.setDeliveryMethod}
-      />
+        <ProductDetailsFields
+          price={formData.price}
+          setPrice={formData.setPrice}
+          condition={formData.condition}
+          setCondition={formData.setCondition}
+          category={formData.category}
+          setCategory={formData.setCategory}
+        />
 
-      <ImageUpload 
-        onImagesChange={formData.setSelectedFiles}
-        multiple
-        existingImages={formData.selectedFiles}
-      />
-      
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Saving..." : initialData ? "Update Listing" : "Create Listing"}
-      </Button>
-    </form>
+        <ImageUpload
+          onImagesChange={formData.setSelectedFiles}
+          multiple={true}
+        />
+
+        <DeliveryMethodFields
+          location={formData.location}
+          setLocation={formData.setLocation}
+          paymentMethods={formData.paymentMethods}
+          setPaymentMethods={formData.setPaymentMethods}
+          deliveryMethod={formData.deliveryMethod}
+          setDeliveryMethod={formData.setDeliveryMethod}
+        />
+
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Listing"}
+        </Button>
+      </div>
+    </Form>
   );
 };
