@@ -18,13 +18,12 @@ export const ReportsManagement = () => {
         .from("issue_reports")
         .select(`
           *,
-          profiles!issue_reports_user_id_fkey(username)
+          profiles!issue_reports_user_id_profiles_fkey(username)
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
 
-      // Transform the data to match IssueReport type
       return data.map((report) => ({
         ...report,
         user: {
