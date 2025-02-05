@@ -8,6 +8,7 @@ const ReportsManagement = lazy(() => import("@/pages/admin/ReportsManagement").t
 const AdsManagement = lazy(() => import("@/pages/admin/AdsManagement").then(module => ({ default: module.AdsManagement })));
 const PostModeration = lazy(() => import("@/pages/admin/PostModeration"));
 const CategoriesManagement = lazy(() => import("@/pages/admin/CategoriesManagement"));
+const MarketplaceManagement = lazy(() => import("@/pages/admin/MarketplaceManagement").then(module => ({ default: module.MarketplaceManagement })));
 const AdminSignIn = lazy(() => import("@/pages/admin/SignIn").then(module => ({ default: module.default })));
 
 export const adminRoutes: RouteObject[] = [
@@ -42,6 +43,14 @@ export const adminRoutes: RouteObject[] = [
         <AdminLayout>
           <CategoriesManagement />
         </AdminLayout>
+      </ProtectedAdminRoute>
+    )
+  },
+  {
+    path: "/admin/marketplace",
+    element: (
+      <ProtectedAdminRoute>
+        <MarketplaceManagement />
       </ProtectedAdminRoute>
     )
   },

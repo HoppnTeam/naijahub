@@ -917,6 +917,39 @@ export type Database = {
           },
         ]
       }
+      marketplace_moderation_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          listing_type: Database["public"]["Enums"]["marketplace_listing_type"]
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          listing_type: Database["public"]["Enums"]["marketplace_listing_type"]
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          listing_type?: Database["public"]["Enums"]["marketplace_listing_type"]
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       moderation_reports: {
         Row: {
           created_at: string
@@ -1570,6 +1603,7 @@ export type Database = {
       auto_marketplace_section: "vehicles" | "parts"
       delivery_method: "shipping" | "pickup" | "both"
       listing_status: "active" | "sold" | "pending" | "cancelled"
+      marketplace_listing_type: "auto" | "tech"
       payment_method: "online" | "cash_on_delivery" | "in_person"
       report_category:
         | "content"
