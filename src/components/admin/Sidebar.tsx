@@ -7,10 +7,12 @@ import {
   Settings,
   List,
   LayoutDashboard,
+  LineChart,
 } from "lucide-react";
 
 const navigation = [
   { name: "Overview", to: "/admin", icon: ChartBar },
+  { name: "Analytics", to: "/admin/analytics", icon: LineChart },
   { name: "Users", to: "/admin/users", icon: Users },
   { name: "Content Moderation", to: "/admin/posts", icon: FileText },
   { name: "Reports", to: "/admin/reports", icon: Flag },
