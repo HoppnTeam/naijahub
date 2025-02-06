@@ -12,31 +12,35 @@ export const adminRoutes = [
     element: <ProtectedAdminRoute>
       <Dashboard />
     </ProtectedAdminRoute>,
-    children: [
-      {
-        path: "",
-        element: <Dashboard />
-      },
-      {
-        path: "categories",
-        element: <CategoriesManagement />
-      },
-      {
-        path: "posts",
-        element: <PostModeration />
-      },
-      {
-        path: "reports",
-        element: <ReportsManagement />
-      },
-      {
-        path: "ads",
-        element: <AdsManagement />
-      },
-      {
-        path: "settings",
-        element: <Settings />
-      }
-    ]
+  },
+  {
+    path: "/admin/categories",
+    element: <ProtectedAdminRoute>
+      <CategoriesManagement />
+    </ProtectedAdminRoute>,
+  },
+  {
+    path: "/admin/posts",
+    element: <ProtectedAdminRoute>
+      <PostModeration />
+    </ProtectedAdminRoute>,
+  },
+  {
+    path: "/admin/reports",
+    element: <ProtectedAdminRoute>
+      <ReportsManagement />
+    </ProtectedAdminRoute>,
+  },
+  {
+    path: "/admin/ads",
+    element: <ProtectedAdminRoute>
+      <AdsManagement />
+    </ProtectedAdminRoute>,
+  },
+  {
+    path: "/admin/settings",
+    element: <ProtectedAdminRoute>
+      <Settings />
+    </ProtectedAdminRoute>,
   }
 ];

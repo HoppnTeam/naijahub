@@ -13,4 +13,16 @@ export interface Profile {
   location?: string | null;
   status?: string;
   user_roles?: { role: string }[];
+  posts?: {
+    id: string;
+    title: string;
+    content: string;
+    created_at: string;
+    category_id?: string;
+    image_url?: string;
+    _count?: {
+      comments: number;
+      likes: number;
+    };
+  }[];
 }
