@@ -12,6 +12,8 @@ import { AdForm } from "@/components/admin/ads/AdForm";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./ads/columns";
 import { LoadingState } from "@/components/admin/LoadingState";
+import { BackNavigation } from "@/components/BackNavigation";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const AdsContent = ({ onEdit }: { onEdit: (ad: any) => void }) => {
   const { data: advertisements, isLoading } = useQuery({
@@ -52,26 +54,31 @@ export const AdsManagement = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Advertisements</h1>
-        <Button onClick={handleCreate}>Create Advertisement</Button>
+    <AdminLayout>
+      <div className="p-6">
+        <BackNavigation />
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Advertisements</h1>
+          <Button onClick={handleCreate}>Create Advertisement</Button>
+        </div>
+
+        <Suspense fallback={<LoadingState />}>
+          <AdsContent onEdit={handleEdit} />
+        </Suspense>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                {selectedAd ? "Edit Advertisement" : "Create Advertisement"}
+              </DialogTitle>
+            </DialogHeader>
+            <AdForm initialData={selectedAd} />
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <Suspense fallback={<LoadingState />}>
-        <AdsContent onEdit={handleEdit} />
-      </Suspense>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedAd ? "Edit Advertisement" : "Create Advertisement"}
-            </DialogTitle>
-          </DialogHeader>
-          <AdForm initialData={selectedAd} />
-        </DialogContent>
-      </Dialog>
-    </div>
+    </AdminLayout>
   );
 };
+
+export default AdsManagement;

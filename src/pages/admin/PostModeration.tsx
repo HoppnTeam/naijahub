@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ViolationTable } from "@/components/admin/post-moderation/ViolationTable";
 import { ReviewViolationDialog } from "@/components/admin/post-moderation/ReviewViolationDialog";
 import { LoadingState } from "@/components/admin/LoadingState";
+import { BackNavigation } from "@/components/BackNavigation";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import type { PostViolation } from "@/components/admin/post-moderation/types";
 
 const ModeratorContent = ({
@@ -120,25 +122,28 @@ const PostModeration = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Content Moderation</h1>
+    <AdminLayout>
+      <div className="p-6">
+        <BackNavigation />
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Content Moderation</h1>
+        </div>
+
+        <Suspense fallback={<LoadingState />}>
+          <ModeratorContent onReviewClick={setSelectedViolation} />
+        </Suspense>
+
+        <ReviewViolationDialog
+          violation={selectedViolation}
+          actionNotes={actionNotes}
+          selectedAction={selectedAction}
+          onActionNotesChange={setActionNotes}
+          onActionChange={setSelectedAction}
+          onClose={handleCloseDialog}
+          onSubmit={handleReviewViolation}
+        />
       </div>
-
-      <Suspense fallback={<LoadingState />}>
-        <ModeratorContent onReviewClick={setSelectedViolation} />
-      </Suspense>
-
-      <ReviewViolationDialog
-        violation={selectedViolation}
-        actionNotes={actionNotes}
-        selectedAction={selectedAction}
-        onActionNotesChange={setActionNotes}
-        onActionChange={setSelectedAction}
-        onClose={handleCloseDialog}
-        onSubmit={handleReviewViolation}
-      />
-    </div>
+    </AdminLayout>
   );
 };
 

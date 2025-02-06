@@ -12,6 +12,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { LoadingState } from "@/components/admin/LoadingState";
+import { BackNavigation } from "@/components/BackNavigation";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import type { IssueReport } from "@/components/reports/types";
 
 const ReportsContent = () => {
@@ -90,14 +92,19 @@ const ReportsContent = () => {
 
 export const ReportsManagement = () => {
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Issue Reports</h1>
-      </div>
+    <AdminLayout>
+      <div className="p-6">
+        <BackNavigation />
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Issue Reports</h1>
+        </div>
 
-      <Suspense fallback={<LoadingState />}>
-        <ReportsContent />
-      </Suspense>
-    </div>
+        <Suspense fallback={<LoadingState />}>
+          <ReportsContent />
+        </Suspense>
+      </div>
+    </AdminLayout>
   );
 };
+
+export default ReportsManagement;
