@@ -11,11 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { LoadingState } from "@/components/admin/LoadingState";
 
+type ListingStatus = 'active' | 'inactive' | 'suspended';
+
 interface FilterState {
   search: string;
   status: string;
   minPrice: string;
   maxPrice: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
 }
 
 export const MarketplaceManagement = () => {
@@ -25,6 +29,8 @@ export const MarketplaceManagement = () => {
     status: "all",
     minPrice: "",
     maxPrice: "",
+    sortBy: "created_at",
+    sortOrder: "desc"
   });
   const { toast } = useToast();
 
@@ -51,7 +57,7 @@ export const MarketplaceManagement = () => {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
       if (filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status as ListingStatus);
       }
       if (filters.minPrice) {
         query = query.gte('price', parseFloat(filters.minPrice));
@@ -59,6 +65,9 @@ export const MarketplaceManagement = () => {
       if (filters.maxPrice) {
         query = query.lte('price', parseFloat(filters.maxPrice));
       }
+
+      // Apply sorting
+      query = query.order(filters.sortBy, { ascending: filters.sortOrder === 'asc' });
 
       const { data, error } = await query;
       if (error) throw error;
@@ -89,7 +98,7 @@ export const MarketplaceManagement = () => {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
       if (filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status as ListingStatus);
       }
       if (filters.minPrice) {
         query = query.gte('price', parseFloat(filters.minPrice));
@@ -97,6 +106,9 @@ export const MarketplaceManagement = () => {
       if (filters.maxPrice) {
         query = query.lte('price', parseFloat(filters.maxPrice));
       }
+
+      // Apply sorting
+      query = query.order(filters.sortBy, { ascending: filters.sortOrder === 'asc' });
 
       const { data, error } = await query;
       if (error) throw error;
@@ -196,7 +208,7 @@ export const MarketplaceManagement = () => {
         
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Filters</CardTitle>
+            <CardTitle>Filters & Sorting</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -245,6 +257,40 @@ export const MarketplaceManagement = () => {
                   value={filters.maxPrice}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Sort By</Label>
+                <Select
+                  value={filters.sortBy}
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="created_at">Date Created</SelectItem>
+                    <SelectItem value="price">Price</SelectItem>
+                    <SelectItem value="title">Title</SelectItem>
+                    <SelectItem value="status">Status</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Sort Order</Label>
+                <Select
+                  value={filters.sortOrder}
+                  onValueChange={(value: 'asc' | 'desc') => setFilters(prev => ({ ...prev, sortOrder: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                    <SelectItem value="desc">Descending</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardContent>
