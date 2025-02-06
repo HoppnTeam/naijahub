@@ -66,6 +66,13 @@ export type Database = {
             foreignKeyName: "fk_admin_profiles"
             columns: ["admin_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_admin_profiles"
+            columns: ["admin_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -154,6 +161,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "auto_marketplace_listings"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "auto_marketplace_comments_user_id_fkey"
@@ -290,6 +304,13 @@ export type Database = {
             foreignKeyName: "auto_marketplace_listings_seller_id_profiles_fkey"
             columns: ["seller_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_listings_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -346,6 +367,13 @@ export type Database = {
             foreignKeyName: "auto_marketplace_orders_buyer_id_fkey"
             columns: ["buyer_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -355,6 +383,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "auto_marketplace_listings"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "auto_marketplace_orders_seller_id_fkey"
@@ -405,7 +440,21 @@ export type Database = {
             foreignKeyName: "auto_marketplace_reviews_reviewed_id_fkey"
             columns: ["reviewed_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_reviews_reviewed_id_fkey"
+            columns: ["reviewed_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "auto_marketplace_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
             referencedColumns: ["user_id"]
           },
           {
@@ -585,6 +634,13 @@ export type Database = {
             foreignKeyName: "car_reviews_user_id_profiles_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "car_reviews_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -679,6 +735,13 @@ export type Database = {
             foreignKeyName: "celebrity_posts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "celebrity_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -713,6 +776,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "comments_user_id_profiles_fkey"
@@ -801,7 +871,21 @@ export type Database = {
             foreignKeyName: "followers_follower_id_fkey"
             columns: ["follower_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "followers_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "followers_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
             referencedColumns: ["user_id"]
           },
           {
@@ -857,6 +941,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "issue_reports_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "issue_reports_user_id_profiles_fkey"
             columns: ["user_id"]
@@ -929,7 +1020,21 @@ export type Database = {
             foreignKeyName: "marketplace_chats_receiver_id_fkey"
             columns: ["receiver_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "marketplace_chats_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "marketplace_chats_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
             referencedColumns: ["user_id"]
           },
           {
@@ -973,6 +1078,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "marketplace_chats"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "marketplace_messages_sender_id_fkey"
@@ -1196,6 +1308,13 @@ export type Database = {
             foreignKeyName: "posts_user_id_profiles_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1212,8 +1331,10 @@ export type Database = {
           following_count: number | null
           id: string
           interests: string[] | null
+          level: number | null
           location: string | null
           phone_number: string | null
+          points: number | null
           status: string | null
           updated_at: string
           user_id: string
@@ -1229,8 +1350,10 @@ export type Database = {
           following_count?: number | null
           id?: string
           interests?: string[] | null
+          level?: number | null
           location?: string | null
           phone_number?: string | null
+          points?: number | null
           status?: string | null
           updated_at?: string
           user_id: string
@@ -1246,8 +1369,10 @@ export type Database = {
           following_count?: number | null
           id?: string
           interests?: string[] | null
+          level?: number | null
           location?: string | null
           phone_number?: string | null
+          points?: number | null
           status?: string | null
           updated_at?: string
           user_id?: string
@@ -1366,6 +1491,13 @@ export type Database = {
             foreignKeyName: "tech_jobs_user_id_profiles_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tech_jobs_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1454,6 +1586,13 @@ export type Database = {
             foreignKeyName: "tech_marketplace_listings_seller_id_profiles_fkey"
             columns: ["seller_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tech_marketplace_listings_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1510,6 +1649,13 @@ export type Database = {
             foreignKeyName: "tech_marketplace_orders_buyer_id_profiles_fkey"
             columns: ["buyer_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tech_marketplace_orders_buyer_id_profiles_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1519,6 +1665,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "tech_marketplace_listings"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tech_marketplace_orders_seller_id_profiles_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "tech_marketplace_orders_seller_id_profiles_fkey"
@@ -1598,6 +1751,13 @@ export type Database = {
             foreignKeyName: "user_achievements_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1654,6 +1814,13 @@ export type Database = {
             foreignKeyName: "user_roles_user_id_profiles_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
@@ -1696,9 +1863,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          avatar_url: string | null
+          level: number | null
+          points: number | null
+          rank: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_weekly_leaderboard: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          username: string
+          avatar_url: string
+          points: number
+          level: number
+          user_id: string
+          rank: number
+        }[]
+      }
       has_role: {
         Args: {
           user_id: string

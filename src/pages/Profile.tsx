@@ -11,6 +11,7 @@ import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
 import { OrdersList } from "@/components/marketplace/OrdersList";
 import { AchievementsTab } from "@/components/profile/AchievementsTab";
+import { LeaderboardTab } from "@/components/profile/LeaderboardTab";
 import { useProfile } from "@/hooks/useProfile";
 import type { Post } from "@/types/post";
 
@@ -80,6 +81,7 @@ const Profile = () => {
           <TabsList>
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="achievements">Achievements</TabsTrigger>
+            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           </TabsList>
@@ -90,6 +92,10 @@ const Profile = () => {
 
           <TabsContent value="achievements">
             <AchievementsTab userId={profile.user_id} />
+          </TabsContent>
+
+          <TabsContent value="leaderboard">
+            <LeaderboardTab />
           </TabsContent>
 
           <TabsContent value="orders">

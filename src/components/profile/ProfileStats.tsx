@@ -12,12 +12,12 @@ export const ProfileStats = ({ profile }: ProfileStatsProps) => {
       value: profile.posts?.length || 0,
     },
     {
-      label: "Comments",
-      value: profile.posts?.reduce((acc, post) => acc + (post._count?.comments || 0), 0) || 0,
+      label: "Level",
+      value: profile.level || 1,
     },
     {
-      label: "Likes Received",
-      value: profile.posts?.reduce((acc, post) => acc + (post._count?.likes || 0), 0) || 0,
+      label: "Points",
+      value: profile.points || 0,
     },
   ];
 
