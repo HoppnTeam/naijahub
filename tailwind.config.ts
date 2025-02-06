@@ -25,11 +25,11 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#32a852', // Updated to the specified green
-          foreground: '#FFFFFF' // Changed back to white for better contrast on darker green
+          DEFAULT: '#32a852',
+          foreground: '#FFFFFF'
         },
         secondary: {
-          DEFAULT: '#E2725B', // Terracotta
+          DEFAULT: '#E2725B',
           foreground: '#FFFFFF'
         },
         destructive: {
@@ -37,11 +37,11 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))'
         },
         muted: {
-          DEFAULT: '#F5F5F5',
-          foreground: '#666666'
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: '#E2725B', // Terracotta
+          DEFAULT: '#E2725B',
           foreground: '#FFFFFF'
         },
         popover: {

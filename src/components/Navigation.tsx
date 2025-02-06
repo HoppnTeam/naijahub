@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { UserMenu } from "./UserMenu";
+import { ThemeToggle } from "./theme/ThemeToggle";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export const Navigation = () => {
           NaijaHub
         </h1>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <UserMenu />
         </div>
       </div>

@@ -8,9 +8,8 @@ import { adminRoutes } from "@/routes/adminRoutes";
 import { categoryRoutes } from "@/routes/categoryRoutes";
 import { mainRoutes } from "@/routes/mainRoutes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { useToast } from "@/hooks/use-toast";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
-// Create a client with error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -37,47 +36,44 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProvider>
-          <ErrorBoundary>
-            <div className="min-h-screen flex flex-col">
-              <Navigation />
-              <main className="flex-grow">
-                <Routes>
-                  {/* Main Routes */}
-                  {mainRoutes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-
-                  {/* Admin Routes */}
-                  {adminRoutes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-
-                  {/* Category Routes */}
-                  {categoryRoutes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-                </Routes>
-              </main>
-              <Footer />
-              <Toaster />
-            </div>
-          </ErrorBoundary>
-        </AuthProvider>
-      </Router>
+      <ThemeProvider defaultTheme="system" storageKey="naijahub-theme">
+        <Router>
+          <AuthProvider>
+            <ErrorBoundary>
+              <div className="min-h-screen flex flex-col">
+                <Navigation />
+                <main className="flex-grow">
+                  <Routes>
+                    {mainRoutes.map((route) => (
+                      <Route
+                        key={route.path}
+                        path={route.path}
+                        element={route.element}
+                      />
+                    ))}
+                    {adminRoutes.map((route) => (
+                      <Route
+                        key={route.path}
+                        path={route.path}
+                        element={route.element}
+                      />
+                    ))}
+                    {categoryRoutes.map((route) => (
+                      <Route
+                        key={route.path}
+                        path={route.path}
+                        element={route.element}
+                      />
+                    ))}
+                  </Routes>
+                </main>
+                <Footer />
+                <Toaster />
+              </div>
+            </ErrorBoundary>
+          </AuthProvider>
+        </Router>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
