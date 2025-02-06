@@ -11,12 +11,11 @@ import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCr
 
 interface LocationState {
   category?: string;
-  categoryId?: string;
 }
 
 export default function CreatePost() {
   const location = useLocation();
-  const { category, categoryId } = (location.state as LocationState) || {};
+  const { category } = (location.state as LocationState) || {};
 
   const renderCategoryForm = () => {
     switch (category) {
@@ -37,7 +36,7 @@ export default function CreatePost() {
       case "Culture & Personals":
         return <CultureCreatePost />;
       case "Automotive":
-        return categoryId ? <AutomotiveCreatePost categoryId={categoryId} /> : null;
+        return <AutomotiveCreatePost />;
       default:
         return (
           <div className="container py-8">

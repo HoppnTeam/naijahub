@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import { CategorySelect } from "@/components/posts/CategorySelect";
 import { LiveDiscussionToggle } from "@/components/posts/LiveDiscussionToggle";
-import { useToast } from "@/hooks/use-toast";
 import { BackNavigation } from "@/components/BackNavigation";
 
 export const AutomotiveCreatePost = () => {
@@ -38,7 +38,8 @@ export const AutomotiveCreatePost = () => {
             content,
             image_url: imageUrl,
             user_id: user.id,
-            category_id: selectedSubcategoryId,
+            category_id: "automotive",
+            subcategory_id: selectedSubcategoryId,
             is_live: isLive,
           },
         ])
@@ -52,7 +53,7 @@ export const AutomotiveCreatePost = () => {
         description: "Your automotive post has been created.",
       });
 
-      navigate(`/posts/${post.id}`);
+      navigate(`/categories/automotive`);
     } catch (error) {
       console.error("Error creating post:", error);
       toast({
