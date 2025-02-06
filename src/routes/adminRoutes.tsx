@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { Dashboard } from "@/pages/admin/Dashboard";
 import { Analytics } from "@/pages/admin/Analytics";
-import { SignIn } from "@/pages/admin/SignIn";
+import AdminSignIn from "@/pages/admin/SignIn";
 import { Settings } from "@/pages/admin/Settings";
 import { CategoriesManagement } from "@/pages/admin/CategoriesManagement";
-import { PostModeration } from "@/pages/admin/PostModeration";
+import PostModeration from "@/pages/admin/PostModeration";
 import { ReportsManagement } from "@/pages/admin/ReportsManagement";
 import { AdsManagement } from "@/pages/admin/AdsManagement";
 import { MarketplaceManagement } from "@/pages/admin/MarketplaceManagement";
@@ -13,7 +13,7 @@ import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 export const adminRoutes = [
   {
     path: "/admin/sign-in",
-    element: <SignIn />,
+    element: <AdminSignIn />,
   },
   {
     path: "/admin",

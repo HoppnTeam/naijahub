@@ -11,6 +11,7 @@ import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
 import { OrdersList } from "@/components/marketplace/OrdersList";
 import { useProfile } from "@/hooks/useProfile";
+import type { Post } from "@/types/post";
 
 const Profile = () => {
   const { id } = useParams();
@@ -57,10 +58,15 @@ const Profile = () => {
 
   const isProfileEmpty = !profile.bio && !profile.location && !profile.interests?.length && !profile.community_intent;
 
-  // Transform posts to include user_id
-  const postsWithUserId = profile.posts?.map(post => ({
+  // Transform posts to include required fields from Post type
+  const postsWithRequiredFields: Post[] = profile.posts?.map(post => ({
     ...post,
-    user_id: profile.user_id // Add user_id from profile
+    user_id: profile.user_id,
+    category_id: post.category_id || '', // Provide a default value
+    subcategory_id: post.subcategory_id,
+    pinned: post.pinned || false,
+    is_live: post.is_live || false,
+    is_draft: post.is_draft || false,
   })) || [];
 
   return (
@@ -77,7 +83,7 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="posts">
-            <ProfilePosts posts={postsWithUserId} />
+            <ProfilePosts posts={postsWithRequiredFields} />
           </TabsContent>
 
           <TabsContent value="orders">

@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingState } from "@/components/admin/LoadingState";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 
 export const Analytics = () => {
   const { data: stats, isLoading: isLoadingStats } = useQuery({
@@ -109,18 +108,18 @@ export const Analytics = () => {
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
-              <ChartContainer>
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={activityData}>
                   <XAxis dataKey="date" />
                   <YAxis />
+                  <Tooltip />
                   <Bar
                     dataKey="activities"
                     fill="#32a852"
                     radius={[4, 4, 0, 0]}
                   />
-                  <ChartTooltip />
                 </BarChart>
-              </ChartContainer>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
