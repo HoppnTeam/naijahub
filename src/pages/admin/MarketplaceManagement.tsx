@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AdminLayout } from "@/components/admin/AdminLayout";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ListingTabs } from "@/components/marketplace/management";
-import { useState } from "react";
 import { ListingEditDialog } from "@/components/marketplace/management";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { LoadingState } from "@/components/admin/LoadingState";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
-type ListingStatus = 'active' | 'inactive' | 'suspended';
+const ITEMS_PER_PAGE = 15;
+
+type ListingStatus = 'active' | 'sold' | 'pending' | 'cancelled';
 
 interface FilterState {
   search: string;
@@ -24,6 +27,7 @@ interface FilterState {
 
 export const MarketplaceManagement = () => {
   const [editingListing, setEditingListing] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     status: "all",
@@ -35,7 +39,7 @@ export const MarketplaceManagement = () => {
   const { toast } = useToast();
 
   const { data: techListings, isLoading: techLoading, refetch: refetchTech } = useQuery({
-    queryKey: ['admin-tech-listings', filters],
+    queryKey: ['admin-tech-listings', filters, currentPage],
     queryFn: async () => {
       let query = supabase
         .from('tech_marketplace_listings')
@@ -69,6 +73,10 @@ export const MarketplaceManagement = () => {
       // Apply sorting
       query = query.order(filters.sortBy, { ascending: filters.sortOrder === 'asc' });
 
+      // Apply pagination
+      query = query
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+
       const { data, error } = await query;
       if (error) throw error;
       return data;
@@ -76,7 +84,7 @@ export const MarketplaceManagement = () => {
   });
 
   const { data: autoListings, isLoading: autoLoading, refetch: refetchAuto } = useQuery({
-    queryKey: ['admin-auto-listings', filters],
+    queryKey: ['admin-auto-listings', filters, currentPage],
     queryFn: async () => {
       let query = supabase
         .from('auto_marketplace_listings')
@@ -109,6 +117,10 @@ export const MarketplaceManagement = () => {
 
       // Apply sorting
       query = query.order(filters.sortBy, { ascending: filters.sortOrder === 'asc' });
+
+      // Apply pagination
+      query = query
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
 
       const { data, error } = await query;
       if (error) throw error;
@@ -191,6 +203,10 @@ export const MarketplaceManagement = () => {
     console.log("Opening chat for listing:", listingId);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   if (techLoading || autoLoading) {
     return (
       <AdminLayout>
@@ -233,8 +249,9 @@ export const MarketplaceManagement = () => {
                   <SelectContent>
                     <SelectItem value="all">All</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="sold">Sold</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -305,6 +322,35 @@ export const MarketplaceManagement = () => {
               onDelete={handleDelete}
               onChatOpen={handleChatOpen}
             />
+
+            <div className="mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  {[...Array(5)].map((_, i) => (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(i + 1)}
+                        isActive={currentPage === i + 1}
+                      >
+                        {i + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={currentPage === 5 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </CardContent>
         </Card>
 
