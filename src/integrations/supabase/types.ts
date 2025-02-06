@@ -747,6 +747,42 @@ export type Database = {
         }
         Relationships: []
       }
+      followers: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "followers_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "followers_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       issue_reports: {
         Row: {
           category: Database["public"]["Enums"]["report_category"]
@@ -1142,6 +1178,8 @@ export type Database = {
           community_intent: string | null
           contact_email: string | null
           created_at: string
+          followers_count: number | null
+          following_count: number | null
           id: string
           interests: string[] | null
           location: string | null
@@ -1157,6 +1195,8 @@ export type Database = {
           community_intent?: string | null
           contact_email?: string | null
           created_at?: string
+          followers_count?: number | null
+          following_count?: number | null
           id?: string
           interests?: string[] | null
           location?: string | null
@@ -1172,6 +1212,8 @@ export type Database = {
           community_intent?: string | null
           contact_email?: string | null
           created_at?: string
+          followers_count?: number | null
+          following_count?: number | null
           id?: string
           interests?: string[] | null
           location?: string | null

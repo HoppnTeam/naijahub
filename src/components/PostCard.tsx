@@ -1,80 +1,58 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, TrendingUp, Tag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Post } from "@/types/post";
+import { formatDistanceToNow } from "date-fns";
+import { SocialShare } from "./SocialShare";
+import { FollowButton } from "./FollowButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PostCardProps {
-  post: Post;
+  post: {
+    id: string;
+    title: string;
+    content: string;
+    created_at: string;
+    user: {
+      id: string;
+      username: string;
+      avatar_url?: string;
+    };
+  };
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
-  const navigate = useNavigate();
-
-  // Format price if it exists
-  const formattedPrice = post.price 
-    ? `₦${post.price.toLocaleString()}`
-    : null;
+  const { user } = useAuth();
+  const postUrl = `${window.location.origin}/posts/${post.id}`;
 
   return (
-    <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate(`/posts/${post.id}`)}
-    >
-      {post.image_url && (
-        <div className="aspect-video w-full overflow-hidden">
-          <img
-            src={post.image_url}
-            alt={post.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-      <CardHeader>
-        <div className="flex items-center space-x-4 mb-4">
-          <Avatar>
-            <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
-            <AvatarFallback>
-              {post.profiles?.username?.substring(0, 2).toUpperCase() ?? "U"}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium">{post.profiles?.username}</p>
-            <p className="text-xs text-muted-foreground">
-              {new Date(post.created_at).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-        <CardTitle className="line-clamp-2">
-          {post.title}
-          {formattedPrice && (
-            <span className="ml-2 text-green-600 font-bold">
-              {formattedPrice}
-            </span>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground line-clamp-3 mb-4">
-          {post.content}
-        </p>
-        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-          {post.condition && (
-            <div className="flex items-center gap-1">
-              <Tag className="w-4 h-4" />
-              <span>{post.condition}</span>
+    <Card className="mb-4">
+      <CardContent className="pt-6">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center">
+            <Avatar className="h-10 w-10 mr-2">
+              <AvatarImage src={post.user.avatar_url} />
+              <AvatarFallback>
+                {post.user.username.substring(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-medium">{post.user.username}</p>
+              <p className="text-sm text-muted-foreground">
+                {formatDistanceToNow(new Date(post.created_at), {
+                  addSuffix: true,
+                })}
+              </p>
             </div>
+          </div>
+          {user && user.id !== post.user.id && (
+            <FollowButton targetUserId={post.user.id} />
           )}
-          <div className="flex items-center gap-1">
-            <MessageCircle className="w-4 h-4" />
-            <span>{post._count?.comments || 0}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <TrendingUp className="w-4 h-4" />
-            <span>{post._count?.likes || 0}</span>
-          </div>
         </div>
+        <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+        <p className="text-muted-foreground">{post.content}</p>
       </CardContent>
+      <CardFooter className="flex justify-between">
+        <SocialShare title={post.title} url={postUrl} />
+      </CardFooter>
     </Card>
   );
 };
