@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { SocialShare } from "./SocialShare";
+import { PostActions } from "./PostActions";
 import { FollowButton } from "./FollowButton";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -20,6 +20,10 @@ interface PostCardProps {
     profiles?: {
       username: string;
       avatar_url?: string;
+    };
+    _count?: {
+      likes: number;
+      comments: number;
     };
   };
 }
@@ -62,8 +66,12 @@ export const PostCard = ({ post }: PostCardProps) => {
         <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
         <p className="text-muted-foreground">{post.content}</p>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <SocialShare title={post.title} url={postUrl} />
+      <CardFooter>
+        <PostActions
+          postId={post.id}
+          initialLikesCount={post._count?.likes || 0}
+          commentsCount={post._count?.comments || 0}
+        />
       </CardFooter>
     </Card>
   );
