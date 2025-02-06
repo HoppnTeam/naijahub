@@ -1,14 +1,9 @@
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 import { Dashboard } from "@/pages/admin/Dashboard";
-import { AdminUsers } from "@/pages/admin/AdminUsers";
-import { AdminPosts } from "@/pages/admin/AdminPosts";
-import { AdminCategories } from "@/pages/admin/AdminCategories";
-import { AdminReports } from "@/pages/admin/AdminReports";
-import { AdminViolations } from "@/pages/admin/AdminViolations";
-import { AdminAdvertisements } from "@/pages/admin/AdminAdvertisements";
-import { AdminActivityLogs } from "@/pages/admin/AdminActivityLogs";
-import { AdminWorkshops } from "@/pages/admin/AdminWorkshops";
-import { AdminJobs } from "@/pages/admin/AdminJobs";
+import { CategoriesManagement } from "@/pages/admin/CategoriesManagement";
+import PostModeration from "@/pages/admin/PostModeration";
+import { ReportsManagement } from "@/pages/admin/ReportsManagement";
+import { AdsManagement } from "@/pages/admin/AdsManagement";
 import { MarketplaceManagement } from "@/pages/admin/MarketplaceManagement";
 
 export const adminRoutes = [
@@ -21,40 +16,20 @@ export const adminRoutes = [
         element: <Dashboard />,
       },
       {
-        path: "users",
-        element: <AdminUsers />,
-      },
-      {
         path: "posts",
-        element: <AdminPosts />,
+        element: <PostModeration />,
       },
       {
         path: "categories",
-        element: <AdminCategories />,
+        element: <CategoriesManagement />,
       },
       {
         path: "reports",
-        element: <AdminReports />,
+        element: <ReportsManagement />,
       },
       {
-        path: "violations",
-        element: <AdminViolations />,
-      },
-      {
-        path: "advertisements",
-        element: <AdminAdvertisements />,
-      },
-      {
-        path: "activity-logs",
-        element: <AdminActivityLogs />,
-      },
-      {
-        path: "workshops",
-        element: <AdminWorkshops />,
-      },
-      {
-        path: "jobs",
-        element: <AdminJobs />,
+        path: "ads",
+        element: <AdsManagement />,
       },
       {
         path: "marketplace",

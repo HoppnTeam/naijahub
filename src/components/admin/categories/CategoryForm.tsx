@@ -42,7 +42,11 @@ export function CategoryForm({ onSuccess, initialData }: CategoryFormProps) {
       if (initialData?.id) {
         const { error } = await supabase
           .from("categories")
-          .update(values)
+          .update({
+            name: values.name,
+            description: values.description,
+            parent_id: values.parent_id,
+          })
           .eq("id", initialData.id);
 
         if (error) throw error;
@@ -50,7 +54,11 @@ export function CategoryForm({ onSuccess, initialData }: CategoryFormProps) {
       } else {
         const { error } = await supabase
           .from("categories")
-          .insert(values);
+          .insert({
+            name: values.name,
+            description: values.description,
+            parent_id: values.parent_id,
+          });
 
         if (error) throw error;
         toast.success("Category created successfully");
