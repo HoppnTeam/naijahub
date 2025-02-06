@@ -1,78 +1,124 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { AutomotivePostForm } from "./AutomotivePostForm";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/posts/ImageUpload";
+import { CategorySelect } from "@/components/posts/CategorySelect";
+import { LiveDiscussionToggle } from "@/components/posts/LiveDiscussionToggle";
+import { useToast } from "@/hooks/use-toast";
+import { BackNavigation } from "@/components/BackNavigation";
 
-interface AutomotiveCreatePostProps {
-  categoryId: string;
-}
-
-export const AutomotiveCreatePost = ({ categoryId }: AutomotiveCreatePostProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const AutomotiveCreatePost = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLive, setIsLive] = useState(false);
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (formData: {
-    title: string;
-    content: string;
-    image_url?: string;
-  }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
     try {
-      setIsLoading(true);
+      setIsSubmitting(true);
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        toast({
-          title: "Authentication required",
-          description: "Please sign in to create a post",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { error } = await supabase.from("posts").insert({
-        title: formData.title,
-        content: formData.content,
-        image_url: formData.image_url,
-        user_id: user.id,
-        category_id: categoryId,
-        subcategory_id: selectedSubcategoryId,
-      });
+      const { data: post, error } = await supabase
+        .from("posts")
+        .insert([
+          {
+            title,
+            content,
+            image_url: imageUrl,
+            user_id: user.id,
+            category_id: selectedSubcategoryId,
+            is_live: isLive,
+          },
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Your post has been created",
+        title: "Success!",
+        description: "Your automotive post has been created.",
       });
 
-      navigate("/categories/automotive");
+      navigate(`/posts/${post.id}`);
     } catch (error) {
       console.error("Error creating post:", error);
       toast({
         title: "Error",
-        description: "There was an error creating your post",
+        description: "Failed to create post. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container max-w-3xl py-6">
-      <h1 className="text-3xl font-bold mb-6">Create Automotive Post</h1>
-      <AutomotivePostForm
-        onSubmit={handleSubmit}
-        categoryName="Automotive"
-        selectedSubcategoryId={selectedSubcategoryId}
-        onSubcategoryChange={setSelectedSubcategoryId}
-      />
+    <div className="container mx-auto py-8">
+      <BackNavigation />
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Create Automotive Post</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <CategorySelect
+            selectedSubcategoryId={selectedSubcategoryId}
+            onSubcategoryChange={setSelectedSubcategoryId}
+            categoryName="Automotive"
+          />
+
+          <div className="space-y-2">
+            <Input
+              placeholder="Post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="text-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Write your post content here..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              className="min-h-[200px]"
+            />
+          </div>
+
+          <ImageUpload
+            onImagesChange={(files) => {
+              if (files.length > 0) {
+                // Handle the first image only since we only need one
+                const file = files[0];
+                // You might want to handle the image upload here
+                setImageUrl(URL.createObjectURL(file));
+              }
+            }}
+            currentImageUrl={imageUrl}
+            onImageUploaded={setImageUrl}
+            bucket="post-images"
+          />
+
+          <LiveDiscussionToggle isLive={isLive} onLiveChange={setIsLive} />
+
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Creating..." : "Create Post"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
