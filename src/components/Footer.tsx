@@ -11,7 +11,7 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">About NaijaHub</h3>
             <p className="text-[#8E9196] text-sm">
-              Connecting Nigerians worldwide through news, culture, and community.
+              The Pulse of Nigeria - Connecting Nigerians Worldwide
             </p>
           </div>
 
