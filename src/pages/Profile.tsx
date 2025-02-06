@@ -10,6 +10,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfilePosts } from "@/components/profile/ProfilePosts";
 import { OrdersList } from "@/components/marketplace/OrdersList";
+import { AchievementsTab } from "@/components/profile/AchievementsTab";
 import { useProfile } from "@/hooks/useProfile";
 import type { Post } from "@/types/post";
 
@@ -62,7 +63,7 @@ const Profile = () => {
   const postsWithRequiredFields: Post[] = profile.posts?.map(post => ({
     ...post,
     user_id: profile.user_id,
-    category_id: post.category_id || '', // Provide a default value
+    category_id: post.category_id || '',
     subcategory_id: post.subcategory_id,
     pinned: post.pinned || false,
     is_live: post.is_live || false,
@@ -78,12 +79,17 @@ const Profile = () => {
         <Tabs defaultValue="posts" className="space-y-6 mt-8">
           <TabsList>
             <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="achievements">Achievements</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts">
             <ProfilePosts posts={postsWithRequiredFields} />
+          </TabsContent>
+
+          <TabsContent value="achievements">
+            <AchievementsTab userId={profile.user_id} />
           </TabsContent>
 
           <TabsContent value="orders">
