@@ -57,6 +57,12 @@ const Profile = () => {
 
   const isProfileEmpty = !profile.bio && !profile.location && !profile.interests?.length && !profile.community_intent;
 
+  // Transform posts to include user_id
+  const postsWithUserId = profile.posts?.map(post => ({
+    ...post,
+    user_id: profile.user_id // Add user_id from profile
+  })) || [];
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container py-8">
@@ -71,7 +77,7 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="posts">
-            <ProfilePosts posts={profile.posts || []} />
+            <ProfilePosts posts={postsWithUserId} />
           </TabsContent>
 
           <TabsContent value="orders">

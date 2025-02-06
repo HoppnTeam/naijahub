@@ -30,7 +30,7 @@ export const RegularContent = ({
         .from("posts")
         .select(`
           *,
-          profiles (username, avatar_url),
+          profiles!posts_user_id_profiles_fkey (username, avatar_url),
           categories!posts_category_id_fkey (name),
           likes (count),
           comments (count)
