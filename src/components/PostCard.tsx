@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { PostActions } from "./PostActions";
 import { FollowButton } from "./FollowButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: {
@@ -30,6 +31,7 @@ interface PostCardProps {
 
 export const PostCard = ({ post }: PostCardProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const postUrl = `${window.location.origin}/posts/${post.id}`;
 
   // Use either user or profiles data
@@ -39,8 +41,21 @@ export const PostCard = ({ post }: PostCardProps) => {
     avatar_url: post.profiles?.avatar_url
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent navigation if clicking on buttons or links
+    if (
+      (e.target as HTMLElement).tagName === 'BUTTON' ||
+      (e.target as HTMLElement).closest('button') ||
+      (e.target as HTMLElement).tagName === 'A' ||
+      (e.target as HTMLElement).closest('a')
+    ) {
+      return;
+    }
+    navigate(`/posts/${post.id}`);
+  };
+
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 cursor-pointer hover:shadow-md transition-shadow" onClick={handleCardClick}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center">
