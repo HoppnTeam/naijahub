@@ -11,7 +11,7 @@ import { ImageUpload } from "@/components/posts/ImageUpload";
 import { BackNavigation } from "@/components/BackNavigation";
 
 interface HealthCreatePostProps {
-  categoryId: string;
+  categoryId?: string;
 }
 
 export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
@@ -26,7 +26,14 @@ export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to create a post",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -101,7 +108,7 @@ export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
                 setImageUrl(URL.createObjectURL(file));
               }
             }}
-            currentImageUrl={imageUrl}
+            currentImageUrl={imageUrl || undefined}
             onImageUploaded={setImageUrl}
             bucket="post-images"
           />
