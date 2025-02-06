@@ -12,6 +12,8 @@ export interface Profile {
   community_intent?: string | null;
   location?: string | null;
   status?: string;
+  points?: number;
+  level?: number;
   user_roles?: { role: string }[];
   posts?: {
     id: string;
@@ -19,7 +21,11 @@ export interface Profile {
     content: string;
     created_at: string;
     category_id?: string;
+    subcategory_id?: string;
     image_url?: string;
+    pinned?: boolean;
+    is_live?: boolean;
+    is_draft?: boolean;
     _count?: {
       comments: number;
       likes: number;

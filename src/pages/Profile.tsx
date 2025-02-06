@@ -65,7 +65,7 @@ const Profile = () => {
     ...post,
     user_id: profile.user_id,
     category_id: post.category_id || '',
-    subcategory_id: post.subcategory_id,
+    subcategory_id: post.subcategory_id || null,
     pinned: post.pinned || false,
     is_live: post.is_live || false,
     is_draft: post.is_draft || false,
