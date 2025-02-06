@@ -39,16 +39,10 @@ export function CategoryForm({ onSuccess, initialData }: CategoryFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const dataToSubmit = {
-        name: values.name,
-        description: values.description,
-        parent_id: values.parent_id || null,
-      };
-
       if (initialData?.id) {
         const { error } = await supabase
           .from("categories")
-          .update(dataToSubmit)
+          .update(values)
           .eq("id", initialData.id);
 
         if (error) throw error;
@@ -56,7 +50,7 @@ export function CategoryForm({ onSuccess, initialData }: CategoryFormProps) {
       } else {
         const { error } = await supabase
           .from("categories")
-          .insert(dataToSubmit);
+          .insert(values);
 
         if (error) throw error;
         toast.success("Category created successfully");

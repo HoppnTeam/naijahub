@@ -12,14 +12,4 @@ export interface Profile {
   community_intent?: string;
   location?: string;
   status?: string;
-  posts?: {
-    id: string;
-    title: string;
-    content: string;
-    created_at: string;
-    _count?: {
-      comments?: number;
-      likes?: number;
-    };
-  }[];
 }
