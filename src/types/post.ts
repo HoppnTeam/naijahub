@@ -11,14 +11,17 @@ export interface Post {
   is_live?: boolean | null;
   is_draft?: boolean | null;
   source_url?: string | null;
-  price?: number | null;
-  condition?: string | null;
   scheduled_publish_date?: string | null;
   seeking_gender?: string | null;
   age_range?: string | null;
   relationship_type?: string | null;
   location_preference?: string | null;
   interests?: string[] | null;
+  user?: {
+    id: string;
+    username: string;
+    avatar_url?: string | null;
+  };
   profiles?: {
     username: string;
     avatar_url?: string | null;

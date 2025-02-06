@@ -11,8 +11,13 @@ interface PostCardProps {
     title: string;
     content: string;
     created_at: string;
-    user: {
+    user_id?: string;
+    user?: {
       id: string;
+      username: string;
+      avatar_url?: string;
+    };
+    profiles?: {
       username: string;
       avatar_url?: string;
     };
@@ -23,19 +28,26 @@ export const PostCard = ({ post }: PostCardProps) => {
   const { user } = useAuth();
   const postUrl = `${window.location.origin}/posts/${post.id}`;
 
+  // Use either user or profiles data
+  const postUser = post.user || { 
+    id: post.user_id,
+    username: post.profiles?.username || 'Unknown User',
+    avatar_url: post.profiles?.avatar_url
+  };
+
   return (
     <Card className="mb-4">
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center">
             <Avatar className="h-10 w-10 mr-2">
-              <AvatarImage src={post.user.avatar_url} />
+              <AvatarImage src={postUser.avatar_url || undefined} />
               <AvatarFallback>
-                {post.user.username.substring(0, 2).toUpperCase()}
+                {postUser.username?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">{post.user.username}</p>
+              <p className="font-medium">{postUser.username}</p>
               <p className="text-sm text-muted-foreground">
                 {formatDistanceToNow(new Date(post.created_at), {
                   addSuffix: true,
@@ -43,8 +55,8 @@ export const PostCard = ({ post }: PostCardProps) => {
               </p>
             </div>
           </div>
-          {user && user.id !== post.user.id && (
-            <FollowButton targetUserId={post.user.id} />
+          {user && user.id !== postUser.id && (
+            <FollowButton targetUserId={postUser.id} />
           )}
         </div>
         <h3 className="text-xl font-semibold mb-2">{post.title}</h3>

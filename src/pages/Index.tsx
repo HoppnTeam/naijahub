@@ -53,6 +53,11 @@ const Index = () => {
       
       return data.map(post => ({
         ...post,
+        user: {
+          id: post.user_id,
+          username: post.profiles?.username || 'Unknown User',
+          avatar_url: post.profiles?.avatar_url
+        },
         _count: {
           likes: post.likes?.[0]?.count || 0,
           comments: post.comments?.[0]?.count || 0
