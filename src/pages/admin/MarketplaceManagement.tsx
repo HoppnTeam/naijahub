@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LoadingState } from "@/components/admin/LoadingState";
 import { MarketplaceFilters, FilterState } from "@/components/admin/marketplace/MarketplaceFilters";
 import { MarketplacePagination } from "@/components/admin/marketplace/MarketplacePagination";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const ITEMS_PER_PAGE = 15;
 
@@ -25,7 +26,7 @@ export const MarketplaceManagement = () => {
   });
   const { toast } = useToast();
 
-  const { data: techListings, isLoading: techLoading, refetch: refetchTech } = useQuery({
+  const { data: techListings, isLoading: techLoading, error: techError, refetch: refetchTech } = useQuery({
     queryKey: ['admin-tech-listings', filters, currentPage],
     queryFn: async () => {
       let query = supabase
@@ -48,7 +49,7 @@ export const MarketplaceManagement = () => {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
       if (filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status as 'active' | 'sold' | 'pending' | 'cancelled');
       }
       if (filters.minPrice) {
         query = query.gte('price', parseFloat(filters.minPrice));
@@ -70,7 +71,7 @@ export const MarketplaceManagement = () => {
     },
   });
 
-  const { data: autoListings, isLoading: autoLoading, refetch: refetchAuto } = useQuery({
+  const { data: autoListings, isLoading: autoLoading, error: autoError, refetch: refetchAuto } = useQuery({
     queryKey: ['admin-auto-listings', filters, currentPage],
     queryFn: async () => {
       let query = supabase
@@ -93,7 +94,7 @@ export const MarketplaceManagement = () => {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
       if (filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status as 'active' | 'sold' | 'pending' | 'cancelled');
       }
       if (filters.minPrice) {
         query = query.gte('price', parseFloat(filters.minPrice));
@@ -200,6 +201,18 @@ export const MarketplaceManagement = () => {
     );
   }
 
+  if (techError || autoError) {
+    return (
+      <AdminLayout>
+        <div className="p-6">
+          <ErrorBoundary>
+            <div>Error loading marketplace listings</div>
+          </ErrorBoundary>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -210,22 +223,24 @@ export const MarketplaceManagement = () => {
           onFiltersChange={setFilters}
         />
 
-        <Card>
-          <CardContent>
-            <ListingTabs
-              techListings={techListings || []}
-              autoListings={autoListings || []}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onChatOpen={handleChatOpen}
-            />
+        <ErrorBoundary>
+          <Card>
+            <CardContent>
+              <ListingTabs
+                techListings={techListings || []}
+                autoListings={autoListings || []}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onChatOpen={handleChatOpen}
+              />
 
-            <MarketplacePagination
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
-          </CardContent>
-        </Card>
+              <MarketplacePagination
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            </CardContent>
+          </Card>
+        </ErrorBoundary>
 
         <ListingEditDialog
           listing={editingListing}
