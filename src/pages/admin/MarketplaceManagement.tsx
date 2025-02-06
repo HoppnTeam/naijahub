@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LoadingState } from "@/components/admin/LoadingState";
 import { MarketplaceFilters, FilterState } from "@/components/admin/marketplace/MarketplaceFilters";
 import { MarketplacePagination } from "@/components/admin/marketplace/MarketplacePagination";
+import { MarketplaceMetrics } from "@/components/admin/marketplace/MarketplaceMetrics";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const ITEMS_PER_PAGE = 15;
@@ -206,6 +207,10 @@ export const MarketplaceManagement = () => {
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Marketplace Management</h1>
         
+        <ErrorBoundary>
+          <MarketplaceMetrics />
+        </ErrorBoundary>
+
         <MarketplaceFilters 
           filters={filters}
           onFiltersChange={setFilters}
