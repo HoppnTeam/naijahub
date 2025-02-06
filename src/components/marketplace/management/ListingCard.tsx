@@ -52,10 +52,9 @@ export const ListingCard = ({
         </div>
 
         <PostActions
-          likesCount={likesCount}
+          postId={listing.id}
+          initialLikesCount={likesCount}
           commentsCount={unreadMessages}
-          isLiked={false}
-          onLike={() => {}}
         />
 
         <ListingActions

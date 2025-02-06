@@ -52,34 +52,28 @@ const PostDetails = () => {
 
     const isLiked = post?.likes?.some((like) => like.user_id === user.id);
 
-    if (isLiked) {
-      const { error } = await supabase
-        .from("likes")
-        .delete()
-        .eq("post_id", id)
-        .eq("user_id", user.id);
+    try {
+      if (isLiked) {
+        const { error } = await supabase
+          .from("likes")
+          .delete()
+          .eq("post_id", id)
+          .eq("user_id", user.id);
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Could not unlike the post",
-          variant: "destructive",
-        });
-        return;
-      }
-    } else {
-      const { error } = await supabase
-        .from("likes")
-        .insert({ post_id: id, user_id: user.id });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("likes")
+          .insert({ post_id: id, user_id: user.id });
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Could not like the post",
-          variant: "destructive",
-        });
-        return;
+        if (error) throw error;
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not update like status",
+        variant: "destructive",
+      });
     }
   };
 
@@ -124,10 +118,11 @@ const PostDetails = () => {
         </CardContent>
         <CardFooter>
           <PostActions
-            likesCount={post.likes?.length ?? 0}
+            postId={post.id}
+            initialLikesCount={post.likes?.length ?? 0}
             commentsCount={post.comments?.length ?? 0}
             isLiked={isLiked}
-            onLike={handleLike}
+            onLikeToggle={handleLike}
           />
         </CardFooter>
       </Card>

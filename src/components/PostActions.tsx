@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { SocialShare } from "./SocialShare";
+import { Link } from "react-router-dom";
 
 interface PostActionsProps {
   postId: string;
@@ -85,10 +86,12 @@ export const PostActions = ({
         <ThumbsUp className="h-4 w-4 mr-2" />
         {likesCount}
       </Button>
-      <Button variant="ghost" size="sm">
-        <MessageSquare className="h-4 w-4 mr-2" />
-        {commentsCount}
-      </Button>
+      <Link to={`/posts/${postId}`}>
+        <Button variant="ghost" size="sm">
+          <MessageSquare className="h-4 w-4 mr-2" />
+          {commentsCount}
+        </Button>
+      </Link>
       <SocialShare title="" url={window.location.href} />
     </div>
   );
