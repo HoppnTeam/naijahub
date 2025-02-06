@@ -12,6 +12,7 @@ interface PostCardProps {
     title: string;
     content: string;
     created_at: string;
+    image_url?: string;
     user_id?: string;
     user?: {
       id: string;
@@ -79,6 +80,15 @@ export const PostCard = ({ post }: PostCardProps) => {
           )}
         </div>
         <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+        {post.image_url && (
+          <div className="mb-4">
+            <img
+              src={post.image_url}
+              alt={post.title}
+              className="w-full h-48 object-cover rounded-md"
+            />
+          </div>
+        )}
         <p className="text-muted-foreground">{post.content}</p>
       </CardContent>
       <CardFooter>

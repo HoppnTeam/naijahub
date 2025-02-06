@@ -124,11 +124,13 @@ const PostDetails = () => {
         </CardHeader>
         <CardContent>
           {post.image_url && (
-            <img
-              src={post.image_url}
-              alt={post.title}
-              className="w-full h-64 object-cover rounded-lg mb-6"
-            />
+            <div className="mb-6">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full max-h-[600px] object-contain rounded-lg"
+              />
+            </div>
           )}
           <p className="whitespace-pre-wrap">{post.content}</p>
         </CardContent>
