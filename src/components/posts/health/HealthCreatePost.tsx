@@ -2,89 +2,57 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/posts/ImageUpload";
+import { CategorySelect } from "@/components/posts/CategorySelect";
+import { LiveDiscussionToggle } from "@/components/posts/LiveDiscussionToggle";
 import { useToast } from "@/hooks/use-toast";
-import { PostForm } from "@/components/posts/news-politics/PostForm";
+import { BackNavigation } from "@/components/BackNavigation";
 
-interface HealthCreatePostProps {
-  categoryId?: string;
-}
-
-export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
+export const HealthCreatePost = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLive, setIsLive] = useState(false);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (formData: {
-    title: string;
-    content: string;
-    subcategoryId: string;
-    isLive: boolean;
-    selectedFiles: File[];
-  }) => {
-    if (!user) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be signed in to create a post",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
 
     try {
-      let uploadedImageUrls: string[] = [];
-      if (formData.selectedFiles.length > 0) {
-        for (const file of formData.selectedFiles) {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${crypto.randomUUID()}.${fileExt}`;
-          const filePath = `${user.id}/${fileName}`;
+      setIsSubmitting(true);
 
-          const { error: uploadError } = await supabase.storage
-            .from('post-images')
-            .upload(filePath, file);
-
-          if (uploadError) {
-            console.error('Error uploading file:', uploadError);
-            toast({
-              title: "Upload failed",
-              description: `Failed to upload ${file.name}`,
-              variant: "destructive",
-            });
-            continue;
-          }
-
-          const { data: { publicUrl } } = supabase.storage
-            .from('post-images')
-            .getPublicUrl(filePath);
-
-          uploadedImageUrls.push(publicUrl);
-        }
-      }
-
-      const { error } = await supabase
+      const { data: post, error } = await supabase
         .from("posts")
         .insert([
           {
-            title: formData.title,
-            content: formData.content,
+            title,
+            content,
+            image_url: imageUrl,
             user_id: user.id,
-            category_id: categoryId,
-            subcategory_id: formData.subcategoryId || null,
-            is_live: formData.isLive,
-            image_url: uploadedImageUrls[0],
+            category_id: selectedSubcategoryId,
+            is_live: isLive,
           },
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
 
       toast({
         title: "Success!",
-        description: "Your post has been created",
+        description: "Your health post has been created.",
       });
-      
-      navigate("/categories/health");
+
+      navigate(`/posts/${post.id}`);
     } catch (error) {
       console.error("Error creating post:", error);
       toast({
@@ -93,22 +61,64 @@ export const HealthCreatePost = ({ categoryId }: HealthCreatePostProps) => {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container max-w-2xl py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Create Health Post</h1>
-        <p className="text-muted-foreground">Share health insights and experiences with the community</p>
+    <div className="container mx-auto py-8">
+      <BackNavigation />
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Create Health Post</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <CategorySelect
+            selectedSubcategoryId={selectedSubcategoryId}
+            onSubcategoryChange={setSelectedSubcategoryId}
+            categoryName="Health"
+          />
+
+          <div className="space-y-2">
+            <Input
+              placeholder="Post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="text-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Write your post content here..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              className="min-h-[200px]"
+            />
+          </div>
+
+          <ImageUpload
+            onImagesChange={(files) => {
+              if (files.length > 0) {
+                // Handle the first image only since we only need one
+                const file = files[0];
+                // You might want to handle the image upload here
+                setImageUrl(URL.createObjectURL(file));
+              }
+            }}
+            currentImageUrl={imageUrl}
+            onImageUploaded={setImageUrl}
+            bucket="post-images"
+          />
+
+          <LiveDiscussionToggle isLive={isLive} onLiveChange={setIsLive} />
+
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Creating..." : "Create Post"}
+          </Button>
+        </form>
       </div>
-      
-      <PostForm
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-        categoryName="Health"
-      />
     </div>
   );
 };

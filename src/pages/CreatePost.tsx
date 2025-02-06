@@ -31,7 +31,7 @@ export default function CreatePost() {
       case "Business":
         return <BusinessCategoryCreatePost />;
       case "Health":
-        return categoryId ? <HealthCreatePost categoryId={categoryId} /> : null;
+        return <HealthCreatePost />;
       case "Agriculture":
         return <AgricultureCreatePost />;
       case "Culture & Personals":
