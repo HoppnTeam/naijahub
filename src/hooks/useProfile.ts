@@ -8,7 +8,6 @@ export const useProfile = (userId?: string) => {
     queryFn: async () => {
       if (!userId) return null;
       
-      // First get the profile with posts
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select(`

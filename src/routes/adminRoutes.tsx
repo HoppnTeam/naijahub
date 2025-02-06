@@ -9,19 +9,17 @@ import { Settings } from "@/pages/admin/Settings";
 export const adminRoutes = [
   {
     path: "/admin",
-    element: (
-      <ProtectedAdminRoute>
-        <Dashboard />
-      </ProtectedAdminRoute>
-    ),
+    element: <ProtectedAdminRoute>
+      <Dashboard />
+    </ProtectedAdminRoute>,
     children: [
       {
         path: "",
         element: <Dashboard />
       },
       {
-        path: "users",
-        element: <Dashboard />
+        path: "categories",
+        element: <CategoriesManagement />
       },
       {
         path: "posts",
@@ -30,10 +28,6 @@ export const adminRoutes = [
       {
         path: "reports",
         element: <ReportsManagement />
-      },
-      {
-        path: "categories",
-        element: <CategoriesManagement />
       },
       {
         path: "ads",

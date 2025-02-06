@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { CategoryForm } from "@/components/admin/categories/CategoryForm";
 import { columns } from "@/components/admin/categories/columns";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import type { Category } from "@/components/admin/categories/types";
 
 export const CategoriesManagement = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -28,7 +29,14 @@ export const CategoriesManagement = () => {
         .is("parent_id", null);
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match the Category type
+      return (data || []).map(category => ({
+        ...category,
+        subcategories: Array.isArray(category.subcategories) 
+          ? category.subcategories 
+          : [category.subcategories]
+      })) as Category[];
     },
   });
 

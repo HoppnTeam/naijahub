@@ -17,9 +17,11 @@ export interface Profile {
     title: string;
     content: string;
     created_at: string;
+    category_id?: string;
+    image_url?: string;
     _count?: {
-      comments?: number;
-      likes?: number;
+      comments: number;
+      likes: number;
     };
   }[];
 }
