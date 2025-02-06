@@ -8,6 +8,7 @@ import {
   List,
   LayoutDashboard,
   LineChart,
+  Store,
 } from "lucide-react";
 
 const navigation = [
@@ -17,6 +18,7 @@ const navigation = [
   { name: "Content Moderation", to: "/admin/posts", icon: FileText },
   { name: "Reports", to: "/admin/reports", icon: Flag },
   { name: "Categories", to: "/admin/categories", icon: List },
+  { name: "Marketplace", to: "/admin/marketplace", icon: Store },
   { name: "Ads Management", to: "/admin/ads", icon: LayoutDashboard },
   { name: "Settings", to: "/admin/settings", icon: Settings },
 ];
