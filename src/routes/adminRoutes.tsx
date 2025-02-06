@@ -1,42 +1,60 @@
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 import { Dashboard } from "@/pages/admin/Dashboard";
-import { CategoriesManagement } from "@/pages/admin/CategoriesManagement";
-import { PostModeration } from "@/pages/admin/PostModeration";
-import { ReportsManagement } from "@/pages/admin/ReportsManagement";
-import { AdsManagement } from "@/pages/admin/AdsManagement";
+import { AdminUsers } from "@/pages/admin/AdminUsers";
+import { AdminPosts } from "@/pages/admin/AdminPosts";
+import { AdminCategories } from "@/pages/admin/AdminCategories";
+import { AdminReports } from "@/pages/admin/AdminReports";
+import { AdminViolations } from "@/pages/admin/AdminViolations";
+import { AdminAdvertisements } from "@/pages/admin/AdminAdvertisements";
+import { AdminActivityLogs } from "@/pages/admin/AdminActivityLogs";
+import { AdminWorkshops } from "@/pages/admin/AdminWorkshops";
+import { AdminJobs } from "@/pages/admin/AdminJobs";
 import { MarketplaceManagement } from "@/pages/admin/MarketplaceManagement";
-import { AdminLayout } from "@/components/admin/AdminLayout";
 
 export const adminRoutes = [
   {
     path: "/admin",
-    element: (
-      <ProtectedAdminRoute>
-        <AdminLayout>
-          <Dashboard />
-        </AdminLayout>
-      </ProtectedAdminRoute>
-    ),
+    element: <ProtectedAdminRoute />,
     children: [
       {
         path: "",
         element: <Dashboard />,
       },
       {
-        path: "categories",
-        element: <CategoriesManagement />,
+        path: "users",
+        element: <AdminUsers />,
       },
       {
         path: "posts",
-        element: <PostModeration />,
+        element: <AdminPosts />,
+      },
+      {
+        path: "categories",
+        element: <AdminCategories />,
       },
       {
         path: "reports",
-        element: <ReportsManagement />,
+        element: <AdminReports />,
       },
       {
-        path: "ads",
-        element: <AdsManagement />,
+        path: "violations",
+        element: <AdminViolations />,
+      },
+      {
+        path: "advertisements",
+        element: <AdminAdvertisements />,
+      },
+      {
+        path: "activity-logs",
+        element: <AdminActivityLogs />,
+      },
+      {
+        path: "workshops",
+        element: <AdminWorkshops />,
+      },
+      {
+        path: "jobs",
+        element: <AdminJobs />,
       },
       {
         path: "marketplace",
