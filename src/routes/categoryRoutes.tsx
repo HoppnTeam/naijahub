@@ -9,12 +9,14 @@ import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
+import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import { RouteObject } from "react-router-dom";
 import ContentGuidelines from "@/pages/ContentGuidelines";
 
 export const categoryRoutes: RouteObject[] = [
   { path: "/categories/news-politics", element: <NewsAndPolitics /> },
   { path: "/categories/entertainment", element: <Entertainment /> },
+  { path: "/categories/entertainment/create", element: <EntertainmentCreatePost /> },
   { path: "/categories/technology", element: <Technology /> },
   { path: "/categories/sports", element: <Sports /> },
   { path: "/categories/business", element: <Business /> },
