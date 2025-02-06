@@ -15,7 +15,8 @@ export const useListingsQuery = (searchQuery: string, filters: SearchFilters) =>
           .from("auto_marketplace_listings")
           .select(`
             *,
-            profiles!auto_marketplace_listings_seller_id_profiles_fkey (username, avatar_url)
+            profiles!auto_marketplace_listings_seller_id_profiles_fkey (username, avatar_url),
+            auto_marketplace_likes (count)
           `)
           .eq("status", "active")
           .order("created_at", { ascending: false });
