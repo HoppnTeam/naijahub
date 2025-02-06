@@ -201,18 +201,6 @@ export const MarketplaceManagement = () => {
     );
   }
 
-  if (techError || autoError) {
-    return (
-      <AdminLayout>
-        <div className="p-6">
-          <ErrorBoundary>
-            <div>Error loading marketplace listings</div>
-          </ErrorBoundary>
-        </div>
-      </AdminLayout>
-    );
-  }
-
   return (
     <AdminLayout>
       <div className="p-6">
@@ -233,6 +221,12 @@ export const MarketplaceManagement = () => {
                 onDelete={handleDelete}
                 onChatOpen={handleChatOpen}
               />
+
+              {(techError || autoError) && (
+                <div className="p-4 text-red-500">
+                  Error loading listings. Please try again.
+                </div>
+              )}
 
               <MarketplacePagination
                 currentPage={currentPage}
