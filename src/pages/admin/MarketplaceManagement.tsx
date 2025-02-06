@@ -6,15 +6,32 @@ import { ListingTabs } from "@/components/marketplace/management";
 import { useState } from "react";
 import { ListingEditDialog } from "@/components/marketplace/management";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { LoadingState } from "@/components/admin/LoadingState";
+
+interface FilterState {
+  search: string;
+  status: string;
+  minPrice: string;
+  maxPrice: string;
+}
 
 export const MarketplaceManagement = () => {
   const [editingListing, setEditingListing] = useState<any>(null);
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    status: "all",
+    minPrice: "",
+    maxPrice: "",
+  });
   const { toast } = useToast();
 
-  const { data: techListings, refetch: refetchTech } = useQuery({
-    queryKey: ['admin-tech-listings'],
+  const { data: techListings, isLoading: techLoading, refetch: refetchTech } = useQuery({
+    queryKey: ['admin-tech-listings', filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('tech_marketplace_listings')
         .select(`
           *,
@@ -28,16 +45,31 @@ export const MarketplaceManagement = () => {
             count
           )
         `);
-      
+
+      // Apply filters
+      if (filters.search) {
+        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      }
+      if (filters.status !== 'all') {
+        query = query.eq('status', filters.status);
+      }
+      if (filters.minPrice) {
+        query = query.gte('price', parseFloat(filters.minPrice));
+      }
+      if (filters.maxPrice) {
+        query = query.lte('price', parseFloat(filters.maxPrice));
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data;
-    }
+    },
   });
 
-  const { data: autoListings, refetch: refetchAuto } = useQuery({
-    queryKey: ['admin-auto-listings'],
+  const { data: autoListings, isLoading: autoLoading, refetch: refetchAuto } = useQuery({
+    queryKey: ['admin-auto-listings', filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('auto_marketplace_listings')
         .select(`
           *,
@@ -51,10 +83,25 @@ export const MarketplaceManagement = () => {
             count
           )
         `);
-      
+
+      // Apply filters
+      if (filters.search) {
+        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      }
+      if (filters.status !== 'all') {
+        query = query.eq('status', filters.status);
+      }
+      if (filters.minPrice) {
+        query = query.gte('price', parseFloat(filters.minPrice));
+      }
+      if (filters.maxPrice) {
+        query = query.lte('price', parseFloat(filters.maxPrice));
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   const handleEdit = (listing: any) => {
@@ -132,15 +179,78 @@ export const MarketplaceManagement = () => {
     console.log("Opening chat for listing:", listingId);
   };
 
+  if (techLoading || autoLoading) {
+    return (
+      <AdminLayout>
+        <div className="p-6">
+          <LoadingState />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Marketplace Management</h1>
         
-        <Card>
+        <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Listings Management</CardTitle>
+            <CardTitle>Filters</CardTitle>
           </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label>Search</Label>
+                <Input
+                  placeholder="Search listings..."
+                  value={filters.search}
+                  onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={filters.status}
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Min Price</Label>
+                <Input
+                  type="number"
+                  placeholder="Min price"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Max Price</Label>
+                <Input
+                  type="number"
+                  placeholder="Max price"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardContent>
             <ListingTabs
               techListings={techListings || []}
