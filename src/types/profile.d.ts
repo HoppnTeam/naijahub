@@ -12,7 +12,7 @@ export interface Profile {
   community_intent?: string;
   location?: string;
   status?: string;
-  posts?: Array<{
+  posts?: {
     id: string;
     title: string;
     content: string;
@@ -21,5 +21,5 @@ export interface Profile {
       comments?: number;
       likes?: number;
     };
-  }>;
+  }[];
 }
