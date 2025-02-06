@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ListingForm } from "./form/ListingForm";
-import { MessageSquare } from "lucide-react";
-import { PostActions } from "../PostActions";
+import { Dialog } from "@/components/ui/dialog";
+import { ListingTabs } from "./management/ListingTabs";
+import { ListingEditDialog } from "./management/ListingEditDialog";
 
 interface ListingsManagementProps {
   userId: string;
@@ -149,139 +142,30 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
     }
   };
 
-  const ListingCard = ({ listing, marketplace }: { listing: any; marketplace: "tech" | "auto" }) => {
-    const likesCount = listing[`${marketplace}_marketplace_likes`]?.[0]?.count || 0;
-    const unreadMessages = listing.marketplace_chats?.reduce((acc: number, chat: any) => {
-      const unreadCount = chat.marketplace_messages?.filter(
-        (msg: any) => msg.sender_id !== userId && !msg.read_at
-      ).length;
-      return acc + (unreadCount || 0);
-    }, 0);
-
-    return (
-      <Card key={listing.id}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg">{listing.title}</CardTitle>
-              <div className="text-sm text-muted-foreground">
-                {marketplace === "tech" ? "Tech" : "Auto"} Marketplace
-              </div>
-            </div>
-            <Badge>{listing.status}</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="aspect-square w-24 rounded-lg overflow-hidden">
-              <img
-                src={listing.images[0]}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Price</div>
-              <div className="font-semibold">{formatCurrency(listing.price)}</div>
-            </div>
-          </div>
-
-          <PostActions
-            likesCount={likesCount}
-            commentsCount={unreadMessages}
-            isLiked={false}
-            onLike={() => {}}
-          />
-
-          <div className="flex gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEditingListing({ ...listing, marketplace });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSelectedListingId(listing.id);
-                setShowChatDialog(true);
-              }}
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Messages {unreadMessages > 0 && <Badge variant="destructive">{unreadMessages}</Badge>}
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your listing.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleDelete(listing.id, marketplace)}
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <>
-      <Tabs defaultValue="tech" className="w-full">
-        <TabsList>
-          <TabsTrigger value="tech">Tech Listings</TabsTrigger>
-          <TabsTrigger value="auto">Auto Listings</TabsTrigger>
-        </TabsList>
+      <ListingTabs
+        techListings={techListings || []}
+        autoListings={autoListings || []}
+        onEdit={setEditingListing}
+        onDelete={handleDelete}
+        onChatOpen={(listingId) => {
+          setSelectedListingId(listingId);
+          setShowChatDialog(true);
+        }}
+      />
 
-        <TabsContent value="tech" className="space-y-4">
-          {!techListings?.length ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No tech listings found
-            </div>
-          ) : (
-            techListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} marketplace="tech" />
-            ))
-          )}
-        </TabsContent>
+      <ListingEditDialog
+        listing={editingListing}
+        onClose={() => setEditingListing(null)}
+        onUpdate={handleUpdate}
+      />
 
-        <TabsContent value="auto" className="space-y-4">
-          {!autoListings?.length ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No auto listings found
-            </div>
-          ) : (
-            autoListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} marketplace="auto" />
-            ))
-          )}
-        </TabsContent>
-      </Tabs>
-
-      <Dialog open={!!editingListing} onOpenChange={(open) => !open && setEditingListing(null)}>
-        <DialogContent className="max-w-3xl">
-          {editingListing && (
-            <ListingForm
-              onSubmit={handleUpdate}
-              isLoading={false}
-              initialData={editingListing}
-            />
-          )}
-        </DialogContent>
+      <Dialog 
+        open={showChatDialog} 
+        onOpenChange={setShowChatDialog}
+      >
+        {/* Chat dialog content will be implemented later */}
       </Dialog>
     </>
   );

@@ -1,65 +1,48 @@
 import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 import { Dashboard } from "@/pages/admin/Dashboard";
-import { AdminUsers } from "@/pages/admin/AdminUsers";
-import { AdminPosts } from "@/pages/admin/AdminPosts";
-import { AdminCategories } from "@/pages/admin/AdminCategories";
-import { AdminReports } from "@/pages/admin/AdminReports";
-import { AdminViolations } from "@/pages/admin/AdminViolations";
-import { AdminAdvertisements } from "@/pages/admin/AdminAdvertisements";
-import { AdminActivityLogs } from "@/pages/admin/AdminActivityLogs";
-import { AdminWorkshops } from "@/pages/admin/AdminWorkshops";
-import { AdminJobs } from "@/pages/admin/AdminJobs";
-import { MarketplaceManagement } from "@/pages/admin/MarketplaceManagement";
+import { CategoriesManagement } from "@/pages/admin/CategoriesManagement";
+import PostModeration from "@/pages/admin/PostModeration";
+import { ReportsManagement } from "@/pages/admin/ReportsManagement";
+import { AdsManagement } from "@/pages/admin/AdsManagement";
+import { Settings } from "@/pages/admin/Settings";
 
 export const adminRoutes = [
   {
     path: "/admin",
-    element: <ProtectedAdminRoute />,
+    element: (
+      <ProtectedAdminRoute>
+        <Dashboard />
+      </ProtectedAdminRoute>
+    ),
     children: [
       {
         path: "",
-        element: <Dashboard />,
+        element: <Dashboard />
       },
       {
         path: "users",
-        element: <AdminUsers />,
+        element: <Dashboard />
       },
       {
         path: "posts",
-        element: <AdminPosts />,
-      },
-      {
-        path: "categories",
-        element: <AdminCategories />,
+        element: <PostModeration />
       },
       {
         path: "reports",
-        element: <AdminReports />,
+        element: <ReportsManagement />
       },
       {
-        path: "violations",
-        element: <AdminViolations />,
+        path: "categories",
+        element: <CategoriesManagement />
       },
       {
-        path: "advertisements",
-        element: <AdminAdvertisements />,
+        path: "ads",
+        element: <AdsManagement />
       },
       {
-        path: "activity-logs",
-        element: <AdminActivityLogs />,
-      },
-      {
-        path: "workshops",
-        element: <AdminWorkshops />,
-      },
-      {
-        path: "jobs",
-        element: <AdminJobs />,
-      },
-      {
-        path: "marketplace",
-        element: <MarketplaceManagement />,
-      },
-    ],
-  },
+        path: "settings",
+        element: <Settings />
+      }
+    ]
+  }
 ];
