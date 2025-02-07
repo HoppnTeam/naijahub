@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
@@ -46,25 +45,25 @@ export const CategoryTabs = ({
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
       case "News & Politics":
-        return <Newspaper className="w-4 h-4" />;
+        return <Newspaper className="w-4 h-4 text-[#E2725B]" />;
       case "Entertainment":
-        return <Music className="w-4 h-4" />;
+        return <Music className="w-4 h-4 text-[#E2725B]" />;
       case "Technology":
-        return <Laptop className="w-4 h-4" />;
+        return <Laptop className="w-4 h-4 text-[#E2725B]" />;
       case "Sports":
-        return <Trophy className="w-4 h-4" />;
+        return <Trophy className="w-4 h-4 text-[#E2725B]" />;
       case "Business":
-        return <Briefcase className="w-4 h-4" />;
+        return <Briefcase className="w-4 h-4 text-[#E2725B]" />;
       case "Health":
-        return <Heart className="w-4 h-4" />;
+        return <Heart className="w-4 h-4 text-[#E2725B]" />;
       case "Agriculture":
-        return <Wheat className="w-4 h-4" />;
+        return <Wheat className="w-4 h-4 text-[#E2725B]" />;
       case "Travel":
-        return <Plane className="w-4 h-4" />;
+        return <Plane className="w-4 h-4 text-[#E2725B]" />;
       case "Culture & Personals":
-        return <Users className="w-4 h-4" />;
+        return <Users className="w-4 h-4 text-[#E2725B]" />;
       case "Automotive":
-        return <Car className="w-4 h-4" />;
+        return <Car className="w-4 h-4 text-[#E2725B]" />;
       default:
         return null;
     }
@@ -93,29 +92,17 @@ export const CategoryTabs = ({
   };
 
   const getCategoryStyle = (categoryName: string) => {
-    const styles: { [key: string]: string } = {
-      "News & Politics": "hover:bg-[#32a852]/20 hover:text-[#32a852]",
-      "Entertainment": "hover:bg-[#E2725B]/20 hover:text-[#E2725B]",
-      "Technology": "hover:bg-[#32a852]/20 hover:text-[#32a852]",
-      "Sports": "hover:bg-[#E2725B]/20 hover:text-[#E2725B]",
-      "Business": "hover:bg-[#32a852]/20 hover:text-[#32a852]",
-      "Health": "hover:bg-[#E2725B]/20 hover:text-[#E2725B]",
-      "Agriculture": "hover:bg-[#32a852]/20 hover:text-[#32a852]",
-      "Travel": "hover:bg-[#E2725B]/20 hover:text-[#E2725B]",
-      "Culture & Personals": "hover:bg-[#32a852]/20 hover:text-[#32a852]",
-      "Automotive": "hover:bg-[#E2725B]/20 hover:text-[#E2725B]"
-    };
-    return styles[categoryName] || "";
+    return "hover:bg-[#32a852]/20";
   };
 
   return (
     <Tabs defaultValue="all" className="w-full">
       <ScrollArea className="w-full">
-        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-[#221F26] rounded-lg shadow-md border border-[#32a852]/20">
+        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
           <TabsTrigger 
             value="all" 
             onClick={() => onCategoryChange("all")}
-            className="text-foreground hover:bg-[#32a852]/20 hover:text-[#32a852] transition-colors"
+            className="text-white hover:bg-[#32a852]/20 transition-colors"
           >
             All Posts
           </TabsTrigger>
@@ -124,7 +111,7 @@ export const CategoryTabs = ({
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className={`whitespace-nowrap flex items-center gap-2 transition-colors text-foreground ${getCategoryStyle(category.name)}`}
+              className={`whitespace-nowrap flex items-center gap-2 transition-colors text-white ${getCategoryStyle(category.name)}`}
             >
               {getCategoryIcon(category.name)}
               {category.name}
