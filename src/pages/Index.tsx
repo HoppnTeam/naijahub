@@ -76,7 +76,12 @@ const Index = () => {
         <AdPlacement type="banner" />
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold">Welcome to NaijaHub</h1>
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#32a852] to-[#E2725B] bg-clip-text text-transparent">
+              Welcome to NaijaHub
+            </h1>
+            <p className="text-muted-foreground">Connect with Nigerians worldwide</p>
+          </div>
         </div>
 
         <CategoryTabs

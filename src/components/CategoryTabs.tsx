@@ -4,6 +4,18 @@ import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
 import { ScrollArea } from "./ui/scroll-area";
+import { 
+  Newspaper, 
+  Music, 
+  Laptop, 
+  Trophy, 
+  Briefcase, 
+  Heart, 
+  Wheat, 
+  Plane, 
+  Users, 
+  Car 
+} from "lucide-react";
 
 interface Category {
   id: string;
@@ -31,6 +43,33 @@ export const CategoryTabs = ({
      "Culture & Personals", "Automotive"].includes(category.name)
   );
 
+  const getCategoryIcon = (categoryName: string) => {
+    switch (categoryName) {
+      case "News & Politics":
+        return <Newspaper className="w-4 h-4" />;
+      case "Entertainment":
+        return <Music className="w-4 h-4" />;
+      case "Technology":
+        return <Laptop className="w-4 h-4" />;
+      case "Sports":
+        return <Trophy className="w-4 h-4" />;
+      case "Business":
+        return <Briefcase className="w-4 h-4" />;
+      case "Health":
+        return <Heart className="w-4 h-4" />;
+      case "Agriculture":
+        return <Wheat className="w-4 h-4" />;
+      case "Travel":
+        return <Plane className="w-4 h-4" />;
+      case "Culture & Personals":
+        return <Users className="w-4 h-4" />;
+      case "Automotive":
+        return <Car className="w-4 h-4" />;
+      default:
+        return null;
+    }
+  };
+
   const getCategoryPath = (categoryName: string) => {
     const paths: { [key: string]: string } = {
       "News & Politics": "/categories/news-politics",
@@ -53,11 +92,31 @@ export const CategoryTabs = ({
     navigate(path);
   };
 
+  const getCategoryStyle = (categoryName: string) => {
+    const styles: { [key: string]: string } = {
+      "News & Politics": "hover:text-[#32a852] hover:bg-[#32a852]/10",
+      "Entertainment": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
+      "Technology": "hover:text-[#32a852] hover:bg-[#32a852]/10",
+      "Sports": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
+      "Business": "hover:text-[#32a852] hover:bg-[#32a852]/10",
+      "Health": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
+      "Agriculture": "hover:text-[#32a852] hover:bg-[#32a852]/10",
+      "Travel": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
+      "Culture & Personals": "hover:text-[#32a852] hover:bg-[#32a852]/10",
+      "Automotive": "hover:text-[#E2725B] hover:bg-[#E2725B]/10"
+    };
+    return styles[categoryName] || "";
+  };
+
   return (
     <Tabs defaultValue="all" className="w-full">
       <ScrollArea className="w-full">
-        <TabsList className="w-full flex-nowrap mb-6 p-1">
-          <TabsTrigger value="all" onClick={() => onCategoryChange("all")}>
+        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-gradient-to-r from-[#32a852]/20 to-[#E2725B]/20">
+          <TabsTrigger 
+            value="all" 
+            onClick={() => onCategoryChange("all")}
+            className="hover:bg-[#32a852]/10 hover:text-[#32a852] transition-colors"
+          >
             All Posts
           </TabsTrigger>
           {mainCategories?.map((category) => (
@@ -65,8 +124,9 @@ export const CategoryTabs = ({
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className="whitespace-nowrap"
+              className={`whitespace-nowrap flex items-center gap-2 transition-colors ${getCategoryStyle(category.name)}`}
             >
+              {getCategoryIcon(category.name)}
               {category.name}
             </TabsTrigger>
           ))}
