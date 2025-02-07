@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
@@ -91,10 +92,6 @@ export const CategoryTabs = ({
     navigate(path);
   };
 
-  const getCategoryStyle = (categoryName: string) => {
-    return "hover:bg-[#32a852]/20";
-  };
-
   return (
     <Tabs defaultValue="all" className="w-full">
       <ScrollArea className="w-full">
@@ -111,7 +108,7 @@ export const CategoryTabs = ({
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className={`whitespace-nowrap flex items-center gap-2 transition-colors text-white ${getCategoryStyle(category.name)}`}
+              className="whitespace-nowrap flex items-center gap-2 transition-colors text-white hover:bg-[#32a852]/20"
             >
               {getCategoryIcon(category.name)}
               {category.name}
