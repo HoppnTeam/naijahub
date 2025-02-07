@@ -1,12 +1,15 @@
 
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { CategoryTabs } from "@/components/CategoryTabs";
 import { Post } from "@/types/post";
-import { AdPlacement } from "@/components/ads/AdPlacement";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load components
+const CategoryTabs = lazy(() => import("@/components/CategoryTabs"));
+const AdPlacement = lazy(() => import("@/components/ads/AdPlacement"));
 
 const Index = () => {
   const navigate = useNavigate();
@@ -29,6 +32,7 @@ const Index = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   const { data: posts } = useQuery<Post[]>({
@@ -66,6 +70,7 @@ const Index = () => {
       })) as Post[];
     },
     enabled: selectedCategory === "all" || !!selectedCategory,
+    staleTime: 30 * 1000, // Cache for 30 seconds
   });
 
   if (!user) return null;
@@ -73,7 +78,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background font-poppins">
       <main className="container px-4 py-4 md:py-8">
-        <AdPlacement type="banner" />
+        <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+          <AdPlacement type="banner" />
+        </Suspense>
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8">
           <div className="space-y-2">
@@ -84,15 +91,18 @@ const Index = () => {
           </div>
         </div>
 
-        <CategoryTabs
-          categories={categories}
-          posts={posts}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
+        <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+          <CategoryTabs
+            categories={categories}
+            posts={posts}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </Suspense>
       </main>
     </div>
   );
 };
 
 export default Index;
+

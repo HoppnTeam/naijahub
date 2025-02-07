@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +28,7 @@ interface CategoryTabsProps {
   onCategoryChange: (category: string) => void;
 }
 
-export const CategoryTabs = ({
+const CategoryTabs = ({
   categories,
   posts,
   selectedCategory,
@@ -127,3 +126,5 @@ export const CategoryTabs = ({
     </Tabs>
   );
 };
+
+export default CategoryTabs;
