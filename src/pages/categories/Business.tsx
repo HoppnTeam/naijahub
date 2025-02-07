@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -39,10 +40,10 @@ const Business = () => {
       .eq("name", "Business")
       .single();
 
-    navigate("/categories/business/create", {
+    navigate("/create-post", { 
       state: { 
-        category: "Business", 
-        categoryId: businessCategory?.id,
+        category: "Business",
+        categoryId: businessCategory?.id 
       }
     });
   };

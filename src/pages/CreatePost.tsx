@@ -1,3 +1,4 @@
+
 import { useLocation } from "react-router-dom";
 import { NewsAndPoliticsCreatePost } from "@/components/posts/news-politics/NewsAndPoliticsCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
@@ -11,11 +12,12 @@ import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCr
 
 interface LocationState {
   category?: string;
+  categoryId?: string;
 }
 
 export default function CreatePost() {
   const location = useLocation();
-  const { category } = (location.state as LocationState) || {};
+  const { category, categoryId } = (location.state as LocationState) || {};
 
   const renderCategoryForm = () => {
     switch (category) {
@@ -28,7 +30,7 @@ export default function CreatePost() {
       case "Sports":
         return <SportsCategoryCreatePost />;
       case "Business":
-        return <BusinessCategoryCreatePost />;
+        return <BusinessCategoryCreatePost categoryId={categoryId} />;
       case "Health":
         return <HealthCreatePost />;
       case "Agriculture":
