@@ -1,7 +1,8 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code, Cpu, Rocket } from "lucide-react";
-import { AdPlacement } from "@/components/ads/AdPlacement";
+import AdPlacement from "@/components/ads/AdPlacement";
 
 interface Category {
   id: string;
