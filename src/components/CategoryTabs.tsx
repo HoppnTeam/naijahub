@@ -1,7 +1,9 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface Category {
   id: string;
@@ -53,23 +55,26 @@ export const CategoryTabs = ({
 
   return (
     <Tabs defaultValue="all" className="w-full">
-      <TabsList className="w-full overflow-x-auto flex space-x-2 mb-6">
-        <TabsTrigger value="all" onClick={() => onCategoryChange("all")}>
-          All Posts
-        </TabsTrigger>
-        {mainCategories?.map((category) => (
-          <TabsTrigger
-            key={category.id}
-            value={category.id}
-            onClick={() => handleCategoryClick(category.id, category.name)}
-          >
-            {category.name}
+      <ScrollArea className="w-full">
+        <TabsList className="w-full flex-nowrap mb-6 p-1">
+          <TabsTrigger value="all" onClick={() => onCategoryChange("all")}>
+            All Posts
           </TabsTrigger>
-        ))}
-      </TabsList>
+          {mainCategories?.map((category) => (
+            <TabsTrigger
+              key={category.id}
+              value={category.id}
+              onClick={() => handleCategoryClick(category.id, category.name)}
+              className="whitespace-nowrap"
+            >
+              {category.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </ScrollArea>
 
       <TabsContent value={selectedCategory} className="mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {posts?.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

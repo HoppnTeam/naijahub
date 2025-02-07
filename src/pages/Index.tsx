@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,11 +72,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-poppins">
-      <main className="container py-8">
+      <main className="container px-4 py-4 md:py-8">
         <AdPlacement type="banner" />
         
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Welcome to NaijaHub</h1>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold">Welcome to NaijaHub</h1>
         </div>
 
         <CategoryTabs
