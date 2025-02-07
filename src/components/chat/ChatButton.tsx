@@ -29,23 +29,28 @@ export const ChatButton = ({ recipientId, recipientName }: ChatButtonProps) => {
     }
 
     try {
-      // Check for existing direct chat room
+      // Get room IDs where current user is a participant
+      const { data: userRooms } = await supabase
+        .from('chat_participants')
+        .select('room_id')
+        .eq('user_id', user.id);
+
+      // Get room IDs where recipient is a participant
+      const { data: recipientRooms } = await supabase
+        .from('chat_participants')
+        .select('room_id')
+        .eq('user_id', recipientId);
+
+      // Find common direct chat rooms
+      const userRoomIds = userRooms?.map(r => r.room_id) || [];
+      const recipientRoomIds = recipientRooms?.map(r => r.room_id) || [];
+
       const { data: existingRoom } = await supabase
         .from('chat_rooms')
         .select('id')
         .eq('type', 'direct')
-        .in('id', (select: any) => {
-          select
-            .from('chat_participants')
-            .select('room_id')
-            .eq('user_id', user.id);
-        })
-        .in('id', (select: any) => {
-          select
-            .from('chat_participants')
-            .select('room_id')
-            .eq('user_id', recipientId);
-        })
+        .in('id', userRoomIds)
+        .in('id', recipientRoomIds)
         .single();
 
       if (existingRoom) {
