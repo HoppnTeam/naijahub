@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,7 +16,10 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+      cacheTime: 30 * 60 * 1000, // Cache persists for 30 minutes
+      refetchInterval: false, // Disable automatic background refetching
+      networkMode: 'offlineFirst',
       meta: {
         errorHandler: (error: Error) => {
           console.error("Query error:", error);
@@ -24,6 +28,7 @@ const queryClient = new QueryClient({
     },
     mutations: {
       retry: 1,
+      networkMode: 'offlineFirst',
       meta: {
         errorHandler: (error: Error) => {
           console.error("Mutation error:", error);
