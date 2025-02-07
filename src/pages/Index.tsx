@@ -47,8 +47,8 @@ const Index = () => {
           *,
           profiles!inner (username, avatar_url),
           categories!inner (name),
-          likes: likes(count),
-          comments: comments(count)
+          likes (count),
+          comments (count)
         `)
         .eq('is_draft', false)
         .order("created_at", { ascending: false });
@@ -60,12 +60,16 @@ const Index = () => {
       const { data, error } = await query;
       if (error) throw error;
       
+      // Transform the data to match the Post interface
       return data.map(post => ({
         ...post,
         user: {
           id: post.user_id,
           username: post.profiles?.username || 'Unknown User',
           avatar_url: post.profiles?.avatar_url
+        },
+        categories: {
+          name: post.categories?.name || ''
         },
         _count: {
           likes: post.likes?.[0]?.count || 0,
