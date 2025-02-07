@@ -77,10 +77,10 @@ const Index = () => {
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8">
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#32a852] to-[#E2725B] bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold text-white bg-gradient-to-r from-[#32a852] to-[#E2725B] px-4 py-2 rounded-lg shadow-md">
               Welcome to NaijaHub
             </h1>
-            <p className="text-muted-foreground">Connect with Nigerians worldwide</p>
+            <p className="text-muted-foreground font-medium px-4">Connect with Nigerians worldwide</p>
           </div>
         </div>
 

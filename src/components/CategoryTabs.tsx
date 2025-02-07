@@ -94,16 +94,16 @@ export const CategoryTabs = ({
 
   const getCategoryStyle = (categoryName: string) => {
     const styles: { [key: string]: string } = {
-      "News & Politics": "hover:text-[#32a852] hover:bg-[#32a852]/10",
-      "Entertainment": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
-      "Technology": "hover:text-[#32a852] hover:bg-[#32a852]/10",
-      "Sports": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
-      "Business": "hover:text-[#32a852] hover:bg-[#32a852]/10",
-      "Health": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
-      "Agriculture": "hover:text-[#32a852] hover:bg-[#32a852]/10",
-      "Travel": "hover:text-[#E2725B] hover:bg-[#E2725B]/10",
-      "Culture & Personals": "hover:text-[#32a852] hover:bg-[#32a852]/10",
-      "Automotive": "hover:text-[#E2725B] hover:bg-[#E2725B]/10"
+      "News & Politics": "hover:bg-[#32a852]/20 hover:text-white",
+      "Entertainment": "hover:bg-[#E2725B]/20 hover:text-white",
+      "Technology": "hover:bg-[#32a852]/20 hover:text-white",
+      "Sports": "hover:bg-[#E2725B]/20 hover:text-white",
+      "Business": "hover:bg-[#32a852]/20 hover:text-white",
+      "Health": "hover:bg-[#E2725B]/20 hover:text-white",
+      "Agriculture": "hover:bg-[#32a852]/20 hover:text-white",
+      "Travel": "hover:bg-[#E2725B]/20 hover:text-white",
+      "Culture & Personals": "hover:bg-[#32a852]/20 hover:text-white",
+      "Automotive": "hover:bg-[#E2725B]/20 hover:text-white"
     };
     return styles[categoryName] || "";
   };
@@ -111,11 +111,11 @@ export const CategoryTabs = ({
   return (
     <Tabs defaultValue="all" className="w-full">
       <ScrollArea className="w-full">
-        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-gradient-to-r from-[#32a852]/20 to-[#E2725B]/20">
+        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-[#221F26] rounded-lg shadow-md">
           <TabsTrigger 
             value="all" 
             onClick={() => onCategoryChange("all")}
-            className="hover:bg-[#32a852]/10 hover:text-[#32a852] transition-colors"
+            className="text-white hover:bg-[#32a852]/20 transition-colors"
           >
             All Posts
           </TabsTrigger>
@@ -124,7 +124,7 @@ export const CategoryTabs = ({
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className={`whitespace-nowrap flex items-center gap-2 transition-colors ${getCategoryStyle(category.name)}`}
+              className={`whitespace-nowrap flex items-center gap-2 transition-colors text-white ${getCategoryStyle(category.name)}`}
             >
               {getCategoryIcon(category.name)}
               {category.name}
