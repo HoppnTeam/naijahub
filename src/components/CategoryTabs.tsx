@@ -6,7 +6,7 @@ import { Post } from "@/types/post";
 import { ScrollArea } from "./ui/scroll-area";
 import { 
   Newspaper, 
-  Music, 
+  Music2, 
   Laptop, 
   Trophy, 
   Briefcase, 
@@ -46,25 +46,25 @@ export const CategoryTabs = ({
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
       case "News & Politics":
-        return <Newspaper className="w-4 h-4 text-[#E2725B]" />;
+        return <Newspaper className="w-5 h-5 text-[#E2725B]" />;
       case "Entertainment":
-        return <Music className="w-4 h-4 text-[#E2725B]" />;
+        return <Music2 className="w-5 h-5 text-[#E2725B]" />;
       case "Technology":
-        return <Laptop className="w-4 h-4 text-[#E2725B]" />;
+        return <Laptop className="w-5 h-5 text-[#E2725B]" />;
       case "Sports":
-        return <Trophy className="w-4 h-4 text-[#E2725B]" />;
+        return <Trophy className="w-5 h-5 text-[#E2725B]" />;
       case "Business":
-        return <Briefcase className="w-4 h-4 text-[#E2725B]" />;
+        return <Briefcase className="w-5 h-5 text-[#E2725B]" />;
       case "Health":
-        return <Heart className="w-4 h-4 text-[#E2725B]" />;
+        return <Heart className="w-5 h-5 text-[#E2725B]" />;
       case "Agriculture":
-        return <Wheat className="w-4 h-4 text-[#E2725B]" />;
+        return <Wheat className="w-5 h-5 text-[#E2725B]" />;
       case "Travel":
-        return <Plane className="w-4 h-4 text-[#E2725B]" />;
+        return <Plane className="w-5 h-5 text-[#E2725B]" />;
       case "Culture & Personals":
-        return <Users className="w-4 h-4 text-[#E2725B]" />;
+        return <Users className="w-5 h-5 text-[#E2725B]" />;
       case "Automotive":
-        return <Car className="w-4 h-4 text-[#E2725B]" />;
+        return <Car className="w-5 h-5 text-[#E2725B]" />;
       default:
         return null;
     }
@@ -99,7 +99,7 @@ export const CategoryTabs = ({
           <TabsTrigger 
             value="all" 
             onClick={() => onCategoryChange("all")}
-            className="text-white hover:bg-[#32a852]/20 transition-colors"
+            className="text-white hover:bg-[#32a852]/20 transition-colors text-base font-medium"
           >
             All Posts
           </TabsTrigger>
@@ -108,7 +108,7 @@ export const CategoryTabs = ({
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className="whitespace-nowrap flex items-center gap-2 transition-colors text-white hover:bg-[#32a852]/20"
+              className="whitespace-nowrap flex items-center gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-base font-medium"
             >
               {getCategoryIcon(category.name)}
               {category.name}
