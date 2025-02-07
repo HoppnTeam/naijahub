@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ interface AdPlacementProps {
   className?: string;
 }
 
-export const AdPlacement = ({ type, className }: AdPlacementProps) => {
+const AdPlacement = ({ type, className }: AdPlacementProps) => {
   return (
     <Card className={cn(
       "relative overflow-hidden",
@@ -34,3 +35,5 @@ export const AdPlacement = ({ type, className }: AdPlacementProps) => {
     </Card>
   );
 };
+
+export default AdPlacement;
