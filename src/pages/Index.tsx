@@ -22,19 +22,22 @@ const Index = () => {
     }
   }, [user, navigate]);
 
+  // Optimize categories query with longer cache time since they rarely change
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
         .select("*")
-        .is('parent_id', null);
+        .is('parent_id', null)
+        .order('name');
       if (error) throw error;
       return data;
     },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 60 * 60 * 1000, // Cache for 1 hour
   });
 
+  // Optimize posts query with more efficient joins and count aggregation
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", selectedCategory],
     queryFn: async () => {
@@ -42,11 +45,12 @@ const Index = () => {
         .from("posts")
         .select(`
           *,
-          profiles (username, avatar_url),
-          categories!posts_category_id_fkey (name),
-          likes (count),
-          comments (count)
+          profiles!inner (username, avatar_url),
+          categories!inner (name),
+          likes: likes(count),
+          comments: comments(count)
         `)
+        .eq('is_draft', false)
         .order("created_at", { ascending: false });
 
       if (selectedCategory !== "all") {
@@ -105,4 +109,3 @@ const Index = () => {
 };
 
 export default Index;
-
