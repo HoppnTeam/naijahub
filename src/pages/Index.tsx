@@ -46,7 +46,7 @@ const Index = () => {
         .select(`
           *,
           profiles!inner (username, avatar_url),
-          categories!inner (name),
+          categories!posts_category_id_fkey (name),
           likes (count),
           comments (count)
         `)
