@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
       retry: 1,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-      cacheTime: 30 * 60 * 1000, // Cache persists for 30 minutes
+      gcTime: 30 * 60 * 1000, // Cache persists for 30 minutes (formerly cacheTime)
       refetchInterval: false, // Disable automatic background refetching
       networkMode: 'offlineFirst',
       meta: {
