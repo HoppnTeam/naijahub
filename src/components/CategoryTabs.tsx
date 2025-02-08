@@ -58,13 +58,23 @@ const CategoryTabs = ({
 
   // Add debug logging for each category
   categories?.forEach(cat => {
-    console.log(`Category in raw data - ID: ${cat.id}, Name: "${cat.name}"`);
+    console.log(`Category in raw data - ID: ${cat.id}, Name: "${cat.name}"`, {
+      rawName: cat.name,
+      trimmedName: cat.name.trim(),
+      length: cat.name.length,
+      charCodes: Array.from(cat.name).map(c => c.charCodeAt(0))
+    });
   });
 
   const mainCategories = categories?.filter(category => {
     const trimmedName = category.name.trim();
     const isMainCategory = categoryNames.includes(trimmedName);
-    console.log(`Checking category "${trimmedName}" (${category.id}): ${isMainCategory}`);
+    console.log(`Checking category "${trimmedName}" (${category.id}):`, {
+      trimmedName,
+      isMainCategory,
+      exactMatch: categoryNames.find(name => name === trimmedName),
+      possibleMatches: categoryNames.filter(name => name.includes(trimmedName) || trimmedName.includes(name))
+    });
     return isMainCategory;
   });
 
