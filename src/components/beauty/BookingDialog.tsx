@@ -71,11 +71,12 @@ export const BookingDialog = ({
         .insert({
           professional_id: professional.id,
           client_id: user.id,
-          service_id: service.id,
-          booking_date: format(selectedDate!, "yyyy-MM-dd"),
-          start_time: selectedStartTime,
-          end_time: selectedEndTime,
+          service_name: service.service_name,
+          price: service.price,
+          duration_minutes: service.duration_minutes,
+          service_date: format(selectedDate!, "yyyy-MM-dd"),
           notes,
+          status: 'pending'
         });
 
       if (bookingError) throw bookingError;

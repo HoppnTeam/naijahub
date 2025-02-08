@@ -6,6 +6,7 @@ import { addDays, format, isAfter, isBefore, setHours, setMinutes } from "date-f
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Clock } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
 
 interface BookingCalendarProps {
   professionalId: string;
@@ -15,7 +16,7 @@ interface BookingCalendarProps {
 export const BookingCalendar = ({ professionalId, onTimeSlotSelect }: BookingCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
 
-  const { data: availability, isLoading: loadingAvailability } = useQuery({
+  const { data: availability } = useQuery({
     queryKey: ['professional-availability', professionalId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -47,9 +48,9 @@ export const BookingCalendar = ({ professionalId, onTimeSlotSelect }: BookingCal
     queryFn: async () => {
       const { data, error } = await supabase
         .from('beauty_professional_bookings')
-        .select('start_time, end_time')
+        .select('service_date')
         .eq('professional_id', professionalId)
-        .eq('booking_date', format(selectedDate!, 'yyyy-MM-dd'))
+        .eq('service_date', format(selectedDate!, 'yyyy-MM-dd'))
         .neq('status', 'cancelled');
       
       if (error) throw error;
@@ -81,12 +82,8 @@ export const BookingCalendar = ({ professionalId, onTimeSlotSelect }: BookingCal
         slotEndTime.setHours(currentTime.getHours() + 1);
 
         const isBooked = bookedSlots.some(booking => {
-          const bookingStart = new Date(`1970-01-01T${booking.start_time}`);
-          const bookingEnd = new Date(`1970-01-01T${booking.end_time}`);
-          return (
-            !isAfter(bookingStart, slotEndTime) && 
-            !isBefore(bookingEnd, currentTime)
-          );
+          const bookingDate = new Date(booking.service_date);
+          return format(bookingDate, 'yyyy-MM-dd') === format(currentTime, 'yyyy-MM-dd');
         });
 
         if (!isBooked) {
@@ -126,8 +123,6 @@ export const BookingCalendar = ({ professionalId, onTimeSlotSelect }: BookingCal
         <h3 className="font-semibold mb-4">Available Time Slots</h3>
         {!selectedDate ? (
           <p className="text-muted-foreground">Please select a date to view available time slots</p>
-        ) : loadingAvailability ? (
-          <p>Loading availability...</p>
         ) : timeSlots.length === 0 ? (
           <p className="text-muted-foreground">No available time slots for this date</p>
         ) : (

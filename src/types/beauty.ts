@@ -58,3 +58,17 @@ export interface BeautyProfessionalService {
   created_at: string;
   updated_at: string;
 }
+
+export interface BeautyProfessionalBooking {
+  id: string;
+  professional_id: string;
+  client_id: string;
+  service_name: string;
+  price: number;
+  duration_minutes: number;
+  service_date: string;
+  notes?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+}

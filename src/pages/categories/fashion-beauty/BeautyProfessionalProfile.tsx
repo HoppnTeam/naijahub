@@ -8,8 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingCalendar } from "@/components/beauty/BookingCalendar";
 import { BookingDialog } from "@/components/beauty/BookingDialog";
-import { Badge } from "@/components/ui/badge";
-import type { BeautyProfessional, BeautyProfessionalService, ServiceCategory } from "@/types/beauty";
+import { AboutSection } from "@/components/beauty/profile/AboutSection";
+import { ServicesSection } from "@/components/beauty/profile/ServicesSection";
+import { ContactSection } from "@/components/beauty/profile/ContactSection";
+import { RatingsSection } from "@/components/beauty/profile/RatingsSection";
+import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beauty";
 
 const BeautyProfessionalProfile = () => {
   const { id } = useParams();
@@ -19,7 +22,6 @@ const BeautyProfessionalProfile = () => {
   const [selectedEndTime, setSelectedEndTime] = useState<string>();
   const [selectedService, setSelectedService] = useState<BeautyProfessionalService>();
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | 'all'>('all');
 
   const { data: professional, isLoading } = useQuery({
     queryKey: ["beauty-professional", id],
@@ -67,27 +69,8 @@ const BeautyProfessionalProfile = () => {
     setSelectedDate(undefined);
     setSelectedStartTime(undefined);
     setSelectedEndTime(undefined);
-  };
-
-  const serviceCategories = services 
-    ? Array.from(new Set(services.map(s => s.category)))
-    : [];
-
-  const filteredServices = services?.filter(service => 
-    selectedCategory === 'all' || service.category === selectedCategory
-  );
-
-  const getServiceLocationLabel = (location: string) => {
-    switch (location) {
-      case 'in_store':
-        return 'In-Store Service';
-      case 'home_service':
-        return 'Home Service';
-      case 'both':
-        return 'In-Store or Home Service Available';
-      default:
-        return location;
-    }
+    // Use querySelector with optional chaining
+    document.querySelector('[value="book"]')?.setAttribute('data-state', 'active');
   };
 
   if (isLoading) {
@@ -148,92 +131,17 @@ const BeautyProfessionalProfile = () => {
                 <TabsTrigger value="book">Book Appointment</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="about" className="space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-2">About</h2>
-                  <p className="text-muted-foreground">{professional.description}</p>
-                </div>
-
-                <div>
-                  <h2 className="text-lg font-semibold mb-2">Specialties</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {professional.specialties?.map((specialty, index) => (
-                      <span
-                        key={index}
-                        className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
-                      >
-                        {specialty.replace('_', ' ')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {professional.portfolio_images && professional.portfolio_images.length > 0 && (
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">Portfolio</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {professional.portfolio_images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`Portfolio ${index + 1}`}
-                          className="rounded-lg object-cover w-full h-48"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <TabsContent value="about">
+                <AboutSection professional={professional} />
               </TabsContent>
 
-              <TabsContent value="services" className="space-y-4">
-                <div className="flex gap-2 mb-4">
-                  <Button
-                    variant={selectedCategory === 'all' ? 'default' : 'outline'}
-                    onClick={() => setSelectedCategory('all')}
-                  >
-                    All Services
-                  </Button>
-                  {serviceCategories.map((category) => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? 'default' : 'outline'}
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category.replace('_', ' ')}
-                    </Button>
-                  ))}
-                </div>
-
-                {filteredServices?.map((service) => (
-                  <Card key={service.id} className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold">{service.service_name}</h3>
-                          <Badge variant="outline">
-                            {getServiceLocationLabel(service.service_location)}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          {service.description}
-                        </p>
-                        <p className="text-sm">Duration: {service.duration_minutes} minutes</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold mb-2">₦{service.price}</p>
-                        <Button 
-                          size="sm" 
-                          onClick={() => {
-                            handleServiceSelect(service);
-                            document.querySelector('[value="book"]')?.click();
-                          }}
-                        >
-                          Book Now
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+              <TabsContent value="services">
+                {services && (
+                  <ServicesSection 
+                    services={services} 
+                    onServiceSelect={handleServiceSelect}
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="book" className="space-y-6">
@@ -243,7 +151,7 @@ const BeautyProfessionalProfile = () => {
                       Please select a service first
                     </p>
                     <Button
-                      onClick={() => document.querySelector('[value="services"]')?.click()}
+                      onClick={() => document.querySelector('[value="services"]')?.setAttribute('data-state', 'active')}
                     >
                       View Services
                     </Button>
@@ -254,9 +162,6 @@ const BeautyProfessionalProfile = () => {
                       <h3 className="font-semibold mb-2">Selected Service</h3>
                       <div className="flex items-center gap-2 mb-1">
                         <p>{selectedService.service_name} - ₦{selectedService.price}</p>
-                        <Badge variant="outline">
-                          {getServiceLocationLabel(selectedService.service_location)}
-                        </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Duration: {selectedService.duration_minutes} minutes
@@ -286,59 +191,8 @@ const BeautyProfessionalProfile = () => {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
-            <div className="space-y-4">
-              {professional.contact_email && (
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">{professional.contact_email}</p>
-                </div>
-              )}
-              {professional.contact_phone && (
-                <div>
-                  <p className="font-medium">Phone</p>
-                  <p className="text-muted-foreground">{professional.contact_phone}</p>
-                </div>
-              )}
-              {professional.website && (
-                <div>
-                  <p className="font-medium">Website</p>
-                  <a
-                    href={professional.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Visit Website
-                  </a>
-                </div>
-              )}
-              {professional.instagram_handle && (
-                <div>
-                  <p className="font-medium">Instagram</p>
-                  <a
-                    href={`https://instagram.com/${professional.instagram_handle}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    @{professional.instagram_handle}
-                  </a>
-                </div>
-              )}
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Ratings & Reviews</h2>
-            <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{professional.rating?.toFixed(1)}</div>
-              <div className="text-muted-foreground">
-                ({professional.review_count} reviews)
-              </div>
-            </div>
-          </Card>
+          <ContactSection professional={professional} />
+          <RatingsSection professional={professional} />
         </div>
       </div>
 
