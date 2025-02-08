@@ -38,7 +38,8 @@ const CategoryTabs = ({
 }: CategoryTabsProps) => {
   const navigate = useNavigate();
 
-  console.log("Raw categories received:", categories);
+  console.log("========== Category Debug Info ==========");
+  console.log("All received categories:", categories);
 
   const categoryNames = [
     "News & Politics",
@@ -56,29 +57,33 @@ const CategoryTabs = ({
 
   console.log("Expected category names:", categoryNames);
 
-  // Add debug logging for each category
+  // Add detailed debug logging for each category
   categories?.forEach(cat => {
-    console.log(`Category in raw data - ID: ${cat.id}, Name: "${cat.name}"`, {
-      rawName: cat.name,
-      trimmedName: cat.name.trim(),
-      length: cat.name.length,
-      charCodes: Array.from(cat.name).map(c => c.charCodeAt(0))
-    });
+    console.log(`\nCategory Debug - ID: ${cat.id}`);
+    console.log(`Raw name: "${cat.name}"`);
+    console.log(`Trimmed name: "${cat.name.trim()}"`);
+    console.log(`Name length: ${cat.name.length}`);
+    console.log(`Characters:`, Array.from(cat.name).map(c => ({char: c, code: c.charCodeAt(0)})));
   });
 
   const mainCategories = categories?.filter(category => {
     const trimmedName = category.name.trim();
     const isMainCategory = categoryNames.includes(trimmedName);
-    console.log(`Checking category "${trimmedName}" (${category.id}):`, {
-      trimmedName,
+    
+    console.log(`\nMatching check for "${trimmedName}":`, {
       isMainCategory,
-      exactMatch: categoryNames.find(name => name === trimmedName),
-      possibleMatches: categoryNames.filter(name => name.includes(trimmedName) || trimmedName.includes(name))
+      matchFound: categoryNames.find(name => name === trimmedName),
+      possibleMatches: categoryNames.filter(name => 
+        name.toLowerCase().includes(trimmedName.toLowerCase()) || 
+        trimmedName.toLowerCase().includes(name.toLowerCase())
+      )
     });
+    
     return isMainCategory;
   });
 
-  console.log("Filtered main categories:", mainCategories?.map(c => ({id: c.id, name: c.name})));
+  console.log("\nFiltered main categories:", mainCategories);
+  console.log("========== End Category Debug ==========");
 
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
