@@ -12,6 +12,17 @@ interface DesignerReviewsProps {
   businessName: string;
 }
 
+interface Review {
+  id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  reviewer: {
+    username: string;
+    avatar_url: string | null;
+  } | null;
+}
+
 export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsProps) => {
   const { user } = useAuth();
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -23,7 +34,7 @@ export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsPro
         .from("designer_reviews")
         .select(`
           *,
-          reviewer:profiles!designer_reviews_reviewer_id_fkey(
+          reviewer:profiles!reviewer_id(
             username,
             avatar_url
           )
@@ -32,7 +43,7 @@ export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsPro
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Review[];
     },
   });
 

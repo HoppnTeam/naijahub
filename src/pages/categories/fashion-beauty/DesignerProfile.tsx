@@ -32,7 +32,7 @@ interface Designer {
   profiles: {
     username: string;
     avatar_url: string | null;
-  };
+  } | null;
 }
 
 const DesignerProfile = () => {
