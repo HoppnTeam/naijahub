@@ -4,29 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-interface BeautyProfessional {
-  id: string;
-  user_id: string;
-  business_name: string;
-  description: string;
-  specialties: string[];
-  years_experience: number | null;
-  portfolio_images: string[];
-  location: string;
-  contact_email: string | null;
-  contact_phone: string | null;
-  instagram_handle: string | null;
-  website: string | null;
-  rating: number;
-  review_count: number;
-  verified: boolean;
-  professional_type: string;
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
-}
+import type { BeautyProfessional } from "@/types/beauty";
 
 const BeautyProfessionalProfile = () => {
   const { id } = useParams();

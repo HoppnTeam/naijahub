@@ -19,8 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ImageUpload } from "@/components/posts/ImageUpload";
+import type { BeautyProfessionalSpecialty } from "@/types/beauty";
 
-const specialties = [
+const specialties: BeautyProfessionalSpecialty[] = [
   'hair_stylist',
   'makeup_artist',
   'nail_technician',
@@ -29,7 +30,7 @@ const specialties = [
   'lash_technician',
   'spa_therapist',
   'cosmetologist'
-] as const;
+];
 
 const formSchema = z.object({
   business_name: z.string().min(2, "Business name must be at least 2 characters"),
@@ -108,6 +109,9 @@ const BeautyProfessionalRegistration = () => {
         specialties: values.specialties,
         professional_type: values.professional_type,
         portfolio_images: imageUrls,
+        rating: 0,
+        review_count: 0,
+        verified: false
       });
 
       if (error) throw error;
