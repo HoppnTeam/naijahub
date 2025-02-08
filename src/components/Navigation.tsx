@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UserMenu } from "./UserMenu";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +27,7 @@ export const Navigation = () => {
     { name: "Agriculture", path: "/categories/agriculture" },
     { name: "Culture & Personals", path: "/categories/culture" },
     { name: "Automotive", path: "/categories/automotive" },
+    { name: "Fashion & Beauty", path: "/categories/fashion-beauty" },
   ];
 
   return (
@@ -80,4 +81,3 @@ export const Navigation = () => {
     </nav>
   );
 };
-
