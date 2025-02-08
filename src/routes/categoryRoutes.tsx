@@ -13,6 +13,8 @@ import FashionAndBeauty from "@/pages/categories/FashionAndBeauty";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
+import DesignerDirectory from "@/pages/categories/fashion-beauty/DesignerDirectory";
+import DesignerRegistration from "@/pages/categories/fashion-beauty/DesignerRegistration";
 import { RouteObject } from "react-router-dom";
 import ContentGuidelines from "@/pages/ContentGuidelines";
 
@@ -31,5 +33,7 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/automotive/create", element: <AutomotiveCreatePost /> },
   { path: "/categories/fashion-beauty", element: <FashionAndBeauty /> },
   { path: "/categories/fashion-beauty/create", element: <FashionAndBeautyCreatePost /> },
+  { path: "/categories/fashion-beauty/designer-directory", element: <DesignerDirectory /> },
+  { path: "/categories/fashion-beauty/designer-register", element: <DesignerRegistration /> },
   { path: "/content-guidelines", element: <ContentGuidelines /> }
 ];

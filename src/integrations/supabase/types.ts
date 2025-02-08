@@ -1153,6 +1153,44 @@ export type Database = {
           },
         ]
       }
+      designer_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          designer_id: string
+          id: string
+          images: string[] | null
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          designer_id: string
+          id?: string
+          images?: string[] | null
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          designer_id?: string
+          id?: string
+          images?: string[] | null
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "designer_reviews_designer_id_fkey"
+            columns: ["designer_id"]
+            isOneToOne: false
+            referencedRelation: "fashion_designers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       external_tech_jobs: {
         Row: {
           application_url: string
@@ -1204,6 +1242,78 @@ export type Database = {
           source?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      fashion_designers: {
+        Row: {
+          business_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          instagram_handle: string | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          portfolio_images: string[] | null
+          rating: number | null
+          review_count: number | null
+          specialties:
+            | Database["public"]["Enums"]["designer_specialty"][]
+            | null
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+          website: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          business_name: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram_handle?: string | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          portfolio_images?: string[] | null
+          rating?: number | null
+          review_count?: number | null
+          specialties?:
+            | Database["public"]["Enums"]["designer_specialty"][]
+            | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+          website?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          business_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram_handle?: string | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          portfolio_images?: string[] | null
+          rating?: number | null
+          review_count?: number | null
+          specialties?:
+            | Database["public"]["Enums"]["designer_specialty"][]
+            | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+          website?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -2263,6 +2373,14 @@ export type Database = {
         | "sharing"
       auto_marketplace_section: "vehicles" | "parts"
       delivery_method: "shipping" | "pickup" | "both"
+      designer_specialty:
+        | "traditional"
+        | "contemporary"
+        | "bridal"
+        | "ready_to_wear"
+        | "haute_couture"
+        | "accessories"
+        | "footwear"
       listing_status: "active" | "sold" | "pending" | "cancelled"
       marketplace_listing_type: "auto" | "tech"
       payment_method: "online" | "cash_on_delivery" | "in_person"
