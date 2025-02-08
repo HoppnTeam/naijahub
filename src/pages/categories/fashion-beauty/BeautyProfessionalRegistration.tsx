@@ -21,7 +21,7 @@ import * as z from "zod";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import type { BeautyProfessionalSpecialty } from "@/types/beauty";
 
-const specialties: BeautyProfessionalSpecialty[] = [
+const specialtiesList = [
   'hair_stylist',
   'makeup_artist',
   'nail_technician',
@@ -30,7 +30,7 @@ const specialties: BeautyProfessionalSpecialty[] = [
   'lash_technician',
   'spa_therapist',
   'cosmetologist'
-];
+] as const;
 
 const formSchema = z.object({
   business_name: z.string().min(2, "Business name must be at least 2 characters"),
@@ -41,8 +41,8 @@ const formSchema = z.object({
   contact_phone: z.string().optional(),
   instagram_handle: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
-  specialties: z.array(z.enum(specialties)),
-  professional_type: z.enum(specialties)
+  specialties: z.array(z.enum(specialtiesList)),
+  professional_type: z.enum(specialtiesList)
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -99,7 +99,6 @@ const BeautyProfessionalRegistration = () => {
       const { error } = await supabase
         .from("beauty_professional_portfolios")
         .insert({
-          user_id: user.id,
           business_name: values.business_name,
           description: values.description,
           years_experience: values.years_experience,
@@ -111,6 +110,7 @@ const BeautyProfessionalRegistration = () => {
           specialties: values.specialties,
           professional_type: values.professional_type,
           portfolio_images: imageUrls,
+          user_id: user.id,
           rating: 0,
           review_count: 0,
           verified: false
@@ -175,7 +175,7 @@ const BeautyProfessionalRegistration = () => {
                     {...field}
                     className="w-full p-2 border rounded-md"
                   >
-                    {specialties.map((type) => (
+                    {specialtiesList.map((type) => (
                       <option key={type} value={type}>
                         {type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                       </option>
@@ -262,7 +262,7 @@ const BeautyProfessionalRegistration = () => {
                 <FormLabel>Specialties</FormLabel>
                 <FormControl>
                   <div className="grid grid-cols-2 gap-2">
-                    {specialties.map((specialty) => (
+                    {specialtiesList.map((specialty) => (
                       <label key={specialty} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
