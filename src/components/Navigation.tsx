@@ -30,15 +30,15 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-primary py-4 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-4">
+    <nav className="bg-primary py-2 md:py-4 shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-2 md:px-4">
+        <div className="flex items-center justify-between gap-2">
+          {/* Logo and Menu button */}
+          <div className="flex items-center gap-2 md:gap-4">
             <Sheet>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon" className="text-white">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="sm" className="text-white">
+                  <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
@@ -50,7 +50,7 @@ export const Navigation = () => {
                     <Button
                       key={item.path}
                       variant="ghost"
-                      className="w-full justify-start"
+                      className="w-full justify-start text-sm"
                       onClick={() => {
                         navigate(item.path);
                         setIsMobileMenuOpen(false);
@@ -64,14 +64,14 @@ export const Navigation = () => {
             </Sheet>
             <h1 
               onClick={() => navigate("/")} 
-              className="text-xl md:text-2xl font-bold text-white cursor-pointer font-poppins"
+              className="text-lg md:text-2xl font-bold text-white cursor-pointer font-poppins"
             >
               NaijaHub
             </h1>
           </div>
 
           {/* Right section */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1 md:gap-4">
             <ThemeToggle />
             <UserMenu />
           </div>
@@ -80,3 +80,4 @@ export const Navigation = () => {
     </nav>
   );
 };
+

@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
@@ -94,30 +95,33 @@ const CategoryTabs = ({
   return (
     <Tabs defaultValue="all" className="w-full">
       <ScrollArea className="w-full">
-        <TabsList className="w-full flex-nowrap mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
+        <TabsList className="w-full flex-nowrap mb-4 md:mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
           <TabsTrigger 
             value="all" 
             onClick={() => onCategoryChange("all")}
-            className="text-white hover:bg-[#32a852]/20 transition-colors text-base font-medium"
+            className="text-white hover:bg-[#32a852]/20 transition-colors text-sm md:text-base font-medium px-2 md:px-4"
           >
-            All Posts
+            All
           </TabsTrigger>
           {mainCategories?.map((category) => (
             <TabsTrigger
               key={category.id}
               value={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className="whitespace-nowrap flex items-center gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-base font-medium"
+              className="whitespace-nowrap flex items-center gap-1.5 md:gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-sm md:text-base font-medium px-2 md:px-4"
             >
               {getCategoryIcon(category.name)}
-              {category.name}
+              <span className="hidden md:inline">{category.name}</span>
+              <span className="md:hidden">
+                {category.name.split(' ')[0]}
+              </span>
             </TabsTrigger>
           ))}
         </TabsList>
       </ScrollArea>
 
-      <TabsContent value={selectedCategory} className="mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <TabsContent value={selectedCategory} className="mt-4 md:mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {posts?.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
@@ -128,3 +132,4 @@ const CategoryTabs = ({
 };
 
 export default CategoryTabs;
+
