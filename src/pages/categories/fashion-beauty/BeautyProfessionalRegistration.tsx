@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { 
+import {
   Form,
   FormControl,
   FormField,
@@ -41,8 +41,8 @@ const formSchema = z.object({
   contact_phone: z.string().optional(),
   instagram_handle: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
-  specialties: z.array(z.enum(['hair_stylist', 'makeup_artist', 'nail_technician', 'esthetician', 'barber', 'lash_technician', 'spa_therapist', 'cosmetologist'])),
-  professional_type: z.enum(['hair_stylist', 'makeup_artist', 'nail_technician', 'esthetician', 'barber', 'lash_technician', 'spa_therapist', 'cosmetologist'])
+  specialties: z.array(z.enum(specialties)),
+  professional_type: z.enum(specialties)
 });
 
 type FormValues = z.infer<typeof formSchema>;

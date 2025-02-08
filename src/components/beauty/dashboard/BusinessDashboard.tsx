@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +20,16 @@ import {
   Users 
 } from "lucide-react";
 
-interface Activity {
+interface BusinessMetrics {
+  total_sales: number;
+  total_bookings: number;
+  marketplace_orders: number;
+  marketplace_revenue: number;
+  average_rating: number;
+  total_reviews: number;
+}
+
+interface BusinessActivity {
   id: string;
   activity_date: string;
   activity_type: string;
@@ -45,7 +53,7 @@ export const BusinessDashboard = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as BusinessMetrics;
     },
   });
 
@@ -59,7 +67,7 @@ export const BusinessDashboard = () => {
         .limit(10);
 
       if (error) throw error;
-      return data;
+      return data as BusinessActivity[];
     },
   });
 
