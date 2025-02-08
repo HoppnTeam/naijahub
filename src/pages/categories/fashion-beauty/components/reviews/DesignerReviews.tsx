@@ -23,7 +23,7 @@ export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsPro
         .from("designer_reviews")
         .select(`
           *,
-          reviewer:profiles!designer_reviews_reviewer_id_fkey (
+          reviewer:reviewer_id(
             username,
             avatar_url
           )

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +8,7 @@ import { DesignerHeader } from "./components/DesignerHeader";
 import { DesignerInfo } from "./components/DesignerInfo";
 import { DesignerContact } from "./components/DesignerContact";
 import { DesignerPortfolio } from "./components/DesignerPortfolio";
-import { DesignerReviews } from "./components/DesignerReviews";
+import { DesignerReviews } from "./components/reviews/DesignerReviews";
 
 interface Designer {
   id: string;
@@ -51,6 +52,7 @@ const DesignerProfile = () => {
         .maybeSingle();
 
       if (error) throw error;
+      if (!data) return null;
       return data as Designer;
     },
   });
