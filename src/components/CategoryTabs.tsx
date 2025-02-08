@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { 
   Newspaper, 
   Music2, 
@@ -94,30 +94,33 @@ const CategoryTabs = ({
 
   return (
     <Tabs defaultValue="all" className="w-full">
-      <ScrollArea className="w-full">
-        <TabsList className="w-full flex-nowrap mb-4 md:mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
-          <TabsTrigger 
-            value="all" 
-            onClick={() => onCategoryChange("all")}
-            className="text-white hover:bg-[#32a852]/20 transition-colors text-sm md:text-base font-medium px-2 md:px-4"
-          >
-            All
-          </TabsTrigger>
-          {mainCategories?.map((category) => (
-            <TabsTrigger
-              key={category.id}
-              value={category.id}
-              onClick={() => handleCategoryClick(category.id, category.name)}
-              className="whitespace-nowrap flex items-center gap-1.5 md:gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-sm md:text-base font-medium px-2 md:px-4"
+      <ScrollArea className="w-full relative" type="scroll">
+        <div className="overflow-x-auto">
+          <TabsList className="w-max inline-flex mb-4 md:mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
+            <TabsTrigger 
+              value="all" 
+              onClick={() => onCategoryChange("all")}
+              className="text-white hover:bg-[#32a852]/20 transition-colors text-sm md:text-base font-medium px-2 md:px-4"
             >
-              {getCategoryIcon(category.name)}
-              <span className="hidden md:inline">{category.name}</span>
-              <span className="md:hidden">
-                {category.name.split(' ')[0]}
-              </span>
+              All
             </TabsTrigger>
-          ))}
-        </TabsList>
+            {mainCategories?.map((category) => (
+              <TabsTrigger
+                key={category.id}
+                value={category.id}
+                onClick={() => handleCategoryClick(category.id, category.name)}
+                className="whitespace-nowrap flex items-center gap-1.5 md:gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-sm md:text-base font-medium px-2 md:px-4"
+              >
+                {getCategoryIcon(category.name)}
+                <span className="hidden md:inline">{category.name}</span>
+                <span className="md:hidden">
+                  {category.name.split(' ')[0]}
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+        <ScrollBar orientation="horizontal" className="bg-[#32a852]/10" />
       </ScrollArea>
 
       <TabsContent value={selectedCategory} className="mt-4 md:mt-6">
