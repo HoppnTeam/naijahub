@@ -1155,6 +1155,48 @@ export type Database = {
           },
         ]
       }
+      business_metrics: {
+        Row: {
+          average_rating: number | null
+          consultations_count: number | null
+          created_at: string | null
+          id: string
+          marketplace_orders: number | null
+          marketplace_revenue: number | null
+          total_bookings: number | null
+          total_reviews: number | null
+          total_sales: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          average_rating?: number | null
+          consultations_count?: number | null
+          created_at?: string | null
+          id?: string
+          marketplace_orders?: number | null
+          marketplace_revenue?: number | null
+          total_bookings?: number | null
+          total_reviews?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          average_rating?: number | null
+          consultations_count?: number | null
+          created_at?: string | null
+          id?: string
+          marketplace_orders?: number | null
+          marketplace_revenue?: number | null
+          total_bookings?: number | null
+          total_reviews?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       car_reviews: {
         Row: {
           cons: string[] | null
@@ -2642,6 +2684,18 @@ export type Database = {
       }
     }
     Views: {
+      business_activities: {
+        Row: {
+          activity_date: string | null
+          activity_type: string | null
+          amount: number | null
+          business_id: string | null
+          client_name: string | null
+          description: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
       leaderboard: {
         Row: {
           avatar_url: string | null

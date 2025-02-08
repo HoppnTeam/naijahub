@@ -7,6 +7,7 @@ import { BeautyProfileHeader } from "@/components/beauty/profile/ProfileHeader";
 import { ProfileLoadingSkeleton } from "@/components/beauty/profile/ProfileLoadingSkeleton";
 import { ProfileErrorState } from "@/components/beauty/profile/ProfileErrorState";
 import { ProfileContent } from "@/components/beauty/profile/ProfileContent";
+import { BusinessDashboard } from "@/components/beauty/dashboard/BusinessDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import type { BeautyProfessionalService } from "@/types/beauty";
 
@@ -81,20 +82,26 @@ const BeautyProfessionalProfile = () => {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <BeautyProfileHeader professional={professional} />
-      <ProfileContent 
-        professional={professional}
-        services={services}
-        selectedService={selectedService}
-        selectedDate={selectedDate}
-        selectedStartTime={selectedStartTime}
-        selectedEndTime={selectedEndTime}
-        isOwner={isOwner}
-        isBookingDialogOpen={isBookingDialogOpen}
-        onServiceSelect={handleServiceSelect}
-        onTimeSlotSelect={handleTimeSlotSelect}
-        onBookingDialogClose={() => setIsBookingDialogOpen(false)}
-        onProceedBooking={() => setIsBookingDialogOpen(true)}
-      />
+      {isOwner ? (
+        <div className="mt-8">
+          <BusinessDashboard />
+        </div>
+      ) : (
+        <ProfileContent 
+          professional={professional}
+          services={services}
+          selectedService={selectedService}
+          selectedDate={selectedDate}
+          selectedStartTime={selectedStartTime}
+          selectedEndTime={selectedEndTime}
+          isOwner={isOwner}
+          isBookingDialogOpen={isBookingDialogOpen}
+          onServiceSelect={handleServiceSelect}
+          onTimeSlotSelect={handleTimeSlotSelect}
+          onBookingDialogClose={() => setIsBookingDialogOpen(false)}
+          onProceedBooking={() => setIsBookingDialogOpen(true)}
+        />
+      )}
     </div>
   );
 };
