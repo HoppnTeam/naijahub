@@ -1031,7 +1031,7 @@ export type Database = {
       }
       beauty_professional_services: {
         Row: {
-          category: string | null
+          category: Database["public"]["Enums"]["service_category"] | null
           created_at: string
           description: string | null
           duration_minutes: number
@@ -1043,7 +1043,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          category?: string | null
+          category?: Database["public"]["Enums"]["service_category"] | null
           created_at?: string
           description?: string | null
           duration_minutes: number
@@ -1055,7 +1055,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          category?: string | null
+          category?: Database["public"]["Enums"]["service_category"] | null
           created_at?: string
           description?: string | null
           duration_minutes?: number
@@ -2710,6 +2710,17 @@ export type Database = {
         | "app_improvement"
         | "user_related"
         | "general"
+      service_category:
+        | "hair_styling"
+        | "makeup"
+        | "nail_care"
+        | "skincare"
+        | "massage"
+        | "facial"
+        | "waxing"
+        | "lash_extensions"
+        | "microblading"
+        | "other"
       service_location_type: "in_store" | "home_service" | "both"
       user_role: "user" | "moderator" | "admin"
       vehicle_type:
