@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,9 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetricsOverview } from "./MetricsOverview";
-import { RecentActivities } from "./RecentActivities";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
@@ -23,13 +22,14 @@ import {
 } from "lucide-react";
 
 interface Activity {
-  id: string;
+  id: string; // Added this missing property
   activity_date: string;
   activity_type: string;
   client_name: string;
   description: string;
   amount: number;
   status: string;
+  business_id: string;
 }
 
 export const BusinessDashboard = () => {

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -70,7 +69,7 @@ const BeautyProfessionalRegistration = () => {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
     
     setIsSubmitting(true);
@@ -82,7 +81,7 @@ const BeautyProfessionalRegistration = () => {
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `beauty-portfolios/${fileName}`;
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('images')
           .upload(filePath, image);
 
@@ -95,10 +94,11 @@ const BeautyProfessionalRegistration = () => {
         imageUrls.push(publicUrl);
       }
 
-      // Create professional profile
+      // Create professional profile with correct type annotations
       const { error } = await supabase
         .from("beauty_professional_portfolios")
         .insert({
+          user_id: user.id,
           business_name: values.business_name,
           description: values.description,
           years_experience: values.years_experience,
@@ -110,7 +110,6 @@ const BeautyProfessionalRegistration = () => {
           specialties: values.specialties,
           professional_type: values.professional_type,
           portfolio_images: imageUrls,
-          user_id: user.id,
           rating: 0,
           review_count: 0,
           verified: false
