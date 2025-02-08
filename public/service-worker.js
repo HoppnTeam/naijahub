@@ -20,6 +20,12 @@ self.addEventListener('install', (event) => {
 // Network-first strategy for API requests, Cache-first for static assets
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  
+  // Skip caching for POST requests
+  if (request.method !== 'GET') {
+    return;
+  }
+
   const url = new URL(request.url);
 
   // Handle API requests (Supabase)
@@ -27,10 +33,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then(response => {
-          const clonedResponse = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(request, clonedResponse);
-          });
+          if (request.method === 'GET') {
+            const clonedResponse = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(request, clonedResponse);
+            });
+          }
           return response;
         })
         .catch(() => {
@@ -47,8 +55,7 @@ self.addEventListener('fetch', (event) => {
         return response; // Return cached response if found
       }
       return fetch(request).then((networkResponse) => {
-        // Cache new static assets
-        if (request.method === 'GET' && !url.href.includes('supabase.co')) {
+        if (request.method === 'GET') {
           const clonedResponse = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(request, clonedResponse);
@@ -72,3 +79,4 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
+
