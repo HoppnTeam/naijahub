@@ -38,7 +38,7 @@ const CategoryTabs = ({
 }: CategoryTabsProps) => {
   const navigate = useNavigate();
 
-  console.log("CategoryTabs received categories:", categories);
+  console.log("Raw categories received:", categories);
 
   const categoryNames = [
     "News & Politics",
@@ -58,11 +58,11 @@ const CategoryTabs = ({
 
   const mainCategories = categories?.filter(category => {
     const isMainCategory = categoryNames.includes(category.name);
-    console.log(`Checking category "${category.name}": ${isMainCategory}`);
+    console.log(`Checking category "${category.name}" (${category.id}): ${isMainCategory}`);
     return isMainCategory;
   });
 
-  console.log("Filtered main categories:", mainCategories);
+  console.log("Filtered main categories:", mainCategories?.map(c => ({id: c.id, name: c.name})));
 
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
@@ -111,7 +111,7 @@ const CategoryTabs = ({
   };
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    console.log("Category clicked:", categoryName, categoryId);
+    console.log("Category clicked:", categoryName, "with ID:", categoryId);
     onCategoryChange(categoryId);
     const path = getCategoryPath(categoryName);
     navigate(path);
