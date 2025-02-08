@@ -817,6 +817,44 @@ export type Database = {
           },
         ]
       }
+      beauty_professional_hours: {
+        Row: {
+          close_time: string | null
+          created_at: string
+          day_of_week: number
+          id: string
+          is_closed: boolean | null
+          open_time: string | null
+          professional_id: string
+        }
+        Insert: {
+          close_time?: string | null
+          created_at?: string
+          day_of_week: number
+          id?: string
+          is_closed?: boolean | null
+          open_time?: string | null
+          professional_id: string
+        }
+        Update: {
+          close_time?: string | null
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          is_closed?: boolean | null
+          open_time?: string | null
+          professional_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_hours_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_professional_portfolios: {
         Row: {
           business_name: string
@@ -911,6 +949,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "beauty_professional_reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_professional_services: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          price: number
+          professional_id: string
+          service_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes: number
+          id?: string
+          price: number
+          professional_id: string
+          service_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          price?: number
+          professional_id?: string
+          service_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_services_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "beauty_professional_portfolios"
