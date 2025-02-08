@@ -106,7 +106,7 @@ const CategoryTabs = ({
               onClick={() => onCategoryChange("all")}
               className="text-white hover:bg-[#32a852]/20 transition-colors text-sm md:text-base font-medium px-2 md:px-4"
             >
-              All
+              All Posts
             </TabsTrigger>
             {mainCategories?.map((category) => (
               <TabsTrigger
@@ -139,4 +139,3 @@ const CategoryTabs = ({
 };
 
 export default CategoryTabs;
-
