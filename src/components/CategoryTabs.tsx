@@ -38,14 +38,31 @@ const CategoryTabs = ({
 }: CategoryTabsProps) => {
   const navigate = useNavigate();
 
-  const mainCategories = categories?.filter(category => 
-    ["News & Politics", "Entertainment", "Technology", "Sports", 
-     "Business", "Health", "Agriculture", "Travel", 
-     "Culture & Personals", "Automotive", "Fashion & Beauty"].includes(category.name)
-  );
+  console.log("CategoryTabs received categories:", categories);
 
-  console.log("Available categories:", categories); // Debug log
-  console.log("Filtered main categories:", mainCategories); // Debug log
+  const categoryNames = [
+    "News & Politics",
+    "Entertainment",
+    "Technology",
+    "Sports",
+    "Business",
+    "Health",
+    "Agriculture",
+    "Travel",
+    "Culture & Personals",
+    "Automotive",
+    "Fashion & Beauty"
+  ];
+
+  console.log("Expected category names:", categoryNames);
+
+  const mainCategories = categories?.filter(category => {
+    const isMainCategory = categoryNames.includes(category.name);
+    console.log(`Category "${category.name}" included: ${isMainCategory}`);
+    return isMainCategory;
+  });
+
+  console.log("Filtered main categories:", mainCategories);
 
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
@@ -94,7 +111,7 @@ const CategoryTabs = ({
   };
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    console.log("Category clicked:", categoryName, categoryId); // Debug log
+    console.log("Category clicked:", categoryName, categoryId);
     onCategoryChange(categoryId);
     const path = getCategoryPath(categoryName);
     navigate(path);

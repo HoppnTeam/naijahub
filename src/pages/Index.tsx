@@ -26,12 +26,19 @@ const Index = () => {
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
+      console.log("Fetching categories...");
       const { data, error } = await supabase
         .from("categories")
         .select("*")
         .is('parent_id', null)
         .order('name');
-      if (error) throw error;
+      
+      if (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+      }
+      
+      console.log("Raw categories data:", data);
       return data;
     },
     staleTime: 60 * 60 * 1000, // Cache for 1 hour
@@ -41,6 +48,7 @@ const Index = () => {
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", selectedCategory],
     queryFn: async () => {
+      console.log("Fetching posts for category:", selectedCategory);
       let query = supabase
         .from("posts")
         .select(`
@@ -58,7 +66,12 @@ const Index = () => {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching posts:", error);
+        throw error;
+      }
+      
+      console.log("Raw posts data:", data);
       
       // Transform the data to match the Post interface
       return data.map(post => ({
@@ -117,4 +130,3 @@ const Index = () => {
 };
 
 export default Index;
-
