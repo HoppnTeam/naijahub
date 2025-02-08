@@ -4,23 +4,13 @@ import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { 
-  Newspaper, 
-  Music2, 
-  Laptop, 
-  Trophy, 
-  Briefcase, 
-  Heart, 
-  Wheat, 
-  Plane, 
-  Users, 
-  Car,
-  Scissors
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import * as Icons from "lucide-react";
 
 interface Category {
   id: string;
   name: string;
+  icon?: string;
 }
 
 interface CategoryTabsProps {
@@ -56,7 +46,6 @@ const CategoryTabs = ({
   console.log("1. Raw categories prop:", categories);
   console.log("2. Expected category names:", categoryNames);
 
-  // Add null check and detailed filtering log
   const mainCategories = categories?.filter(category => {
     if (!category || !category.name) {
       console.log("Invalid category object:", category);
@@ -72,33 +61,18 @@ const CategoryTabs = ({
 
   console.log("3. Filtered categories:", mainCategories);
 
-  const getCategoryIcon = (categoryName: string) => {
-    switch (categoryName) {
-      case "News & Politics":
-        return <Newspaper className="w-5 h-5 text-[#E2725B]" />;
-      case "Entertainment":
-        return <Music2 className="w-5 h-5 text-[#E2725B]" />;
-      case "Technology":
-        return <Laptop className="w-5 h-5 text-[#E2725B]" />;
-      case "Sports":
-        return <Trophy className="w-5 h-5 text-[#E2725B]" />;
-      case "Business":
-        return <Briefcase className="w-5 h-5 text-[#E2725B]" />;
-      case "Health":
-        return <Heart className="w-5 h-5 text-[#E2725B]" />;
-      case "Agriculture":
-        return <Wheat className="w-5 h-5 text-[#E2725B]" />;
-      case "Travel":
-        return <Plane className="w-5 h-5 text-[#E2725B]" />;
-      case "Culture & Personals":
-        return <Users className="w-5 h-5 text-[#E2725B]" />;
-      case "Automotive":
-        return <Car className="w-5 h-5 text-[#E2725B]" />;
-      case "Fashion & Beauty":
-        return <Scissors className="w-5 h-5 text-[#E2725B]" />;
-      default:
-        return null;
-    }
+  const getCategoryIcon = (category: Category) => {
+    if (!category.icon) return null;
+    
+    // Convert icon name to Pascal case for Lucide icon component name
+    const iconName = category.icon
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('') as keyof typeof Icons;
+    
+    const IconComponent = Icons[iconName] as LucideIcon;
+    
+    return IconComponent ? <IconComponent className="w-5 h-5 text-[#E2725B]" /> : null;
   };
 
   const getCategoryPath = (categoryName: string) => {
@@ -144,7 +118,7 @@ const CategoryTabs = ({
                 onClick={() => handleCategoryClick(category.id, category.name)}
                 className="whitespace-nowrap flex items-center gap-1.5 md:gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-sm md:text-base font-medium px-2 md:px-4"
               >
-                {getCategoryIcon(category.name)}
+                {getCategoryIcon(category)}
                 <span className="hidden md:inline">{category.name}</span>
                 <span className="md:hidden">
                   {category.name.split(' ')[0]}
