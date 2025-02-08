@@ -9,6 +9,7 @@ import { DesignerInfo } from "./components/DesignerInfo";
 import { DesignerContact } from "./components/DesignerContact";
 import { DesignerPortfolio } from "./components/DesignerPortfolio";
 import { DesignerReviews } from "./components/reviews/DesignerReviews";
+import { DesignerLocationMap } from "./components/DesignerLocationMap";
 
 interface Designer {
   id: string;
@@ -19,6 +20,8 @@ interface Designer {
   years_experience: number | null;
   portfolio_images: string[];
   location: string;
+  latitude: number;
+  longitude: number;
   contact_email: string | null;
   contact_phone: string | null;
   instagram_handle: string | null;
@@ -123,7 +126,7 @@ const DesignerProfile = () => {
           />
         </div>
 
-        <div>
+        <div className="space-y-6">
           <Card>
             <DesignerContact
               email={designer.contact_email}
@@ -132,6 +135,17 @@ const DesignerProfile = () => {
               instagramHandle={designer.instagram_handle}
             />
           </Card>
+
+          {designer.latitude && designer.longitude && (
+            <Card className="p-4">
+              <h3 className="font-semibold mb-4">Location</h3>
+              <DesignerLocationMap
+                latitude={designer.latitude}
+                longitude={designer.longitude}
+                businessName={designer.business_name}
+              />
+            </Card>
+          )}
         </div>
       </div>
     </div>
