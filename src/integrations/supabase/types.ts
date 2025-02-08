@@ -869,7 +869,9 @@ export type Database = {
           professional_type: Database["public"]["Enums"]["beauty_professional_type"]
           rating: number | null
           review_count: number | null
-          specialties: string[] | null
+          specialties:
+            | Database["public"]["Enums"]["beauty_professional_specialty"][]
+            | null
           updated_at: string
           user_id: string
           verified: boolean | null
@@ -889,7 +891,9 @@ export type Database = {
           professional_type: Database["public"]["Enums"]["beauty_professional_type"]
           rating?: number | null
           review_count?: number | null
-          specialties?: string[] | null
+          specialties?:
+            | Database["public"]["Enums"]["beauty_professional_specialty"][]
+            | null
           updated_at?: string
           user_id: string
           verified?: boolean | null
@@ -909,7 +913,9 @@ export type Database = {
           professional_type?: Database["public"]["Enums"]["beauty_professional_type"]
           rating?: number | null
           review_count?: number | null
-          specialties?: string[] | null
+          specialties?:
+            | Database["public"]["Enums"]["beauty_professional_specialty"][]
+            | null
           updated_at?: string
           user_id?: string
           verified?: boolean | null
@@ -2602,6 +2608,15 @@ export type Database = {
         | "following"
         | "sharing"
       auto_marketplace_section: "vehicles" | "parts"
+      beauty_professional_specialty:
+        | "hair_stylist"
+        | "makeup_artist"
+        | "nail_technician"
+        | "esthetician"
+        | "barber"
+        | "lash_technician"
+        | "spa_therapist"
+        | "cosmetologist"
       beauty_professional_type: "makeup_artist" | "hair_stylist"
       delivery_method: "shipping" | "pickup" | "both"
       designer_specialty:
