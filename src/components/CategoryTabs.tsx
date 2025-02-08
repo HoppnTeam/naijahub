@@ -14,7 +14,8 @@ import {
   Wheat, 
   Plane, 
   Users, 
-  Car 
+  Car,
+  Scissors
 } from "lucide-react";
 
 interface Category {
@@ -40,7 +41,7 @@ const CategoryTabs = ({
   const mainCategories = categories?.filter(category => 
     ["News & Politics", "Entertainment", "Technology", "Sports", 
      "Business", "Health", "Agriculture", "Travel", 
-     "Culture & Personals", "Automotive"].includes(category.name)
+     "Culture & Personals", "Automotive", "Fashion & Beauty"].includes(category.name)
   );
 
   const getCategoryIcon = (categoryName: string) => {
@@ -65,6 +66,8 @@ const CategoryTabs = ({
         return <Users className="w-5 h-5 text-[#E2725B]" />;
       case "Automotive":
         return <Car className="w-5 h-5 text-[#E2725B]" />;
+      case "Fashion & Beauty":
+        return <Scissors className="w-5 h-5 text-[#E2725B]" />;
       default:
         return null;
     }
@@ -81,7 +84,8 @@ const CategoryTabs = ({
       "Agriculture": "/categories/agriculture",
       "Travel": "/categories/travel",
       "Culture & Personals": "/categories/culture",
-      "Automotive": "/categories/automotive"
+      "Automotive": "/categories/automotive",
+      "Fashion & Beauty": "/categories/fashion-beauty"
     };
     return paths[categoryName] || "/";
   };
@@ -135,4 +139,3 @@ const CategoryTabs = ({
 };
 
 export default CategoryTabs;
-
