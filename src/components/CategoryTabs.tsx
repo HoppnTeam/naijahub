@@ -97,7 +97,7 @@ const CategoryTabs = ({
   };
 
   return (
-    <Tabs defaultValue="all" className="w-full">
+    <Tabs defaultValue={selectedCategory} className="w-full">
       <ScrollArea className="w-full relative" type="scroll">
         <div className="overflow-x-auto">
           <TabsList className="w-max inline-flex mb-4 md:mb-6 p-1 bg-[#243949] rounded-lg shadow-md">
