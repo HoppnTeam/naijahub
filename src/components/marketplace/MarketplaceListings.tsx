@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,14 +7,19 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { CreateListingForm } from "./CreateListingForm";
 import { MarketplaceFilters } from "./listings/MarketplaceFilters";
 import { MarketplaceList } from "./listings/MarketplaceList";
+import { ShoppingCart } from "./cart/ShoppingCart";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { ShoppingCart as CartIcon } from "lucide-react";
+import { useShoppingCart } from "@/hooks/use-shopping-cart";
 
 export const MarketplaceListings = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { cartItemsCount } = useShoppingCart();
 
   const { data: listings, isLoading, refetch } = useQuery({
     queryKey: ["marketplace-listings", selectedCategory, searchQuery],
@@ -76,16 +82,34 @@ export const MarketplaceListings = () => {
           onCategoryChange={setSelectedCategory}
         />
         
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button onClick={handleCreateClick}>Create Listing</Button>
-          </DialogTrigger>
-          {user && (
+        <div className="flex gap-2">
+          <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="relative">
+                <CartIcon className="w-5 h-5" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Button>
+            </DialogTrigger>
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-              <CreateListingForm />
+              <ShoppingCart />
             </DialogContent>
-          )}
-        </Dialog>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button onClick={handleCreateClick}>Create Listing</Button>
+            </DialogTrigger>
+            {user && (
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <CreateListingForm />
+              </DialogContent>
+            )}
+          </Dialog>
+        </div>
       </div>
 
       <MarketplaceList 

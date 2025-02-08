@@ -1,13 +1,15 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
-import { Package, MapPin, Clock, Heart } from "lucide-react";
+import { Package, MapPin, Clock, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useShoppingCart } from "@/hooks/use-shopping-cart";
 
 interface MarketplaceListingCardProps {
   listing: {
@@ -33,9 +35,10 @@ export const MarketplaceListingCard = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLiking, setIsLiking] = useState(false);
+  const { addToCart } = useShoppingCart();
 
   const handleLikeClick = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when clicking like button
+    e.stopPropagation();
     
     if (!user) {
       toast({
@@ -79,6 +82,21 @@ export const MarketplaceListingCard = ({
     }
   };
 
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to add items to cart",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addToCart.mutate({ listingId: listing.id });
+  };
+
   return (
     <Card 
       className="cursor-pointer hover:shadow-lg transition-shadow relative"
@@ -108,15 +126,26 @@ export const MarketplaceListingCard = ({
             <Clock className="w-4 h-4" />
             <span>{new Date(listing.created_at).toLocaleDateString()}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
-            onClick={handleLikeClick}
-            disabled={isLiking}
-          >
-            <Heart className={cn("w-5 h-5", isLiked ? "fill-current text-red-500" : "")} />
-          </Button>
+          <div className="flex gap-2 absolute top-2 right-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-background/80 backdrop-blur-sm"
+              onClick={handleAddToCart}
+              disabled={addToCart.isPending}
+            >
+              <ShoppingCart className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-background/80 backdrop-blur-sm"
+              onClick={handleLikeClick}
+              disabled={isLiking}
+            >
+              <Heart className={cn("w-5 h-5", isLiked ? "fill-current text-red-500" : "")} />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
