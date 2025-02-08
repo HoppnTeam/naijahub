@@ -20,8 +20,8 @@ interface Designer {
   years_experience: number | null;
   portfolio_images: string[];
   location: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   contact_email: string | null;
   contact_phone: string | null;
   instagram_handle: string | null;
@@ -29,6 +29,8 @@ interface Designer {
   rating: number;
   review_count: number;
   verified: boolean;
+  created_at: string;
+  updated_at: string;
   profiles: {
     username: string;
     avatar_url: string | null;

@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 interface Activity {
-  id: string; // Added this missing property
+  id: string;
   activity_date: string;
   activity_type: string;
   client_name: string;

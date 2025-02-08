@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,7 +70,7 @@ const BeautyProfessionalRegistration = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     if (!user) return;
     
     setIsSubmitting(true);
@@ -94,7 +95,7 @@ const BeautyProfessionalRegistration = () => {
         imageUrls.push(publicUrl);
       }
 
-      // Create professional profile with correct type annotations
+      // Create professional profile
       const { error } = await supabase
         .from("beauty_professional_portfolios")
         .insert({
