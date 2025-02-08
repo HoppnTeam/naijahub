@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +7,7 @@ import { DesignerHeader } from "./components/DesignerHeader";
 import { DesignerInfo } from "./components/DesignerInfo";
 import { DesignerContact } from "./components/DesignerContact";
 import { DesignerPortfolio } from "./components/DesignerPortfolio";
+import { DesignerReviews } from "./components/DesignerReviews";
 
 interface Designer {
   id: string;
@@ -112,6 +112,11 @@ const DesignerProfile = () => {
 
           <DesignerPortfolio 
             images={designer.portfolio_images}
+            businessName={designer.business_name}
+          />
+
+          <DesignerReviews
+            designerId={designer.id}
             businessName={designer.business_name}
           />
         </div>
