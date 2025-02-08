@@ -10,32 +10,7 @@ import { DesignerContact } from "./components/DesignerContact";
 import { DesignerPortfolio } from "./components/DesignerPortfolio";
 import { DesignerReviews } from "./components/reviews/DesignerReviews";
 import { DesignerLocationMap } from "./components/DesignerLocationMap";
-
-interface Designer {
-  id: string;
-  user_id: string;
-  business_name: string;
-  description: string;
-  specialties: string[];
-  years_experience: number | null;
-  portfolio_images: string[];
-  location: string;
-  latitude: number | null;
-  longitude: number | null;
-  contact_email: string | null;
-  contact_phone: string | null;
-  instagram_handle: string | null;
-  website: string | null;
-  rating: number;
-  review_count: number;
-  verified: boolean;
-  created_at: string;
-  updated_at: string;
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
-}
+import type { Designer } from "@/types/beauty";
 
 const DesignerProfile = () => {
   const { id } = useParams();
@@ -44,6 +19,8 @@ const DesignerProfile = () => {
   const { data: designer, isLoading } = useQuery({
     queryKey: ["designer", id],
     queryFn: async () => {
+      if (!id) return null;
+
       const { data, error } = await supabase
         .from("fashion_designers")
         .select(`
@@ -54,11 +31,21 @@ const DesignerProfile = () => {
           )
         `)
         .eq("id", id)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
       if (!data) return null;
-      return data as Designer;
+
+      // Transform the data to match the Designer type
+      const transformedData: Designer = {
+        ...data,
+        profiles: {
+          username: data.profiles?.username || "",
+          avatar_url: data.profiles?.avatar_url || null
+        }
+      };
+
+      return transformedData;
     },
   });
 
