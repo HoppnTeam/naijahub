@@ -52,14 +52,25 @@ const CategoryTabs = ({
     "Fashion & Beauty"
   ];
 
-  console.log("Current categories from props:", categories);
-  console.log("Expected category names:", categoryNames);
+  console.log("CategoryTabs Debug:");
+  console.log("1. Raw categories prop:", categories);
+  console.log("2. Expected category names:", categoryNames);
 
-  const mainCategories = categories?.filter(category => 
-    categoryNames.includes(category.name?.trim())
-  );
+  // Add null check and detailed filtering log
+  const mainCategories = categories?.filter(category => {
+    if (!category || !category.name) {
+      console.log("Invalid category object:", category);
+      return false;
+    }
+    
+    const trimmedName = category.name.trim();
+    const isIncluded = categoryNames.includes(trimmedName);
+    
+    console.log(`Category "${trimmedName}": ${isIncluded ? 'included' : 'excluded'}`);
+    return isIncluded;
+  });
 
-  console.log("Filtered main categories:", mainCategories);
+  console.log("3. Filtered categories:", mainCategories);
 
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
@@ -108,7 +119,7 @@ const CategoryTabs = ({
   };
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    console.log("Category clicked:", categoryName, "with ID:", categoryId);
+    console.log("Category clicked:", { id: categoryId, name: categoryName });
     onCategoryChange(categoryId);
     const path = getCategoryPath(categoryName);
     navigate(path);
