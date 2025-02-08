@@ -39,7 +39,7 @@ const Index = () => {
       }
       
       console.log("Raw categories data:", data);
-      return data;
+      return data || []; // Ensure we always return an array
     },
     staleTime: 60 * 60 * 1000, // Cache for 1 hour
   });
