@@ -33,7 +33,10 @@ export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsPro
       const { data, error } = await supabase
         .from("designer_reviews")
         .select(`
-          *,
+          id,
+          rating,
+          comment,
+          created_at,
           reviewer:profiles!reviewer_id(
             username,
             avatar_url
