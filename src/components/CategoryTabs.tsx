@@ -44,6 +44,9 @@ const CategoryTabs = ({
      "Culture & Personals", "Automotive", "Fashion & Beauty"].includes(category.name)
   );
 
+  console.log("Available categories:", categories); // Debug log
+  console.log("Filtered main categories:", mainCategories); // Debug log
+
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
       case "News & Politics":
@@ -91,6 +94,7 @@ const CategoryTabs = ({
   };
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
+    console.log("Category clicked:", categoryName, categoryId); // Debug log
     onCategoryChange(categoryId);
     const path = getCategoryPath(categoryName);
     navigate(path);

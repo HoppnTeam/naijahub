@@ -25,9 +25,10 @@ export const Navigation = () => {
     { name: "Business", path: "/categories/business" },
     { name: "Health", path: "/categories/health" },
     { name: "Agriculture", path: "/categories/agriculture" },
+    { name: "Travel", path: "/categories/travel" },
     { name: "Culture & Personals", path: "/categories/culture" },
     { name: "Automotive", path: "/categories/automotive" },
-    { name: "Fashion & Beauty", path: "/categories/fashion-beauty" },
+    { name: "Fashion & Beauty", path: "/categories/fashion-beauty" }
   ];
 
   return (
