@@ -1,9 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +10,14 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Content is required"),
+});
 
 export const FashionAndBeautyCreatePost = () => {
   const navigate = useNavigate();
@@ -19,15 +26,18 @@ export const FashionAndBeautyCreatePost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
 
     setIsLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-
     try {
       let imageUrl = null;
       if (images.length > 0) {
@@ -50,8 +60,8 @@ export const FashionAndBeautyCreatePost = () => {
       }
 
       const { error } = await supabase.from("posts").insert({
-        title,
-        content,
+        title: values.title,
+        content: values.content,
         user_id: user.id,
         image_url: imageUrl,
         category_id: (await supabase
@@ -88,36 +98,52 @@ export const FashionAndBeautyCreatePost = () => {
           <CardTitle>Create Fashion & Beauty Post</CardTitle>
         </CardHeader>
         <CardContent>
-          <Form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" required placeholder="Enter post title" />
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter post title" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-            <div className="space-y-2">
-              <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
+              <FormField
+                control={form.control}
                 name="content"
-                required
-                placeholder="Write your post content"
-                className="min-h-[200px]"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Write your post content"
+                        className="min-h-[200px]"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <Label>Images</Label>
-              <ImageUpload
-                onImagesChange={setImages}
-                multiple={false}
-                maxFiles={1}
-                accept="image/*"
-              />
-            </div>
+              <div className="space-y-2">
+                <FormLabel>Images</FormLabel>
+                <ImageUpload
+                  onImagesChange={setImages}
+                  multiple={false}
+                  maxFiles={1}
+                  accept="image/*"
+                />
+              </div>
 
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Post"}
-            </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Creating..." : "Create Post"}
+              </Button>
+            </form>
           </Form>
         </CardContent>
       </Card>
