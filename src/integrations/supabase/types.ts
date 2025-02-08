@@ -767,6 +767,56 @@ export type Database = {
           },
         ]
       }
+      beauty_professional_bookings: {
+        Row: {
+          client_id: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          price: number
+          professional_id: string
+          service_date: string
+          service_name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          notes?: string | null
+          price: number
+          professional_id: string
+          service_date: string
+          service_name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          price?: number
+          professional_id?: string
+          service_date?: string
+          service_name?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_bookings_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_professional_portfolios: {
         Row: {
           business_name: string
@@ -829,6 +879,44 @@ export type Database = {
           years_experience?: number | null
         }
         Relationships: []
+      }
+      beauty_professional_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          images: string[] | null
+          professional_id: string
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          professional_id: string
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          professional_id?: string
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       beauty_reviews: {
         Row: {
