@@ -4,48 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormLabel } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { ImageUpload } from "@/components/posts/ImageUpload";
-import type { BeautyProfessionalSpecialty } from "@/types/beauty";
-
-const specialtiesList = [
-  'hair_stylist',
-  'makeup_artist',
-  'nail_technician',
-  'esthetician',
-  'barber',
-  'lash_technician',
-  'spa_therapist',
-  'cosmetologist'
-] as const;
-
-const formSchema = z.object({
-  business_name: z.string().min(2, "Business name must be at least 2 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  years_experience: z.number().min(0).optional(),
-  location: z.string().min(2, "Location is required"),
-  contact_email: z.string().email("Invalid email address"),
-  contact_phone: z.string().optional(),
-  instagram_handle: z.string().optional(),
-  website: z.string().url().optional().or(z.literal("")),
-  specialties: z.array(z.enum(specialtiesList)),
-  professional_type: z.enum(specialtiesList)
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { BasicInfoFields } from "@/components/beauty/registration/BasicInfoFields";
+import { ContactInfoFields } from "@/components/beauty/registration/ContactInfoFields";
+import { SpecialtiesFields } from "@/components/beauty/registration/SpecialtiesFields";
+import { beautyProfessionalFormSchema, type BeautyProfessionalFormValues } from "@/schemas/beauty-professional";
 
 const BeautyProfessionalRegistration = () => {
   const { user } = useAuth();
@@ -54,8 +21,8 @@ const BeautyProfessionalRegistration = () => {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<BeautyProfessionalFormValues>({
+    resolver: zodResolver(beautyProfessionalFormSchema),
     defaultValues: {
       business_name: "",
       description: "",
@@ -70,7 +37,7 @@ const BeautyProfessionalRegistration = () => {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: BeautyProfessionalFormValues) => {
     if (!user) return;
     
     setIsSubmitting(true);
@@ -150,70 +117,7 @@ const BeautyProfessionalRegistration = () => {
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="business_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Business Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="professional_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Professional Type</FormLabel>
-                <FormControl>
-                  <select
-                    {...field}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {specialtiesList.map((type) => (
-                      <option key={type} value={type}>
-                        {type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                      </option>
-                    ))}
-                  </select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Location</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <BasicInfoFields form={form} />
 
           <div className="space-y-4">
             <FormLabel>Portfolio Images</FormLabel>
@@ -226,66 +130,10 @@ const BeautyProfessionalRegistration = () => {
 
           <div className="space-y-4">
             <FormLabel>Contact Information</FormLabel>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="contact_email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contact_phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Phone (optional)" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <ContactInfoFields form={form} />
           </div>
 
-          <FormField
-            control={form.control}
-            name="specialties"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Specialties</FormLabel>
-                <FormControl>
-                  <div className="grid grid-cols-2 gap-2">
-                    {specialtiesList.map((specialty) => (
-                      <label key={specialty} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={field.value.includes(specialty)}
-                          onChange={(e) => {
-                            const value = field.value || [];
-                            if (e.target.checked) {
-                              field.onChange([...value, specialty]);
-                            } else {
-                              field.onChange(value.filter((v) => v !== specialty));
-                            }
-                          }}
-                          className="form-checkbox"
-                        />
-                        <span>{specialty.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
-                      </label>
-                    ))}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <SpecialtiesFields form={form} />
 
           <Button type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? "Creating Profile..." : "Create Professional Profile"}
