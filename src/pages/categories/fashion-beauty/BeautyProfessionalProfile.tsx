@@ -1,14 +1,23 @@
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { BeautyProfessional } from "@/types/beauty";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookingCalendar } from "@/components/beauty/BookingCalendar";
+import { BookingDialog } from "@/components/beauty/BookingDialog";
+import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beauty";
 
 const BeautyProfessionalProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedStartTime, setSelectedStartTime] = useState<string>();
+  const [selectedEndTime, setSelectedEndTime] = useState<string>();
+  const [selectedService, setSelectedService] = useState<BeautyProfessionalService>();
+  const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
 
   const { data: professional, isLoading } = useQuery({
     queryKey: ["beauty-professional", id],
@@ -30,6 +39,33 @@ const BeautyProfessionalProfile = () => {
       return data as BeautyProfessional;
     },
   });
+
+  const { data: services } = useQuery({
+    queryKey: ["professional-services", id],
+    enabled: !!professional,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("beauty_professional_services")
+        .select("*")
+        .eq("professional_id", id);
+
+      if (error) throw error;
+      return data as BeautyProfessionalService[];
+    },
+  });
+
+  const handleTimeSlotSelect = (date: Date, startTime: string, endTime: string) => {
+    setSelectedDate(date);
+    setSelectedStartTime(startTime);
+    setSelectedEndTime(endTime);
+  };
+
+  const handleServiceSelect = (service: BeautyProfessionalService) => {
+    setSelectedService(service);
+    setSelectedDate(undefined);
+    setSelectedStartTime(undefined);
+    setSelectedEndTime(undefined);
+  };
 
   if (isLoading) {
     return (
@@ -82,49 +118,119 @@ const BeautyProfessionalProfile = () => {
               )}
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold mb-2">About</h2>
-                <p className="text-muted-foreground">{professional.description}</p>
-              </div>
+            <Tabs defaultValue="about" className="w-full">
+              <TabsList>
+                <TabsTrigger value="about">About</TabsTrigger>
+                <TabsTrigger value="services">Services</TabsTrigger>
+                <TabsTrigger value="book">Book Appointment</TabsTrigger>
+              </TabsList>
 
-              <div>
-                <h2 className="text-lg font-semibold mb-2">Specialties</h2>
-                <div className="flex flex-wrap gap-2">
-                  {professional.specialties.map((specialty, index) => (
-                    <span
-                      key={index}
-                      className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
-                    >
-                      {specialty.replace('_', ' ')}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {professional.years_experience && (
+              <TabsContent value="about" className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-semibold mb-2">Experience</h2>
-                  <p>{professional.years_experience} years</p>
+                  <h2 className="text-lg font-semibold mb-2">About</h2>
+                  <p className="text-muted-foreground">{professional.description}</p>
                 </div>
-              )}
 
-              {professional.portfolio_images && professional.portfolio_images.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold mb-2">Portfolio</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {professional.portfolio_images.map((image, index) => (
-                      <img
+                  <h2 className="text-lg font-semibold mb-2">Specialties</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {professional.specialties?.map((specialty, index) => (
+                      <span
                         key={index}
-                        src={image}
-                        alt={`Portfolio ${index + 1}`}
-                        className="rounded-lg object-cover w-full h-48"
-                      />
+                        className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
+                      >
+                        {specialty.replace('_', ' ')}
+                      </span>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
+
+                {professional.portfolio_images && professional.portfolio_images.length > 0 && (
+                  <div>
+                    <h2 className="text-lg font-semibold mb-2">Portfolio</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {professional.portfolio_images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Portfolio ${index + 1}`}
+                          className="rounded-lg object-cover w-full h-48"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="services" className="space-y-4">
+                {services?.map((service) => (
+                  <Card key={service.id} className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold">{service.service_name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {service.description}
+                        </p>
+                        <p className="text-sm">Duration: {service.duration_minutes} minutes</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">₦{service.price}</p>
+                        <Button 
+                          size="sm" 
+                          onClick={() => {
+                            handleServiceSelect(service);
+                            document.querySelector('[value="book"]')?.click();
+                          }}
+                        >
+                          Book Now
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="book" className="space-y-6">
+                {!selectedService ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-4">
+                      Please select a service first
+                    </p>
+                    <Button
+                      onClick={() => document.querySelector('[value="services"]')?.click()}
+                    >
+                      View Services
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Card className="p-4">
+                      <h3 className="font-semibold mb-2">Selected Service</h3>
+                      <p>{selectedService.service_name} - ₦{selectedService.price}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Duration: {selectedService.duration_minutes} minutes
+                      </p>
+                    </Card>
+
+                    <BookingCalendar
+                      professionalId={professional.id}
+                      onTimeSlotSelect={handleTimeSlotSelect}
+                    />
+
+                    {selectedDate && selectedStartTime && selectedEndTime && (
+                      <div className="flex justify-center">
+                        <Button
+                          size="lg"
+                          onClick={() => setIsBookingDialogOpen(true)}
+                        >
+                          Proceed with Booking
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </TabsContent>
+            </Tabs>
           </Card>
         </div>
 
@@ -176,7 +282,7 @@ const BeautyProfessionalProfile = () => {
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Ratings & Reviews</h2>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{professional.rating.toFixed(1)}</div>
+              <div className="text-2xl font-bold">{professional.rating?.toFixed(1)}</div>
               <div className="text-muted-foreground">
                 ({professional.review_count} reviews)
               </div>
@@ -184,6 +290,18 @@ const BeautyProfessionalProfile = () => {
           </Card>
         </div>
       </div>
+
+      {selectedService && (
+        <BookingDialog
+          isOpen={isBookingDialogOpen}
+          onClose={() => setIsBookingDialogOpen(false)}
+          professional={professional}
+          selectedDate={selectedDate}
+          selectedStartTime={selectedStartTime}
+          selectedEndTime={selectedEndTime}
+          service={selectedService}
+        />
+      )}
     </div>
   );
 };

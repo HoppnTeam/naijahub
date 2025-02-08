@@ -767,6 +767,73 @@ export type Database = {
           },
         ]
       }
+      beauty_professional_availability: {
+        Row: {
+          created_at: string | null
+          day_of_week: number
+          id: string
+          professional_id: string
+          time_slots: Database["public"]["CompositeTypes"]["time_slot"][]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week: number
+          id?: string
+          professional_id: string
+          time_slots?: Database["public"]["CompositeTypes"]["time_slot"][]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: number
+          id?: string
+          professional_id?: string
+          time_slots?: Database["public"]["CompositeTypes"]["time_slot"][]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_availability_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_professional_blocked_dates: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          professional_id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          professional_id: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          professional_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_professional_blocked_dates_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_professional_bookings: {
         Row: {
           client_id: string
@@ -2618,6 +2685,7 @@ export type Database = {
         | "spa_therapist"
         | "cosmetologist"
       beauty_professional_type: "makeup_artist" | "hair_stylist"
+      booking_status: "pending" | "confirmed" | "cancelled" | "completed"
       delivery_method: "shipping" | "pickup" | "both"
       designer_specialty:
         | "traditional"
@@ -2664,7 +2732,10 @@ export type Database = {
         | "general_service"
     }
     CompositeTypes: {
-      [_ in never]: never
+      time_slot: {
+        start_time: string | null
+        end_time: string | null
+      }
     }
   }
 }

@@ -31,3 +31,14 @@ export type BeautyProfessionalSpecialty =
   | 'lash_technician'
   | 'spa_therapist'
   | 'cosmetologist';
+
+export interface BeautyProfessionalService {
+  id: string;
+  professional_id: string;
+  service_name: string;
+  description: string | null;
+  price: number;
+  duration_minutes: number;
+  created_at: string;
+  updated_at: string;
+}
