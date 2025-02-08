@@ -767,6 +767,69 @@ export type Database = {
           },
         ]
       }
+      beauty_professional_portfolios: {
+        Row: {
+          business_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          instagram_handle: string | null
+          location: string
+          portfolio_images: string[] | null
+          professional_type: Database["public"]["Enums"]["beauty_professional_type"]
+          rating: number | null
+          review_count: number | null
+          specialties: string[] | null
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+          website: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          business_name: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram_handle?: string | null
+          location: string
+          portfolio_images?: string[] | null
+          professional_type: Database["public"]["Enums"]["beauty_professional_type"]
+          rating?: number | null
+          review_count?: number | null
+          specialties?: string[] | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+          website?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          business_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram_handle?: string | null
+          location?: string
+          portfolio_images?: string[] | null
+          professional_type?: Database["public"]["Enums"]["beauty_professional_type"]
+          rating?: number | null
+          review_count?: number | null
+          specialties?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+          website?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
       beauty_reviews: {
         Row: {
           business_id: string
@@ -2372,6 +2435,7 @@ export type Database = {
         | "following"
         | "sharing"
       auto_marketplace_section: "vehicles" | "parts"
+      beauty_professional_type: "makeup_artist" | "hair_stylist"
       delivery_method: "shipping" | "pickup" | "both"
       designer_specialty:
         | "traditional"
