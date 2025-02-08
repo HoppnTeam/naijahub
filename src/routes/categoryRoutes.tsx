@@ -1,3 +1,4 @@
+
 import { RouteObject } from "react-router-dom";
 import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import Entertainment from "@/pages/categories/Entertainment";
@@ -16,6 +17,9 @@ import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/Fa
 import DesignerDirectory from "@/pages/categories/fashion-beauty/DesignerDirectory";
 import DesignerRegistration from "@/pages/categories/fashion-beauty/DesignerRegistration";
 import DesignerProfile from "@/pages/categories/fashion-beauty/DesignerProfile";
+import BeautyProfessionalsDirectory from "@/pages/categories/fashion-beauty/BeautyProfessionalsDirectory";
+import BeautyProfessionalRegistration from "@/pages/categories/fashion-beauty/BeautyProfessionalRegistration";
+import BeautyProfessionalProfile from "@/pages/categories/fashion-beauty/BeautyProfessionalProfile";
 import ContentGuidelines from "@/pages/ContentGuidelines";
 
 export const categoryRoutes: RouteObject[] = [
@@ -36,5 +40,8 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/fashion-beauty/designer-directory", element: <DesignerDirectory /> },
   { path: "/categories/fashion-beauty/designer-register", element: <DesignerRegistration /> },
   { path: "/categories/fashion-beauty/designers/:id", element: <DesignerProfile /> },
+  { path: "/categories/fashion-beauty/beauty-professionals", element: <BeautyProfessionalsDirectory /> },
+  { path: "/categories/fashion-beauty/beauty-professionals/register", element: <BeautyProfessionalRegistration /> },
+  { path: "/categories/fashion-beauty/beauty-professionals/:id", element: <BeautyProfessionalProfile /> },
   { path: "/content-guidelines", element: <ContentGuidelines /> }
 ];
