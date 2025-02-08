@@ -31,7 +31,7 @@ export const ReviewsList = ({ professionalId }: ReviewsListProps) => {
           rating,
           comment,
           created_at,
-          reviewer:profiles!reviewer_id(
+          reviewer:profiles!beauty_professional_reviews_reviewer_id_fkey(
             username,
             avatar_url
           )

@@ -37,7 +37,7 @@ export const DesignerReviews = ({ designerId, businessName }: DesignerReviewsPro
           rating,
           comment,
           created_at,
-          reviewer:profiles!reviewer_id(
+          reviewer:profiles!designer_reviews_reviewer_id_fkey(
             username,
             avatar_url
           )
