@@ -56,9 +56,15 @@ const CategoryTabs = ({
 
   console.log("Expected category names:", categoryNames);
 
+  // Add debug logging for each category
+  categories?.forEach(cat => {
+    console.log(`Category in raw data - ID: ${cat.id}, Name: "${cat.name}"`);
+  });
+
   const mainCategories = categories?.filter(category => {
-    const isMainCategory = categoryNames.includes(category.name);
-    console.log(`Checking category "${category.name}" (${category.id}): ${isMainCategory}`);
+    const trimmedName = category.name.trim();
+    const isMainCategory = categoryNames.includes(trimmedName);
+    console.log(`Checking category "${trimmedName}" (${category.id}): ${isMainCategory}`);
     return isMainCategory;
   });
 
