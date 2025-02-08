@@ -796,6 +796,38 @@ export type Database = {
           },
         ]
       }
+      beauty_marketplace_cart_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          listing_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_marketplace_cart_items_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_marketplace_listings: {
         Row: {
           category: string
@@ -840,6 +872,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      beauty_marketplace_orders: {
+        Row: {
+          amount: number
+          buyer_id: string
+          created_at: string | null
+          delivery_method: string
+          delivery_status: string
+          id: string
+          listing_id: string
+          payment_method: string
+          payment_status: string
+          paystack_reference: string | null
+          seller_id: string
+          shipping_address: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          created_at?: string | null
+          delivery_method: string
+          delivery_status?: string
+          id?: string
+          listing_id: string
+          payment_method: string
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id: string
+          shipping_address?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          created_at?: string | null
+          delivery_method?: string
+          delivery_status?: string
+          id?: string
+          listing_id?: string
+          payment_method?: string
+          payment_status?: string
+          paystack_reference?: string | null
+          seller_id?: string
+          shipping_address?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_marketplace_orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       beauty_portfolio_items: {
         Row: {
