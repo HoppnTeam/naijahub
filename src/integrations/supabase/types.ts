@@ -687,6 +687,115 @@ export type Database = {
         }
         Relationships: []
       }
+      beauty_chat_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          room_id: string | null
+          sender_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          room_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          room_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_chat_participants: {
+        Row: {
+          id: string
+          joined_at: string | null
+          last_read_at: string | null
+          room_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          last_read_at?: string | null
+          room_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          last_read_at?: string | null
+          room_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_chat_participants_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_chat_rooms: {
+        Row: {
+          created_at: string | null
+          id: string
+          listing_id: string | null
+          professional_id: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          professional_id?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          professional_id?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_chat_rooms_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beauty_chat_rooms_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_professional_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_marketplace_listings: {
         Row: {
           category: string
