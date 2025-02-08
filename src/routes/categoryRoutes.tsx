@@ -15,7 +15,7 @@ import { EntertainmentCreatePost } from "@/components/posts/entertainment/Entert
 import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
 import DesignerDirectory from "@/pages/categories/fashion-beauty/DesignerDirectory";
 import DesignerRegistration from "@/pages/categories/fashion-beauty/DesignerRegistration";
-import { RouteObject } from "react-router-dom";
+import DesignerProfile from "@/pages/categories/fashion-beauty/DesignerProfile";
 import ContentGuidelines from "@/pages/ContentGuidelines";
 
 export const categoryRoutes: RouteObject[] = [
@@ -35,5 +35,6 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/fashion-beauty/create", element: <FashionAndBeautyCreatePost /> },
   { path: "/categories/fashion-beauty/designer-directory", element: <DesignerDirectory /> },
   { path: "/categories/fashion-beauty/designer-register", element: <DesignerRegistration /> },
+  { path: "/categories/fashion-beauty/designers/:id", element: <DesignerProfile /> },
   { path: "/content-guidelines", element: <ContentGuidelines /> }
 ];
