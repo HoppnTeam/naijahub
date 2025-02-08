@@ -580,6 +580,272 @@ export type Database = {
         }
         Relationships: []
       }
+      beauty_bookings: {
+        Row: {
+          business_id: string
+          created_at: string
+          customer_id: string
+          id: string
+          notes: string | null
+          price: number
+          service_date: string
+          service_name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          notes?: string | null
+          price: number
+          service_date: string
+          service_name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          notes?: string | null
+          price?: number
+          service_date?: string
+          service_name?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_bookings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_businesses: {
+        Row: {
+          business_hours: Json | null
+          business_name: string
+          business_type: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          instagram_handle: string | null
+          location: string
+          rating: number | null
+          review_count: number | null
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+          website: string | null
+        }
+        Insert: {
+          business_hours?: Json | null
+          business_name: string
+          business_type: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          instagram_handle?: string | null
+          location: string
+          rating?: number | null
+          review_count?: number | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+          website?: string | null
+        }
+        Update: {
+          business_hours?: Json | null
+          business_name?: string
+          business_type?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          instagram_handle?: string | null
+          location?: string
+          rating?: number | null
+          review_count?: number | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      beauty_marketplace_listings: {
+        Row: {
+          category: string
+          condition: string
+          created_at: string
+          description: string
+          id: string
+          images: string[] | null
+          location: string
+          price: number
+          seller_id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          condition: string
+          created_at?: string
+          description: string
+          id?: string
+          images?: string[] | null
+          location: string
+          price: number
+          seller_id: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          condition?: string
+          created_at?: string
+          description?: string
+          id?: string
+          images?: string[] | null
+          location?: string
+          price?: number
+          seller_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      beauty_portfolio_items: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          id: string
+          images: string[]
+          title: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images: string[]
+          title: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[]
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_portfolio_items_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_reviews: {
+        Row: {
+          business_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          images: string[] | null
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          business_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          business_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beauty_services: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          duration_minutes: number
+          id?: string
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_reviews: {
         Row: {
           cons: string[] | null
