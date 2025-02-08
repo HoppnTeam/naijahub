@@ -71,6 +71,7 @@ export const ServiceForm = ({
       professional_id: professionalId,
       price: Number(formData.price),
       duration_minutes: Number(formData.duration_minutes),
+      service_name: formData.service_name || "", // Ensure service_name is never undefined
     };
 
     const { error } = editingService
@@ -78,7 +79,14 @@ export const ServiceForm = ({
           .from("beauty_professional_services")
           .update(serviceData)
           .eq("id", editingService.id)
-      : await supabase.from("beauty_professional_services").insert(serviceData);
+      : await supabase
+          .from("beauty_professional_services")
+          .insert({
+            ...serviceData,
+            service_name: serviceData.service_name,
+            service_location: serviceData.service_location || "in_store",
+            category: serviceData.category || "other",
+          });
 
     setIsSubmitting(false);
 

@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +21,16 @@ import {
   Star,
   Users 
 } from "lucide-react";
+
+interface Activity {
+  id: string;
+  activity_date: string;
+  activity_type: string;
+  client_name: string;
+  description: string;
+  amount: number;
+  status: string;
+}
 
 export const BusinessDashboard = () => {
   const { user } = useAuth();
