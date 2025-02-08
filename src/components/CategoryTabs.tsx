@@ -58,7 +58,7 @@ const CategoryTabs = ({
 
   const mainCategories = categories?.filter(category => {
     const isMainCategory = categoryNames.includes(category.name);
-    console.log(`Category "${category.name}" included: ${isMainCategory}`);
+    console.log(`Checking category "${category.name}": ${isMainCategory}`);
     return isMainCategory;
   });
 
