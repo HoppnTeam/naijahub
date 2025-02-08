@@ -1,3 +1,4 @@
+
 import { lazy } from "react";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
@@ -6,6 +7,7 @@ import CreatePost from "@/pages/CreatePost";
 import PostDetails from "@/pages/PostDetails";
 import Contact from "@/pages/Contact";
 import Advertise from "@/pages/Advertise";
+import { MarketplaceListings } from "@/components/marketplace/MarketplaceListings";
 const ContentGuidelines = lazy(() => import("@/pages/ContentGuidelines"));
 
 export const mainRoutes = [
@@ -40,5 +42,9 @@ export const mainRoutes = [
   {
     path: "/content-guidelines",
     element: <ContentGuidelines />,
+  },
+  {
+    path: "/marketplace",
+    element: <MarketplaceListings />,
   },
 ];

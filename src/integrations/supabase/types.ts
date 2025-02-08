@@ -929,6 +929,47 @@ export type Database = {
           },
         ]
       }
+      beauty_marketplace_transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          order_id: string | null
+          payment_status: string | null
+          paystack_reference: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          order_id?: string | null
+          payment_status?: string | null
+          paystack_reference?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          order_id?: string | null
+          payment_status?: string | null
+          paystack_reference?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beauty_marketplace_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "beauty_marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beauty_portfolio_items: {
         Row: {
           business_id: string
