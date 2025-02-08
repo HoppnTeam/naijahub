@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ImageUpload } from "@/components/posts/ImageUpload";
 
+// Update the form schema to match database requirements
 const formSchema = z.object({
   business_name: z.string().min(2, "Business name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
@@ -29,8 +30,10 @@ const formSchema = z.object({
   contact_phone: z.string().optional(),
   instagram_handle: z.string().optional(),
   website: z.string().url().optional().or(z.literal("")),
-  specialties: z.array(z.string()).min(1, "Select at least one specialty"),
+  specialties: z.array(z.enum(['traditional', 'contemporary', 'bridal', 'ready_to_wear', 'haute_couture', 'accessories', 'footwear'])),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 const DesignerRegistration = () => {
   const { user } = useAuth();
@@ -39,7 +42,7 @@ const DesignerRegistration = () => {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       business_name: "",
@@ -54,13 +57,13 @@ const DesignerRegistration = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     if (!user) return;
     
     setIsSubmitting(true);
     try {
       // Upload portfolio images
-      const imageUrls = [];
+      const imageUrls: string[] = [];
       for (const image of images) {
         const fileExt = image.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
@@ -79,10 +82,18 @@ const DesignerRegistration = () => {
         imageUrls.push(publicUrl);
       }
 
-      // Create designer profile
+      // Create designer profile with proper typing
       const { error } = await supabase.from("fashion_designers").insert({
         user_id: user.id,
-        ...values,
+        business_name: values.business_name,
+        description: values.description,
+        years_experience: values.years_experience,
+        location: values.location,
+        contact_email: values.contact_email,
+        contact_phone: values.contact_phone,
+        instagram_handle: values.instagram_handle,
+        website: values.website || null,
+        specialties: values.specialties,
         portfolio_images: imageUrls,
       });
 
