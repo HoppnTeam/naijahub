@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,10 +12,12 @@ import { ServicesSection } from "@/components/beauty/profile/ServicesSection";
 import { ContactSection } from "@/components/beauty/profile/ContactSection";
 import { RatingsSection } from "@/components/beauty/profile/RatingsSection";
 import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beauty";
+import { useAuth } from "@/hooks/auth";
 
 const BeautyProfessionalProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedStartTime, setSelectedStartTime] = useState<string>();
   const [selectedEndTime, setSelectedEndTime] = useState<string>();
@@ -58,6 +59,8 @@ const BeautyProfessionalProfile = () => {
     },
   });
 
+  const isOwner = user?.id === professional?.user_id;
+
   const handleTimeSlotSelect = (date: Date, startTime: string, endTime: string) => {
     setSelectedDate(date);
     setSelectedStartTime(startTime);
@@ -69,7 +72,6 @@ const BeautyProfessionalProfile = () => {
     setSelectedDate(undefined);
     setSelectedStartTime(undefined);
     setSelectedEndTime(undefined);
-    // Use querySelector with optional chaining
     document.querySelector('[value="book"]')?.setAttribute('data-state', 'active');
   };
 
@@ -138,8 +140,10 @@ const BeautyProfessionalProfile = () => {
               <TabsContent value="services">
                 {services && (
                   <ServicesSection 
-                    services={services} 
+                    professional={professional}
+                    services={services}
                     onServiceSelect={handleServiceSelect}
+                    isOwner={isOwner}
                   />
                 )}
               </TabsContent>
