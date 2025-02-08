@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingCalendar } from "@/components/beauty/BookingCalendar";
 import { BookingDialog } from "@/components/beauty/BookingDialog";
-import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beauty";
+import { Badge } from "@/components/ui/badge";
+import type { BeautyProfessional, BeautyProfessionalService, ServiceCategory } from "@/types/beauty";
 
 const BeautyProfessionalProfile = () => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const BeautyProfessionalProfile = () => {
   const [selectedEndTime, setSelectedEndTime] = useState<string>();
   const [selectedService, setSelectedService] = useState<BeautyProfessionalService>();
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | 'all'>('all');
 
   const { data: professional, isLoading } = useQuery({
     queryKey: ["beauty-professional", id],
@@ -65,6 +67,27 @@ const BeautyProfessionalProfile = () => {
     setSelectedDate(undefined);
     setSelectedStartTime(undefined);
     setSelectedEndTime(undefined);
+  };
+
+  const serviceCategories = services 
+    ? Array.from(new Set(services.map(s => s.category)))
+    : [];
+
+  const filteredServices = services?.filter(service => 
+    selectedCategory === 'all' || service.category === selectedCategory
+  );
+
+  const getServiceLocationLabel = (location: string) => {
+    switch (location) {
+      case 'in_store':
+        return 'In-Store Service';
+      case 'home_service':
+        return 'Home Service';
+      case 'both':
+        return 'In-Store or Home Service Available';
+      default:
+        return location;
+    }
   };
 
   if (isLoading) {
@@ -163,18 +186,41 @@ const BeautyProfessionalProfile = () => {
               </TabsContent>
 
               <TabsContent value="services" className="space-y-4">
-                {services?.map((service) => (
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                    onClick={() => setSelectedCategory('all')}
+                  >
+                    All Services
+                  </Button>
+                  {serviceCategories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={selectedCategory === category ? 'default' : 'outline'}
+                      onClick={() => setSelectedCategory(category)}
+                    >
+                      {category.replace('_', ' ')}
+                    </Button>
+                  ))}
+                </div>
+
+                {filteredServices?.map((service) => (
                   <Card key={service.id} className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-semibold">{service.service_name}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold">{service.service_name}</h3>
+                          <Badge variant="outline">
+                            {getServiceLocationLabel(service.service_location)}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-1">
                           {service.description}
                         </p>
                         <p className="text-sm">Duration: {service.duration_minutes} minutes</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">₦{service.price}</p>
+                        <p className="font-semibold mb-2">₦{service.price}</p>
                         <Button 
                           size="sm" 
                           onClick={() => {
@@ -206,7 +252,12 @@ const BeautyProfessionalProfile = () => {
                   <>
                     <Card className="p-4">
                       <h3 className="font-semibold mb-2">Selected Service</h3>
-                      <p>{selectedService.service_name} - ₦{selectedService.price}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p>{selectedService.service_name} - ₦{selectedService.price}</p>
+                        <Badge variant="outline">
+                          {getServiceLocationLabel(selectedService.service_location)}
+                        </Badge>
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         Duration: {selectedService.duration_minutes} minutes
                       </p>

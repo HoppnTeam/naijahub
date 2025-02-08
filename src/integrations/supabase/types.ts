@@ -1031,32 +1031,38 @@ export type Database = {
       }
       beauty_professional_services: {
         Row: {
+          category: string | null
           created_at: string
           description: string | null
           duration_minutes: number
           id: string
           price: number
           professional_id: string
+          service_location: Database["public"]["Enums"]["service_location_type"]
           service_name: string
           updated_at: string
         }
         Insert: {
+          category?: string | null
           created_at?: string
           description?: string | null
           duration_minutes: number
           id?: string
           price: number
           professional_id: string
+          service_location?: Database["public"]["Enums"]["service_location_type"]
           service_name: string
           updated_at?: string
         }
         Update: {
+          category?: string | null
           created_at?: string
           description?: string | null
           duration_minutes?: number
           id?: string
           price?: number
           professional_id?: string
+          service_location?: Database["public"]["Enums"]["service_location_type"]
           service_name?: string
           updated_at?: string
         }
@@ -2704,6 +2710,7 @@ export type Database = {
         | "app_improvement"
         | "user_related"
         | "general"
+      service_location_type: "in_store" | "home_service" | "both"
       user_role: "user" | "moderator" | "admin"
       vehicle_type:
         | "car"

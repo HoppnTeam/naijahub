@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import type { BeautyProfessionalService } from "@/types/beauty";
+import { MapPin, Clock, CreditCard } from "lucide-react";
 
 interface BookingDialogProps {
   isOpen: boolean;
@@ -33,6 +34,19 @@ export const BookingDialog = ({
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const getServiceLocationLabel = (location: string) => {
+    switch (location) {
+      case 'in_store':
+        return 'In-Store Service';
+      case 'home_service':
+        return 'Home Service';
+      case 'both':
+        return 'In-Store or Home Service Available';
+      default:
+        return location;
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -95,20 +109,34 @@ export const BookingDialog = ({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="grid gap-2">
-            <div>
-              <strong>Service:</strong> {service.service_name}
+          <div className="grid gap-3">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <div>
+                <strong>Service Location:</strong>{" "}
+                {getServiceLocationLabel(service.service_location)}
+              </div>
             </div>
-            <div>
-              <strong>Price:</strong> ₦{service.price}
+
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <div>
+                <strong>Duration:</strong> {service.duration_minutes} minutes
+              </div>
             </div>
-            <div>
-              <strong>Duration:</strong> {service.duration_minutes} minutes
+
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <div>
+                <strong>Price:</strong> ₦{service.price}
+              </div>
             </div>
+
             <div>
               <strong>Date:</strong>{" "}
               {selectedDate ? format(selectedDate, "MMMM do, yyyy") : ""}
             </div>
+            
             <div>
               <strong>Time:</strong> {selectedStartTime} - {selectedEndTime}
             </div>

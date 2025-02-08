@@ -32,6 +32,20 @@ export type BeautyProfessionalSpecialty =
   | 'spa_therapist'
   | 'cosmetologist';
 
+export type ServiceLocationType = 'in_store' | 'home_service' | 'both';
+
+export type ServiceCategory =
+  | 'hair_styling'
+  | 'makeup'
+  | 'nail_care'
+  | 'skincare'
+  | 'massage'
+  | 'facial'
+  | 'waxing'
+  | 'lash_extensions'
+  | 'microblading'
+  | 'other';
+
 export interface BeautyProfessionalService {
   id: string;
   professional_id: string;
@@ -39,6 +53,8 @@ export interface BeautyProfessionalService {
   description: string | null;
   price: number;
   duration_minutes: number;
+  service_location: ServiceLocationType;
+  category: ServiceCategory;
   created_at: string;
   updated_at: string;
 }
