@@ -1,4 +1,4 @@
-
+import { RouteObject } from "react-router-dom";
 import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import Entertainment from "@/pages/categories/Entertainment";
 import Technology from "@/pages/categories/Technology";
