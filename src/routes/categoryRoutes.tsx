@@ -11,6 +11,7 @@ import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import FashionAndBeauty from "@/pages/categories/FashionAndBeauty";
+import BeautyBusinessHub from "@/pages/categories/fashion-beauty/BeautyBusinessHub";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
@@ -20,7 +21,7 @@ import DesignerProfile from "@/pages/categories/fashion-beauty/DesignerProfile";
 import BeautyProfessionalsDirectory from "@/pages/categories/fashion-beauty/BeautyProfessionalsDirectory";
 import BeautyProfessionalRegistration from "@/pages/categories/fashion-beauty/BeautyProfessionalRegistration";
 import BeautyProfessionalProfile from "@/pages/categories/fashion-beauty/BeautyProfessionalProfile";
-import ContentGuidelines from "@/pages/ContentGuidelines";
+import BeautyBusinessDashboard from "@/pages/categories/fashion-beauty/BeautyBusinessDashboard";
 
 export const categoryRoutes: RouteObject[] = [
   { path: "/categories/news-politics", element: <NewsAndPolitics /> },
@@ -37,11 +38,12 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/automotive/create", element: <AutomotiveCreatePost /> },
   { path: "/categories/fashion-beauty", element: <FashionAndBeauty /> },
   { path: "/categories/fashion-beauty/create", element: <FashionAndBeautyCreatePost /> },
+  { path: "/categories/fashion-beauty/business-hub", element: <BeautyBusinessHub /> },
+  { path: "/categories/fashion-beauty/business-hub/dashboard", element: <BeautyBusinessDashboard /> },
   { path: "/categories/fashion-beauty/designer-directory", element: <DesignerDirectory /> },
   { path: "/categories/fashion-beauty/designer-register", element: <DesignerRegistration /> },
   { path: "/categories/fashion-beauty/designers/:id", element: <DesignerProfile /> },
   { path: "/categories/fashion-beauty/beauty-professionals", element: <BeautyProfessionalsDirectory /> },
   { path: "/categories/fashion-beauty/beauty-professionals/register", element: <BeautyProfessionalRegistration /> },
   { path: "/categories/fashion-beauty/beauty-professionals/:id", element: <BeautyProfessionalProfile /> },
-  { path: "/content-guidelines", element: <ContentGuidelines /> }
 ];

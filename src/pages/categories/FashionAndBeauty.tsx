@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Post } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Scissors, Sparkles } from "lucide-react";
+import { Scissors, Sparkles, Store } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
@@ -56,13 +56,6 @@ const FashionAndBeauty = () => {
     }
   });
 
-  const handleTabChange = (value: string) => {
-    setSelectedTab(value);
-    if (value === "designer-showcase") {
-      navigate("/categories/fashion-beauty/designer-directory");
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="flex flex-col gap-4 mb-6">
@@ -76,16 +69,26 @@ const FashionAndBeauty = () => {
           </Button>
         </div>
         
-        <Button 
-          className="w-full md:w-auto bg-[#E2725B] hover:bg-[#E2725B]/90 text-white py-3 px-6 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold shadow-lg transition-all hover:scale-[1.02]"
-          onClick={() => navigate("/categories/fashion-beauty/beauty-professionals")}
-        >
-          <Sparkles className="w-5 h-5" />
-          Find Beauty Professionals
-        </Button>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Button 
+            className="w-full md:w-auto bg-[#E2725B] hover:bg-[#E2725B]/90 text-white py-3 px-6 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold shadow-lg transition-all hover:scale-[1.02]"
+            onClick={() => navigate("/categories/fashion-beauty/beauty-professionals")}
+          >
+            <Sparkles className="w-5 h-5" />
+            Find Beauty Professionals
+          </Button>
+
+          <Button 
+            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold shadow-lg transition-all hover:scale-[1.02]"
+            onClick={() => navigate("/categories/fashion-beauty/business-hub")}
+          >
+            <Store className="w-5 h-5" />
+            Beauty Business Hub
+          </Button>
+        </div>
       </div>
 
-      <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
+      <Tabs defaultValue="all" className="w-full" onValueChange={setSelectedTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="all">All Posts</TabsTrigger>
           <TabsTrigger value="fashion-trends">Fashion Trends</TabsTrigger>
