@@ -47,3 +47,4 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/fashion-beauty/beauty-professionals/register", element: <BeautyProfessionalRegistration /> },
   { path: "/categories/fashion-beauty/beauty-professionals/:id", element: <BeautyProfessionalProfile /> },
 ];
+

@@ -1,3 +1,4 @@
+
 export type BeautyProfessionalSpecialty = 
   | 'nail_technician'
   | 'esthetician'
@@ -5,6 +6,19 @@ export type BeautyProfessionalSpecialty =
   | 'lash_technician' 
   | 'spa_therapist'
   | 'cosmetologist';
+
+export interface BeautyProfessionalFormValues {
+  business_name: string;
+  description: string;
+  location: string;
+  contact_email: string;
+  contact_phone: string;
+  website?: string;
+  instagram_handle?: string;
+  specialties: BeautyProfessionalSpecialty[];
+  years_experience: number;
+  professional_type: BeautyProfessionalSpecialty;
+}
 
 export interface BeautyProfessional {
   id: string;
@@ -28,19 +42,6 @@ export interface BeautyProfessional {
     username: string;
     avatar_url: string | null;
   };
-}
-
-export interface BeautyProfessionalFormValues {
-  business_name: string;
-  description: string;
-  location: string;
-  contact_email: string;
-  contact_phone: string;
-  website?: string;
-  instagram_handle?: string;
-  specialties: BeautyProfessionalSpecialty[];
-  years_experience: number;
-  professional_type: BeautyProfessionalSpecialty;
 }
 
 export interface Designer {
@@ -79,15 +80,3 @@ export interface BeautyProfessionalService {
   updated_at: string;
 }
 
-export interface BeautyProfessionalFormValues {
-  business_name: string;
-  description: string;
-  location: string;
-  contact_email: string;
-  contact_phone: string;
-  website?: string;
-  instagram_handle?: string;
-  specialties: BeautyProfessionalSpecialty[];
-  years_experience: number;
-  professional_type: BeautyProfessionalSpecialty;
-}
