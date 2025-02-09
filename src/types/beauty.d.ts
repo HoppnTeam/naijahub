@@ -25,13 +25,13 @@ export interface BeautyProfessional {
   business_name: string;
   description: string;
   location: string;
-  contact_email: string;
-  contact_phone: string;
+  contact_email: string | null;
+  contact_phone: string | null;
   website?: string | null;
   instagram_handle?: string | null;
   portfolio_images: string[];
   specialties: BeautyProfessionalSpecialty[];
-  years_experience: number;
+  years_experience: number | null;
   rating: number;
   review_count: number;
   verified: boolean;

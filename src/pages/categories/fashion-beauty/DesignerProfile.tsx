@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +40,7 @@ const DesignerProfile = () => {
       const transformedData: Designer = {
         ...data,
         profiles: data.profiles ? {
-          username: data.profiles.username,
+          username: data.profiles.username || "Unknown User",
           avatar_url: data.profiles.avatar_url
         } : {
           username: "Unknown User",
