@@ -8,6 +8,7 @@ import { Scissors, Sparkles, Store } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "@/components/PostCard";
+import { BackNavigation } from "@/components/BackNavigation";
 
 const FashionAndBeauty = () => {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ const FashionAndBeauty = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      <BackNavigation />
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
