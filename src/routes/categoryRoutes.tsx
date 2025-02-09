@@ -10,7 +10,7 @@ import Agriculture from "@/pages/categories/Agriculture";
 import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
-import FashionAndBeauty from "@/pages/categories/FashionAndBeauty";
+import FashionAndBeauty from "@/pages/categories/fashion-beauty/FashionAndBeauty";
 import BeautyBusinessHub from "@/pages/categories/fashion-beauty/BeautyBusinessHub";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
