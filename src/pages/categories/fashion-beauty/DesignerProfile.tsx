@@ -25,7 +25,7 @@ const DesignerProfile = () => {
         .from("fashion_designers")
         .select(`
           *,
-          profiles:user_id(
+          profiles:user_id (
             username,
             avatar_url
           )

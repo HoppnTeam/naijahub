@@ -38,6 +38,7 @@ export interface BeautyProfessional {
   latitude?: number | null;
   longitude?: number | null;
   user_id: string;
+  professional_type: BeautyProfessionalSpecialty;
   profiles?: {
     username: string;
     avatar_url: string | null;
@@ -66,16 +67,4 @@ export interface Designer {
     username: string;
     avatar_url: string | null;
   };
-}
-
-export interface BeautyProfessionalService {
-  id: string;
-  professional_id: string;
-  service_name: string;
-  description: string;
-  price: number;
-  duration_minutes: number;
-  category: string;
-  created_at: string;
-  updated_at: string;
 }
