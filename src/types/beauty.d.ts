@@ -1,4 +1,3 @@
-
 export type BeautyProfessionalSpecialty = 
   | 'nail_technician'
   | 'esthetician'
@@ -29,6 +28,19 @@ export interface BeautyProfessional {
     username: string;
     avatar_url: string | null;
   };
+}
+
+export interface BeautyProfessionalFormValues {
+  business_name: string;
+  description: string;
+  location: string;
+  contact_email: string;
+  contact_phone: string;
+  website?: string;
+  instagram_handle?: string;
+  specialties: BeautyProfessionalSpecialty[];
+  years_experience: number;
+  professional_type: BeautyProfessionalSpecialty;
 }
 
 export interface Designer {

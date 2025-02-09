@@ -31,7 +31,7 @@ const DesignerProfile = () => {
           )
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       if (!data) return null;
@@ -39,10 +39,10 @@ const DesignerProfile = () => {
       // Transform the data to match the Designer type
       const transformedData: Designer = {
         ...data,
-        profiles: {
-          username: data.profiles?.username || "",
-          avatar_url: data.profiles?.avatar_url || null
-        }
+        profiles: data.profiles ? {
+          username: data.profiles.username || "",
+          avatar_url: data.profiles.avatar_url || null
+        } : undefined
       };
 
       return transformedData;
