@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import type { BeautyProfessionalFormValues } from "@/schemas/beauty-professional";
+import type { BeautyProfessionalFormValues } from "@/types/beauty";
 
 export const useBeautyProfessionalRegistration = () => {
   const { user } = useAuth();
