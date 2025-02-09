@@ -49,13 +49,13 @@ export interface Designer {
   business_name: string;
   description: string;
   location: string;
-  contact_email: string;
-  contact_phone: string;
+  contact_email: string | null;
+  contact_phone: string | null;
   website?: string | null;
   instagram_handle?: string | null;
   portfolio_images: string[];
   specialties: string[];
-  years_experience: number;
+  years_experience: number | null;
   rating: number;
   review_count: number;
   verified: boolean;
@@ -79,4 +79,3 @@ export interface BeautyProfessionalService {
   created_at: string;
   updated_at: string;
 }
-
