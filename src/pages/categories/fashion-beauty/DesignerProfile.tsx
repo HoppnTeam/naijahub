@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,18 +25,17 @@ const DesignerProfile = () => {
         .from("fashion_designers")
         .select(`
           *,
-          profiles: user_id (
+          profiles:user_id(
             username,
             avatar_url
           )
         `)
         .eq("id", id)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
       if (!data) return null;
 
-      // Transform the data to match the Designer type
       const transformedData: Designer = {
         ...data,
         profiles: data.profiles ? {

@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingDialog } from "@/components/beauty/BookingDialog";
@@ -11,32 +10,24 @@ import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beau
 
 interface ProfileContentProps {
   professional: BeautyProfessional;
-  services?: BeautyProfessionalService[];
   selectedService?: BeautyProfessionalService;
-  selectedDate?: Date;
-  selectedStartTime?: string;
-  selectedEndTime?: string;
   isOwner: boolean;
   isBookingDialogOpen: boolean;
   onServiceSelect: (service: BeautyProfessionalService) => void;
-  onTimeSlotSelect: (date: Date, startTime: string, endTime: string) => void;
   onBookingDialogClose: () => void;
   onProceedBooking: () => void;
+  onTimeSlotSelect?: (date: Date, startTime: string, endTime: string) => void;
 }
 
 export const ProfileContent = ({
   professional,
-  services,
   selectedService,
-  selectedDate,
-  selectedStartTime,
-  selectedEndTime,
   isOwner,
   isBookingDialogOpen,
   onServiceSelect,
-  onTimeSlotSelect,
   onBookingDialogClose,
   onProceedBooking,
+  onTimeSlotSelect = () => {}
 }: ProfileContentProps) => {
   const handleViewServices = () => {
     document.querySelector('[value="services"]')?.setAttribute('data-state', 'active');
@@ -72,9 +63,9 @@ export const ProfileContent = ({
               <BookingSection 
                 professional={professional}
                 selectedService={selectedService}
-                selectedDate={selectedDate}
-                selectedStartTime={selectedStartTime}
-                selectedEndTime={selectedEndTime}
+                selectedDate={undefined}
+                selectedStartTime={undefined}
+                selectedEndTime={undefined}
                 onTimeSlotSelect={onTimeSlotSelect}
                 onProceedBooking={onProceedBooking}
                 onViewServices={handleViewServices}
@@ -94,9 +85,9 @@ export const ProfileContent = ({
           isOpen={isBookingDialogOpen}
           onClose={onBookingDialogClose}
           professional={professional}
-          selectedDate={selectedDate}
-          selectedStartTime={selectedStartTime}
-          selectedEndTime={selectedEndTime}
+          selectedDate={undefined}
+          selectedStartTime={undefined}
+          selectedEndTime={undefined}
           service={selectedService}
         />
       )}

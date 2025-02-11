@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import type { BeautyProfessional } from "@/types/beauty";
+import type { BeautyProfessionalFormValues } from "@/schemas/beauty-professional";
 
 export const useBeautyProfessionalRegistration = () => {
   const { user } = useAuth();
@@ -13,7 +13,7 @@ export const useBeautyProfessionalRegistration = () => {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (values: Partial<BeautyProfessional>) => {
+  const handleSubmit = async (values: BeautyProfessionalFormValues) => {
     if (!user) return;
     
     setIsSubmitting(true);
