@@ -10,6 +10,7 @@ import { DesignerContact } from "./components/DesignerContact";
 import { DesignerPortfolio } from "./components/DesignerPortfolio";
 import { DesignerReviews } from "./components/reviews/DesignerReviews";
 import { DesignerLocationMap } from "./components/DesignerLocationMap";
+import { BackNavigation } from "@/components/BackNavigation";
 import type { Designer } from "@/types/beauty";
 
 const DesignerProfile = () => {
@@ -25,7 +26,7 @@ const DesignerProfile = () => {
         .from("fashion_designers")
         .select(`
           *,
-          profiles:user_id (
+          profiles: user_id (
             username,
             avatar_url
           )
@@ -42,10 +43,7 @@ const DesignerProfile = () => {
         profiles: data.profiles ? {
           username: data.profiles.username || "Unknown User",
           avatar_url: data.profiles.avatar_url
-        } : {
-          username: "Unknown User",
-          avatar_url: null
-        }
+        } : null
       };
 
       return transformedData;
@@ -67,6 +65,7 @@ const DesignerProfile = () => {
   if (!designer) {
     return (
       <div className="container max-w-4xl mx-auto py-8 px-4">
+        <BackNavigation />
         <h1 className="text-2xl font-bold mb-4">Designer not found</h1>
         <Button 
           onClick={() => navigate("/categories/fashion-beauty/designer-directory")}
@@ -80,13 +79,7 @@ const DesignerProfile = () => {
 
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
-      <Button 
-        onClick={() => navigate("/categories/fashion-beauty/designer-directory")}
-        variant="outline"
-        className="mb-6"
-      >
-        Back to Directory
-      </Button>
+      <BackNavigation />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
@@ -96,7 +89,7 @@ const DesignerProfile = () => {
               location={designer.location}
               verified={designer.verified}
               avatarUrl={designer.profiles?.avatar_url}
-              username={designer.profiles?.username || ''}
+              username={designer.profiles?.username || 'Unknown User'}
             />
             <DesignerInfo
               description={designer.description}
