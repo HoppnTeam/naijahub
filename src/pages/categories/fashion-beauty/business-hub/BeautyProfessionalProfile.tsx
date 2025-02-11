@@ -37,6 +37,20 @@ const BeautyProfessionalProfile = () => {
     },
   });
 
+  const { data: services } = useQuery({
+    queryKey: ["beauty-professional-services", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("beauty_professional_services")
+        .select("*")
+        .eq("professional_id", id);
+
+      if (error) throw error;
+      return data as BeautyProfessionalService[];
+    },
+    enabled: !!professional,
+  });
+
   if (isLoading) {
     return <ProfileLoadingSkeleton />;
   }
@@ -57,6 +71,7 @@ const BeautyProfessionalProfile = () => {
       ) : (
         <ProfileContent 
           professional={professional}
+          services={services || []}
           selectedService={selectedService}
           isOwner={isOwner}
           isBookingDialogOpen={isBookingDialogOpen}

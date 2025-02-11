@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingDialog } from "@/components/beauty/BookingDialog";
@@ -10,6 +11,7 @@ import type { BeautyProfessional, BeautyProfessionalService } from "@/types/beau
 
 interface ProfileContentProps {
   professional: BeautyProfessional;
+  services: BeautyProfessionalService[];
   selectedService?: BeautyProfessionalService;
   isOwner: boolean;
   isBookingDialogOpen: boolean;
@@ -21,6 +23,7 @@ interface ProfileContentProps {
 
 export const ProfileContent = ({
   professional,
+  services,
   selectedService,
   isOwner,
   isBookingDialogOpen,
@@ -49,14 +52,12 @@ export const ProfileContent = ({
             </TabsContent>
 
             <TabsContent value="services">
-              {services && (
-                <ServicesSection 
-                  professional={professional}
-                  services={services}
-                  onServiceSelect={onServiceSelect}
-                  isOwner={isOwner}
-                />
-              )}
+              <ServicesSection 
+                professional={professional}
+                services={services}
+                onServiceSelect={onServiceSelect}
+                isOwner={isOwner}
+              />
             </TabsContent>
 
             <TabsContent value="book">
