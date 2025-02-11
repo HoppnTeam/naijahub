@@ -1,5 +1,7 @@
 
 export type BeautyProfessionalSpecialty = 
+  | 'hair_stylist'
+  | 'makeup_artist'
   | 'nail_technician'
   | 'esthetician'
   | 'barber'
@@ -7,37 +9,22 @@ export type BeautyProfessionalSpecialty =
   | 'spa_therapist'
   | 'cosmetologist';
 
-export interface BeautyProfessionalFormValues {
-  business_name: string;
-  description: string;
-  location: string;
-  contact_email: string;
-  contact_phone: string;
-  website?: string;
-  instagram_handle?: string;
-  specialties: BeautyProfessionalSpecialty[];
-  years_experience: number;
-  professional_type: BeautyProfessionalSpecialty;
-}
-
 export interface BeautyProfessional {
   id: string;
+  user_id: string;
   business_name: string;
   description: string;
+  specialties: BeautyProfessionalSpecialty[];
+  years_experience: number | null;
+  portfolio_images: string[];
   location: string;
   contact_email: string | null;
   contact_phone: string | null;
-  website?: string | null;
-  instagram_handle?: string | null;
-  portfolio_images: string[];
-  specialties: BeautyProfessionalSpecialty[];
-  years_experience: number | null;
+  instagram_handle: string | null;
+  website: string | null;
   rating: number;
   review_count: number;
   verified: boolean;
-  latitude?: number | null;
-  longitude?: number | null;
-  user_id: string;
   professional_type: BeautyProfessionalSpecialty;
   profiles?: {
     username: string;

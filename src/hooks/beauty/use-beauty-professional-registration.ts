@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import type { BeautyProfessionalFormValues } from "@/types/beauty";
+import type { BeautyProfessional } from "@/types/beauty";
 
 export const useBeautyProfessionalRegistration = () => {
   const { user } = useAuth();
@@ -13,7 +13,7 @@ export const useBeautyProfessionalRegistration = () => {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (values: BeautyProfessionalFormValues) => {
+  const handleSubmit = async (values: Partial<BeautyProfessional>) => {
     if (!user) return;
     
     setIsSubmitting(true);
@@ -66,7 +66,7 @@ export const useBeautyProfessionalRegistration = () => {
         description: "Your professional profile has been created",
       });
 
-      navigate("/categories/fashion-beauty/beauty-professionals");
+      navigate("/categories/fashion-beauty/business-hub/professionals");
     } catch (error) {
       console.error("Error creating professional profile:", error);
       toast({

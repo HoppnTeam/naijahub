@@ -11,7 +11,7 @@ import Travel from "@/pages/categories/Travel";
 import Culture from "@/pages/categories/Culture";
 import Automotive from "@/pages/categories/Automotive";
 import FashionAndBeauty from "@/pages/categories/fashion-beauty/FashionAndBeauty";
-import BeautyBusinessHub from "@/pages/categories/fashion-beauty/BeautyBusinessHub";
+import BeautyBusinessHub from "@/pages/categories/fashion-beauty/business-hub/BeautyBusinessHub";
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
