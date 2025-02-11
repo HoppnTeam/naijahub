@@ -17,10 +17,6 @@ const FashionAndBeauty = () => {
   const { data: posts, isLoading } = useQuery({
     queryKey: ["fashion-beauty-posts", selectedTab],
     queryFn: async () => {
-      if (selectedTab === "designer-showcase") {
-        return []; // Return empty array as we'll navigate away
-      }
-
       let query = supabase
         .from("posts")
         .select(`
@@ -75,7 +71,7 @@ const FashionAndBeauty = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <Button 
             className="w-full md:w-auto bg-[#E2725B] hover:bg-[#E2725B]/90 text-white py-3 px-6 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold shadow-lg transition-all hover:scale-[1.02]"
-            onClick={() => navigate("/categories/fashion-beauty/beauty-professionals")}
+            onClick={() => navigate("/categories/fashion-beauty/business-hub/professionals")}
           >
             <Sparkles className="w-5 h-5" />
             Find Beauty Professionals
@@ -91,29 +87,32 @@ const FashionAndBeauty = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="w-full" onValueChange={setSelectedTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="all">All Posts</TabsTrigger>
-          <TabsTrigger value="fashion-trends">Fashion Trends</TabsTrigger>
-          <TabsTrigger value="beauty-skincare">Beauty & Skincare</TabsTrigger>
-          <TabsTrigger value="hair-styling">Hair & Styling</TabsTrigger>
-          <TabsTrigger value="makeup">Makeup</TabsTrigger>
-          <TabsTrigger value="traditional">Traditional</TabsTrigger>
-          <TabsTrigger value="designer-showcase">Designer Showcase</TabsTrigger>
-        </TabsList>
+      <TabsList className="mb-4">
+        <TabsTrigger value="all" onClick={() => setSelectedTab("all")}>All Posts</TabsTrigger>
+        <TabsTrigger value="fashion-trends" onClick={() => setSelectedTab("fashion-trends")}>Fashion Trends</TabsTrigger>
+        <TabsTrigger value="beauty-skincare" onClick={() => setSelectedTab("beauty-skincare")}>Beauty & Skincare</TabsTrigger>
+        <TabsTrigger value="hair-styling" onClick={() => setSelectedTab("hair-styling")}>Hair & Styling</TabsTrigger>
+        <TabsTrigger value="makeup" onClick={() => setSelectedTab("makeup")}>Makeup</TabsTrigger>
+        <TabsTrigger value="traditional" onClick={() => setSelectedTab("traditional")}>Traditional</TabsTrigger>
+        <TabsTrigger 
+          value="designer-showcase" 
+          onClick={() => navigate("/categories/fashion-beauty/designer-directory")}
+        >
+          Designer Showcase
+        </TabsTrigger>
+      </TabsList>
 
-        <TabsContent value={selectedTab} className="space-y-4">
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts?.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4">
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts?.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
