@@ -17,6 +17,15 @@ const FashionAndBeauty = () => {
   const { data: posts, isLoading } = useQuery({
     queryKey: ["fashion-beauty-posts", selectedTab],
     queryFn: async () => {
+      // First get the Fashion & Beauty category ID
+      const { data: categoryData } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("name", "Fashion & Beauty")
+        .single();
+
+      if (!categoryData) throw new Error("Category not found");
+
       let query = supabase
         .from("posts")
         .select(`
@@ -27,10 +36,21 @@ const FashionAndBeauty = () => {
           comments (count)
         `)
         .eq("is_draft", false)
+        .eq("category_id", categoryData.id)
         .order("created_at", { ascending: false });
 
       if (selectedTab !== "all") {
-        query = query.eq("subcategory_id", selectedTab);
+        // Get the subcategory ID
+        const { data: subcategory } = await supabase
+          .from("categories")
+          .select("id")
+          .eq("name", selectedTab)
+          .eq("parent_id", categoryData.id)
+          .single();
+
+        if (subcategory) {
+          query = query.eq("subcategory_id", subcategory.id);
+        }
       }
 
       const { data, error } = await query;
@@ -87,32 +107,37 @@ const FashionAndBeauty = () => {
         </div>
       </div>
 
-      <TabsList className="mb-4">
-        <TabsTrigger value="all" onClick={() => setSelectedTab("all")}>All Posts</TabsTrigger>
-        <TabsTrigger value="fashion-trends" onClick={() => setSelectedTab("fashion-trends")}>Fashion Trends</TabsTrigger>
-        <TabsTrigger value="beauty-skincare" onClick={() => setSelectedTab("beauty-skincare")}>Beauty & Skincare</TabsTrigger>
-        <TabsTrigger value="hair-styling" onClick={() => setSelectedTab("hair-styling")}>Hair & Styling</TabsTrigger>
-        <TabsTrigger value="makeup" onClick={() => setSelectedTab("makeup")}>Makeup</TabsTrigger>
-        <TabsTrigger value="traditional" onClick={() => setSelectedTab("traditional")}>Traditional</TabsTrigger>
-        <TabsTrigger 
-          value="designer-showcase" 
-          onClick={() => navigate("/categories/fashion-beauty/designer-directory")}
-        >
-          Designer Showcase
-        </TabsTrigger>
-      </TabsList>
+      <Tabs defaultValue={selectedTab} onValueChange={setSelectedTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="all">All Posts</TabsTrigger>
+          <TabsTrigger value="Fashion Trends">Fashion Trends</TabsTrigger>
+          <TabsTrigger value="Beauty & Skincare">Beauty & Skincare</TabsTrigger>
+          <TabsTrigger value="Hair & Styling">Hair & Styling</TabsTrigger>
+          <TabsTrigger value="Makeup">Makeup</TabsTrigger>
+          <TabsTrigger value="Traditional">Traditional</TabsTrigger>
+          <TabsTrigger 
+            value="Designer Showcase" 
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/categories/fashion-beauty/designer-directory");
+            }}
+          >
+            Designer Showcase
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-4">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts?.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
-      </div>
+        <TabsContent value={selectedTab} className="space-y-4">
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {posts?.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
