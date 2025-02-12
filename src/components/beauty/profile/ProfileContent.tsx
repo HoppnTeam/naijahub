@@ -13,6 +13,9 @@ interface ProfileContentProps {
   professional: BeautyProfessional;
   services: BeautyProfessionalService[];
   selectedService?: BeautyProfessionalService;
+  selectedDate?: Date;
+  selectedStartTime?: string;
+  selectedEndTime?: string;
   isOwner: boolean;
   isBookingDialogOpen: boolean;
   onServiceSelect: (service: BeautyProfessionalService) => void;
@@ -25,6 +28,9 @@ export const ProfileContent = ({
   professional,
   services,
   selectedService,
+  selectedDate,
+  selectedStartTime,
+  selectedEndTime,
   isOwner,
   isBookingDialogOpen,
   onServiceSelect,
@@ -64,9 +70,9 @@ export const ProfileContent = ({
               <BookingSection 
                 professional={professional}
                 selectedService={selectedService}
-                selectedDate={undefined}
-                selectedStartTime={undefined}
-                selectedEndTime={undefined}
+                selectedDate={selectedDate}
+                selectedStartTime={selectedStartTime}
+                selectedEndTime={selectedEndTime}
                 onTimeSlotSelect={onTimeSlotSelect}
                 onProceedBooking={onProceedBooking}
                 onViewServices={handleViewServices}
@@ -86,9 +92,9 @@ export const ProfileContent = ({
           isOpen={isBookingDialogOpen}
           onClose={onBookingDialogClose}
           professional={professional}
-          selectedDate={undefined}
-          selectedStartTime={undefined}
-          selectedEndTime={undefined}
+          selectedDate={selectedDate}
+          selectedStartTime={selectedStartTime}
+          selectedEndTime={selectedEndTime}
           service={selectedService}
         />
       )}

@@ -1890,6 +1890,7 @@ export type Database = {
           location: string
           longitude: number | null
           portfolio_images: string[] | null
+          profiles_data: Json | null
           rating: number | null
           review_count: number | null
           specialties:
@@ -1913,6 +1914,7 @@ export type Database = {
           location: string
           longitude?: number | null
           portfolio_images?: string[] | null
+          profiles_data?: Json | null
           rating?: number | null
           review_count?: number | null
           specialties?:
@@ -1936,6 +1938,7 @@ export type Database = {
           location?: string
           longitude?: number | null
           portfolio_images?: string[] | null
+          profiles_data?: Json | null
           rating?: number | null
           review_count?: number | null
           specialties?:

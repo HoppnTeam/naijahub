@@ -9,13 +9,14 @@ import { BasicInfoFields } from "@/components/beauty/registration/BasicInfoField
 import { ContactInfoFields } from "@/components/beauty/registration/ContactInfoFields";
 import { SpecialtiesFields } from "@/components/beauty/registration/SpecialtiesFields";
 import { useBeautyProfessionalRegistration } from "@/hooks/beauty/use-beauty-professional-registration";
-import type { BeautyProfessional } from "@/types/beauty";
+import { beautyProfessionalFormSchema } from "@/schemas/beauty-professional";
+import type { BeautyProfessionalFormValues } from "@/types/beauty";
 
 const BeautyProfessionalRegistration = () => {
   const { user } = useAuth();
   const { images, setImages, isSubmitting, handleSubmit } = useBeautyProfessionalRegistration();
 
-  const form = useForm<BeautyProfessional>({
+  const form = useForm<BeautyProfessionalFormValues>({
     resolver: zodResolver(beautyProfessionalFormSchema),
     defaultValues: {
       business_name: "",
