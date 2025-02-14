@@ -3,41 +3,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NaijaHub - The Pulse of Nigeria</title>
-    <meta name="description" content="Connect with Nigerians worldwide" />
-    <meta name="author" content="NaijaHub" />
-    <meta property="og:image" content="/og-image.png" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600&display=swap" />
-    
-    <!-- PWA Meta Tags -->
+    <title>NaijaHub - Connect with Nigerians worldwide</title>
+    <meta name="description" content="Premier online platform connecting Nigerians worldwide" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#32a852" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="NaijaHub" />
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
   </head>
   <body>
     <div id="root"></div>
-    <!-- The preview script must come before the main application script -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('ServiceWorker registration successful');
-            })
-            .catch(err => {
-              console.log('ServiceWorker registration failed: ', err);
-            });
-        });
-      }
-    </script>
   </body>
 </html>
