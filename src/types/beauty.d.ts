@@ -1,4 +1,3 @@
-
 export type BeautyProfessionalSpecialty = 
   | 'hair_stylist'
   | 'makeup_artist'

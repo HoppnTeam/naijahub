@@ -1,3 +1,4 @@
+
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +22,6 @@ const Index = () => {
     }
   }, [user, navigate]);
 
-  // Optimize categories query with better logging
   const { data: categories, error: categoriesError } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -40,8 +40,8 @@ const Index = () => {
       console.log("Categories fetch successful:", data);
       return data || []; 
     },
-    staleTime: 0, // Disable caching temporarily for debugging
-    retry: false, // Disable retries temporarily for debugging
+    staleTime: 300000, // Cache for 5 minutes
+    retry: 2,
   });
 
   // Log any categories error
@@ -51,12 +51,6 @@ const Index = () => {
     }
   }, [categoriesError]);
 
-  // Log categories whenever they change
-  useEffect(() => {
-    console.log("Current categories in Index:", categories);
-  }, [categories]);
-
-  // Optimize posts query with more efficient joins and count aggregation
   const { data: posts } = useQuery<Post[]>({
     queryKey: ["posts", selectedCategory],
     queryFn: async () => {
@@ -83,9 +77,6 @@ const Index = () => {
         throw error;
       }
       
-      console.log("Raw posts data:", data);
-      
-      // Transform the data to match the Post interface
       return data.map(post => ({
         ...post,
         user: {
@@ -103,7 +94,7 @@ const Index = () => {
       })) as Post[];
     },
     enabled: selectedCategory === "all" || !!selectedCategory,
-    staleTime: 30 * 1000, // Cache for 30 seconds
+    staleTime: 30000, // Cache for 30 seconds
   });
 
   if (!user) return null;

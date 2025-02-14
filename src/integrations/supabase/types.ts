@@ -787,13 +787,6 @@ export type Database = {
             referencedRelation: "beauty_marketplace_listings"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "beauty_chat_rooms_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
         ]
       }
       beauty_marketplace_cart_items: {
@@ -1030,15 +1023,7 @@ export type Database = {
           time_slots?: Database["public"]["CompositeTypes"]["time_slot"][]
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_availability_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       beauty_professional_blocked_dates: {
         Row: {
@@ -1062,65 +1047,7 @@ export type Database = {
           professional_id?: string
           reason?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_blocked_dates_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      beauty_professional_bookings: {
-        Row: {
-          client_id: string
-          created_at: string
-          duration_minutes: number
-          id: string
-          notes: string | null
-          price: number
-          professional_id: string
-          service_date: string
-          service_name: string
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          client_id: string
-          created_at?: string
-          duration_minutes: number
-          id?: string
-          notes?: string | null
-          price: number
-          professional_id: string
-          service_date: string
-          service_name: string
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          client_id?: string
-          created_at?: string
-          duration_minutes?: number
-          id?: string
-          notes?: string | null
-          price?: number
-          professional_id?: string
-          service_date?: string
-          service_name?: string
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_bookings_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       beauty_professional_hours: {
         Row: {
@@ -1150,198 +1077,7 @@ export type Database = {
           open_time?: string | null
           professional_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_hours_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      beauty_professional_portfolios: {
-        Row: {
-          business_name: string
-          contact_email: string | null
-          contact_phone: string | null
-          created_at: string
-          description: string | null
-          id: string
-          instagram_handle: string | null
-          location: string
-          portfolio_images: string[] | null
-          professional_type: Database["public"]["Enums"]["beauty_professional_type"]
-          rating: number | null
-          review_count: number | null
-          specialties:
-            | Database["public"]["Enums"]["beauty_professional_specialty"][]
-            | null
-          updated_at: string
-          user_id: string
-          verified: boolean | null
-          website: string | null
-          years_experience: number | null
-        }
-        Insert: {
-          business_name: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          instagram_handle?: string | null
-          location: string
-          portfolio_images?: string[] | null
-          professional_type: Database["public"]["Enums"]["beauty_professional_type"]
-          rating?: number | null
-          review_count?: number | null
-          specialties?:
-            | Database["public"]["Enums"]["beauty_professional_specialty"][]
-            | null
-          updated_at?: string
-          user_id: string
-          verified?: boolean | null
-          website?: string | null
-          years_experience?: number | null
-        }
-        Update: {
-          business_name?: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          instagram_handle?: string | null
-          location?: string
-          portfolio_images?: string[] | null
-          professional_type?: Database["public"]["Enums"]["beauty_professional_type"]
-          rating?: number | null
-          review_count?: number | null
-          specialties?:
-            | Database["public"]["Enums"]["beauty_professional_specialty"][]
-            | null
-          updated_at?: string
-          user_id?: string
-          verified?: boolean | null
-          website?: string | null
-          years_experience?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_portfolios_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "beauty_professional_portfolios_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      beauty_professional_reviews: {
-        Row: {
-          comment: string | null
-          created_at: string
-          id: string
-          images: string[] | null
-          professional_id: string
-          rating: number
-          reviewer_id: string
-        }
-        Insert: {
-          comment?: string | null
-          created_at?: string
-          id?: string
-          images?: string[] | null
-          professional_id: string
-          rating: number
-          reviewer_id: string
-        }
-        Update: {
-          comment?: string | null
-          created_at?: string
-          id?: string
-          images?: string[] | null
-          professional_id?: string
-          rating?: number
-          reviewer_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_reviews_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "beauty_professional_reviews_reviewer_id_fkey"
-            columns: ["reviewer_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "beauty_professional_reviews_reviewer_id_fkey"
-            columns: ["reviewer_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      beauty_professional_services: {
-        Row: {
-          category: Database["public"]["Enums"]["service_category"] | null
-          created_at: string
-          description: string | null
-          duration_minutes: number
-          id: string
-          price: number
-          professional_id: string
-          service_location: Database["public"]["Enums"]["service_location_type"]
-          service_name: string
-          updated_at: string
-        }
-        Insert: {
-          category?: Database["public"]["Enums"]["service_category"] | null
-          created_at?: string
-          description?: string | null
-          duration_minutes: number
-          id?: string
-          price: number
-          professional_id: string
-          service_location?: Database["public"]["Enums"]["service_location_type"]
-          service_name: string
-          updated_at?: string
-        }
-        Update: {
-          category?: Database["public"]["Enums"]["service_category"] | null
-          created_at?: string
-          description?: string | null
-          duration_minutes?: number
-          id?: string
-          price?: number
-          professional_id?: string
-          service_location?: Database["public"]["Enums"]["service_location_type"]
-          service_name?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beauty_professional_services_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "beauty_professional_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       beauty_reviews: {
         Row: {
@@ -2968,18 +2704,6 @@ export type Database = {
       }
     }
     Views: {
-      business_activities: {
-        Row: {
-          activity_date: string | null
-          activity_type: string | null
-          amount: number | null
-          business_id: string | null
-          client_name: string | null
-          description: string | null
-          status: string | null
-        }
-        Relationships: []
-      }
       leaderboard: {
         Row: {
           avatar_url: string | null
@@ -3019,15 +2743,6 @@ export type Database = {
         | "following"
         | "sharing"
       auto_marketplace_section: "vehicles" | "parts"
-      beauty_professional_specialty:
-        | "hair_stylist"
-        | "makeup_artist"
-        | "nail_technician"
-        | "esthetician"
-        | "barber"
-        | "lash_technician"
-        | "spa_therapist"
-        | "cosmetologist"
       beauty_professional_type: "makeup_artist" | "hair_stylist"
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"
       delivery_method: "shipping" | "pickup" | "both"
@@ -3048,18 +2763,6 @@ export type Database = {
         | "app_improvement"
         | "user_related"
         | "general"
-      service_category:
-        | "hair_styling"
-        | "makeup"
-        | "nail_care"
-        | "skincare"
-        | "massage"
-        | "facial"
-        | "waxing"
-        | "lash_extensions"
-        | "microblading"
-        | "other"
-      service_location_type: "in_store" | "home_service" | "both"
       user_role: "user" | "moderator" | "admin"
       vehicle_type:
         | "car"
