@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
 import Entertainment from "@/pages/categories/Entertainment";
@@ -15,6 +14,7 @@ import BeautyBusinessHub from "@/pages/categories/fashion-beauty/business-hub/Be
 import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
 import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
 import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
+import { TravelCreatePost } from "@/components/posts/travel/TravelCreatePost";
 import DesignerDirectory from "@/pages/categories/fashion-beauty/DesignerDirectory";
 import DesignerRegistration from "@/pages/categories/fashion-beauty/DesignerRegistration";
 import DesignerProfile from "@/pages/categories/fashion-beauty/DesignerProfile";
@@ -33,6 +33,7 @@ export const categoryRoutes: RouteObject[] = [
   { path: "/categories/health", element: <Health /> },
   { path: "/categories/agriculture", element: <Agriculture /> },
   { path: "/categories/travel", element: <Travel /> },
+  { path: "/categories/travel/create", element: <TravelCreatePost /> },
   { path: "/categories/culture", element: <Culture /> },
   { path: "/categories/automotive", element: <Automotive /> },
   { path: "/categories/automotive/create", element: <AutomotiveCreatePost /> },
