@@ -1,21 +1,21 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import * as Sentry from '@sentry/react';
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error: Error | null;
+  error?: Error;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false,
-    error: null,
+    hasError: false
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -23,29 +23,39 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+    // Log to Sentry
+    Sentry.captureException(error, { extra: errorInfo });
+    
+    // Log to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error caught by ErrorBoundary:', error, errorInfo);
+    }
   }
+
+  private handleReload = () => {
+    window.location.reload();
+  };
 
   public render() {
     if (this.state.hasError) {
-      return (
+      return this.props.fallback || (
         <div className="min-h-[400px] flex items-center justify-center p-4">
-          <Alert variant="destructive" className="max-w-xl">
-            <AlertTitle>Something went wrong</AlertTitle>
-            <AlertDescription className="mt-2">
-              <p className="mb-4">
-                {this.state.error?.message || "An unexpected error occurred"}
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => window.location.reload()}
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Refresh Page
-              </Button>
-            </AlertDescription>
-          </Alert>
+          <div className="max-w-md w-full bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
+            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-destructive mb-2">
+              Something went wrong
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              We apologize for the inconvenience. Please try reloading the page.
+            </p>
+            <Button 
+              variant="destructive"
+              onClick={this.handleReload}
+              className="w-full"
+            >
+              Reload page
+            </Button>
+          </div>
         </div>
       );
     }

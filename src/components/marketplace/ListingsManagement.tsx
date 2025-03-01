@@ -71,10 +71,47 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
     enabled: !!userId,
   });
 
-  const handleDelete = async (listingId: string, marketplace: "tech" | "auto") => {
+  const { data: beautyListings, refetch: refetchBeauty } = useQuery({
+    queryKey: ["beauty-listings", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("beauty_marketplace_listings")
+        .select(`
+          *,
+          beauty_marketplace_likes (count),
+          marketplace_chats (
+            id,
+            sender_id,
+            marketplace_messages (
+              id,
+              content,
+              created_at,
+              sender_id,
+              read_at
+            )
+          )
+        `)
+        .eq("seller_id", userId);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!userId,
+  });
+
+  const handleDelete = async (listingId: string, marketplace: "tech" | "auto" | "beauty") => {
     try {
+      let tableName = "";
+      if (marketplace === "tech") {
+        tableName = "tech_marketplace_listings";
+      } else if (marketplace === "auto") {
+        tableName = "auto_marketplace_listings";
+      } else if (marketplace === "beauty") {
+        tableName = "beauty_marketplace_listings";
+      }
+
       const { error } = await supabase
-        .from(marketplace === "tech" ? "tech_marketplace_listings" : "auto_marketplace_listings")
+        .from(tableName)
         .delete()
         .eq("id", listingId);
 
@@ -87,8 +124,10 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
 
       if (marketplace === "tech") {
         refetchTech();
-      } else {
+      } else if (marketplace === "auto") {
         refetchAuto();
+      } else if (marketplace === "beauty") {
+        refetchBeauty();
       }
     } catch (error) {
       console.error("Error deleting listing:", error);
@@ -104,8 +143,17 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
     if (!editingListing) return;
 
     try {
+      let tableName = "";
+      if (editingListing.marketplace === "tech") {
+        tableName = "tech_marketplace_listings";
+      } else if (editingListing.marketplace === "auto") {
+        tableName = "auto_marketplace_listings";
+      } else if (editingListing.marketplace === "beauty") {
+        tableName = "beauty_marketplace_listings";
+      }
+
       const { error } = await supabase
-        .from(editingListing.marketplace === "tech" ? "tech_marketplace_listings" : "auto_marketplace_listings")
+        .from(tableName)
         .update({
           title: formData.title,
           description: formData.description,
@@ -129,8 +177,10 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
       setEditingListing(null);
       if (editingListing.marketplace === "tech") {
         refetchTech();
-      } else {
+      } else if (editingListing.marketplace === "auto") {
         refetchAuto();
+      } else if (editingListing.marketplace === "beauty") {
+        refetchBeauty();
       }
     } catch (error) {
       console.error("Error updating listing:", error);
@@ -147,6 +197,7 @@ export const ListingsManagement = ({ userId }: ListingsManagementProps) => {
       <ListingTabs
         techListings={techListings || []}
         autoListings={autoListings || []}
+        beautyListings={beautyListings || []}
         onEdit={setEditingListing}
         onDelete={handleDelete}
         onChatOpen={(listingId) => {

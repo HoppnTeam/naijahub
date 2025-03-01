@@ -73,9 +73,44 @@ export const useMarketplaceOrders = () => {
     enabled: !!user,
   });
 
+  const { data: beautyOrders, isLoading: beautyLoading } = useQuery({
+    queryKey: ["beauty-orders", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from("beauty_marketplace_orders")
+        .select(`
+          *,
+          listing:beauty_marketplace_listings!beauty_marketplace_orders_listing_id_fkey (
+            title,
+            images
+          ),
+          buyer:profiles!beauty_marketplace_orders_buyer_id_fkey (
+            username,
+            user_id
+          ),
+          seller:profiles!beauty_marketplace_orders_seller_id_fkey (
+            username,
+            user_id
+          )
+        `)
+        .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching beauty orders:", error);
+        throw error;
+      }
+      return data;
+    },
+    enabled: !!user,
+  });
+
   return {
     techOrders,
     autoOrders,
-    isLoading: techLoading || autoLoading,
+    beautyOrders,
+    isLoading: techLoading || autoLoading || beautyLoading,
   };
 };

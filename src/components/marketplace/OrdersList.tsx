@@ -6,7 +6,7 @@ import { ListingsManagement } from "./ListingsManagement";
 
 export const OrdersList = () => {
   const { user } = useAuth();
-  const { techOrders, autoOrders, isLoading } = useMarketplaceOrders();
+  const { techOrders, autoOrders, beautyOrders, isLoading } = useMarketplaceOrders();
 
   if (isLoading) {
     return <div>Loading orders...</div>;
@@ -15,6 +15,7 @@ export const OrdersList = () => {
   const allOrders = [
     ...(techOrders || []),
     ...(autoOrders || []),
+    ...(beautyOrders || []),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
@@ -23,6 +24,7 @@ export const OrdersList = () => {
         <TabsTrigger value="all">All Orders</TabsTrigger>
         <TabsTrigger value="tech">Tech Orders</TabsTrigger>
         <TabsTrigger value="auto">Auto Orders</TabsTrigger>
+        <TabsTrigger value="beauty">Beauty Orders</TabsTrigger>
         <TabsTrigger value="listings">My Listings</TabsTrigger>
       </TabsList>
 
@@ -46,6 +48,14 @@ export const OrdersList = () => {
         <OrdersListContent 
           orders={autoOrders || []} 
           marketplace="Auto" 
+          userId={user?.id || ""}
+        />
+      </TabsContent>
+
+      <TabsContent value="beauty" className="space-y-6">
+        <OrdersListContent 
+          orders={beautyOrders || []} 
+          marketplace="Beauty" 
           userId={user?.id || ""}
         />
       </TabsContent>

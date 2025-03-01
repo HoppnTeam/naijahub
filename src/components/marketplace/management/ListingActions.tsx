@@ -15,9 +15,9 @@ import {
 
 interface ListingActionsProps {
   listing: any;
-  marketplace: "tech" | "auto";
+  marketplace: "tech" | "auto" | "beauty";
   onEdit: (listing: any) => void;
-  onDelete: (id: string, marketplace: "tech" | "auto") => void;
+  onDelete: (id: string, marketplace: "tech" | "auto" | "beauty") => void;
   onChatOpen: (listingId: string) => void;
   unreadMessages: number;
 }

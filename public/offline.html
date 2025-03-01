@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaijaHub - Offline</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #32a852;
+        }
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .button {
+            background-color: #32a852;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #2a8f45;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/logo.png" alt="NaijaHub Logo" class="logo">
+        <h1>You're Offline</h1>
+        <p>
+            It seems you've lost your internet connection. Don't worry though - you can still access previously viewed content.
+            We'll automatically reconnect when your connection is restored.
+        </p>
+        <a href="/" class="button" id="retryButton">Try Again</a>
+    </div>
+    <script>
+        // Check connection status periodically
+        setInterval(() => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }, 5000);
+
+        // Listen for online event
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+
+        // Handle retry button click
+        document.getElementById('retryButton').addEventListener('click', (e) => {
+            if (!navigator.onLine) {
+                e.preventDefault();
+                alert('Still offline. Please check your internet connection.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -6,9 +6,9 @@ import { ListingActions } from "./ListingActions";
 
 interface ListingCardProps {
   listing: any;
-  marketplace: "tech" | "auto";
+  marketplace: "tech" | "auto" | "beauty";
   onEdit: (listing: any) => void;
-  onDelete: (id: string, marketplace: "tech" | "auto") => void;
+  onDelete: (id: string, marketplace: "tech" | "auto" | "beauty") => void;
   onChatOpen: (listingId: string) => void;
   unreadMessages: number;
   likesCount: number;
@@ -30,7 +30,11 @@ export const ListingCard = ({
           <div>
             <h3 className="text-lg font-semibold">{listing.title}</h3>
             <div className="text-sm text-muted-foreground">
-              {marketplace === "tech" ? "Tech" : "Auto"} Marketplace
+              {marketplace === "tech" 
+                ? "Tech" 
+                : marketplace === "auto" 
+                  ? "Auto" 
+                  : "Beauty"} Marketplace
             </div>
           </div>
           <Badge>{listing.status}</Badge>
