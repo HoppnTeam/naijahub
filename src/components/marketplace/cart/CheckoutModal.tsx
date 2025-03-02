@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { handleAsyncError } from '@/lib/error-handling';
+import { Order, OrderItem } from '@/types/marketplace';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ export const CheckoutModal = ({
         const { data: order, error: orderError } = await supabase
           .from('beauty_marketplace_orders')
           .insert({
-            buyer_id: user.id,
+            user_id: user.id,
             total_amount: totalAmount,
             status: 'pending',
             shipping_address: `${formData.address}, ${formData.city}, ${formData.state}`,
@@ -71,8 +72,7 @@ export const CheckoutModal = ({
 
         const { error: itemsError } = await supabase
           .from('beauty_marketplace_order_items')
-          .insert(orderItems)
-          .select();
+          .insert(orderItems);
 
         if (itemsError) throw itemsError;
 

@@ -143,6 +143,88 @@ CREATE TABLE public.orders (
 );
 ```
 
+## Beauty Marketplace
+
+### beauty_products
+
+Beauty products available for sale in the marketplace.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| title | TEXT | Product title |
+| description | TEXT | Product description |
+| price | DECIMAL(10,2) | Product price |
+| category | TEXT | Product category (skincare, haircare, nails, makeup, fragrance, tools, other) |
+| condition | TEXT | Product condition (new, like-new, good, fair) |
+| brand | TEXT | Product brand (optional) |
+| images | TEXT[] | Array of image URLs |
+| created_at | TIMESTAMP WITH TIME ZONE | Creation timestamp |
+| updated_at | TIMESTAMP WITH TIME ZONE | Last update timestamp |
+| seller_id | UUID | Reference to auth.users(id) |
+| location_id | UUID | Reference to locations(id) |
+| status | TEXT | Product status (available, sold, pending) |
+| features | TEXT[] | Array of product features (optional) |
+| expiry_date | DATE | Product expiry date (optional) |
+| ingredients | TEXT[] | Array of product ingredients (optional) |
+| quantity | INTEGER | Available quantity |
+| views | INTEGER | View count |
+| saved_count | INTEGER | Number of times saved |
+
+### saved_beauty_products
+
+Wishlist functionality for beauty products.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| user_id | UUID | Reference to auth.users(id) |
+| product_id | UUID | Reference to beauty_products(id) |
+| created_at | TIMESTAMP WITH TIME ZONE | Creation timestamp |
+
+### beauty_marketplace_orders
+
+Orders for beauty products.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| user_id | UUID | Reference to auth.users(id) |
+| total_amount | DECIMAL(10,2) | Total order amount |
+| status | TEXT | Order status (pending, processing, shipped, completed, cancelled) |
+| shipping_address | TEXT | Delivery address |
+| payment_method | TEXT | Payment method (card, bank, delivery) |
+| contact_info | JSONB | Contact information (name, email, phone) |
+| payment_details | JSONB | Payment details (optional) |
+| delivery_notes | TEXT | Special delivery instructions (optional) |
+| created_at | TIMESTAMP WITH TIME ZONE | Creation timestamp |
+| updated_at | TIMESTAMP WITH TIME ZONE | Last update timestamp |
+
+### beauty_marketplace_order_items
+
+Individual items within a beauty marketplace order.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| order_id | UUID | Reference to beauty_marketplace_orders(id) |
+| listing_id | UUID | Reference to beauty_products(id) |
+| quantity | INTEGER | Quantity ordered |
+| price | DECIMAL(10,2) | Price at time of purchase |
+| created_at | TIMESTAMP WITH TIME ZONE | Creation timestamp |
+
+### beauty_marketplace_cart_items
+
+Shopping cart items for beauty marketplace.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| user_id | UUID | Reference to auth.users(id) |
+| listing_id | UUID | Reference to beauty_products(id) |
+| quantity | INTEGER | Quantity in cart |
+| created_at | TIMESTAMP WITH TIME ZONE | Creation timestamp |
+
 ## Monitoring Tables
 
 ### Error Logs
