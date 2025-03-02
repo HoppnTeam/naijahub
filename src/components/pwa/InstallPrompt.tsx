@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { logEvent } from '@/lib/monitoring';
+import { X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -23,29 +24,33 @@ const InstallPrompt: React.FC = () => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowPrompt(true);
       
-      // Log the event
-      logEvent('pwa', 'install_prompt_shown', {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform
-      });
+      // Delay showing the prompt by 10 seconds to allow the app to load properly
+      setTimeout(() => {
+        // Check if the user has previously dismissed the prompt
+        const hasUserDismissedPrompt = localStorage.getItem('pwa_prompt_dismissed');
+        if (hasUserDismissedPrompt) {
+          const dismissedTime = parseInt(hasUserDismissedPrompt, 10);
+          const currentTime = new Date().getTime();
+          
+          // If it's been less than 7 days since dismissal, don't show the prompt
+          if (currentTime - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
+            return;
+          }
+        }
+        
+        setShowPrompt(true);
+        
+        // Log the event
+        logEvent('pwa', 'install_prompt_shown', {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform
+        });
+      }, 10000); // 10 second delay
     };
 
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    // Check if the user has previously dismissed the prompt
-    const hasUserDismissedPrompt = localStorage.getItem('pwa_prompt_dismissed');
-    if (hasUserDismissedPrompt) {
-      const dismissedTime = parseInt(hasUserDismissedPrompt, 10);
-      const currentTime = new Date().getTime();
-      
-      // If it's been less than 7 days since dismissal, don't show the prompt
-      if (currentTime - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
-        setShowPrompt(false);
-      }
-    }
 
     // Listen for the appinstalled event
     const handleAppInstalled = () => {
@@ -109,14 +114,16 @@ const InstallPrompt: React.FC = () => {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border shadow-lg z-50 flex justify-between items-center">
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold">Install NaijaHub</h3>
-        <p className="text-sm text-muted-foreground">Add NaijaHub to your home screen for a better experience</p>
+    <div className="fixed bottom-4 right-4 p-4 bg-background border border-border rounded-lg shadow-lg z-40 max-w-xs">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-base font-semibold">Install NaijaHub</h3>
+        <Button variant="ghost" size="icon" onClick={handleDismiss} className="h-6 w-6">
+          <X size={16} />
+        </Button>
       </div>
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={handleDismiss}>Not Now</Button>
-        <Button onClick={handleInstallClick}>Install</Button>
+      <p className="text-sm text-muted-foreground mb-3">Add NaijaHub to your home screen for a better experience</p>
+      <div className="flex justify-end">
+        <Button size="sm" onClick={handleInstallClick}>Install</Button>
       </div>
     </div>
   );

@@ -22,7 +22,9 @@ CREATE POLICY "Authenticated users can create locations" ON locations
     FOR INSERT
     WITH CHECK (auth.role() = 'authenticated');
 
--- Create index for spatial queries
-CREATE INDEX IF NOT EXISTS idx_locations_coords ON locations USING gist (
-    ll_to_earth(latitude, longitude)
-);
+-- Create standard indexes for location queries
+CREATE INDEX IF NOT EXISTS idx_locations_latitude ON locations (latitude);
+CREATE INDEX IF NOT EXISTS idx_locations_longitude ON locations (longitude);
+CREATE INDEX IF NOT EXISTS idx_locations_city ON locations (city);
+CREATE INDEX IF NOT EXISTS idx_locations_state ON locations (state);
+CREATE INDEX IF NOT EXISTS idx_locations_country ON locations (country);

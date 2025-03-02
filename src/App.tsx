@@ -10,8 +10,11 @@ import { mainRoutes } from "@/routes/mainRoutes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { handleAsyncError } from "@/lib/error-handling";
-import InstallPrompt from "@/components/pwa/InstallPrompt";
-import OfflineIndicator from "@/components/pwa/OfflineIndicator";
+import { Suspense, lazy } from "react";
+
+// Lazy load PWA components to prevent them from blocking the main app
+const InstallPrompt = lazy(() => import("@/components/pwa/InstallPrompt"));
+const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator"));
 
 // Create a client with improved error handling
 const queryClient = new QueryClient({
@@ -77,9 +80,20 @@ function App() {
                 </main>
                 <Footer />
               </div>
-              <InstallPrompt />
-              <OfflineIndicator />
               <Toaster />
+            </ErrorBoundary>
+            
+            {/* PWA components wrapped in their own error boundaries */}
+            <ErrorBoundary fallback={<></>}>
+              <Suspense fallback={<></>}>
+                <InstallPrompt />
+              </Suspense>
+            </ErrorBoundary>
+            
+            <ErrorBoundary fallback={<></>}>
+              <Suspense fallback={<></>}>
+                <OfflineIndicator />
+              </Suspense>
             </ErrorBoundary>
           </AuthProvider>
         </Router>

@@ -132,6 +132,30 @@ export const measurePerformance = async <T>(
 };
 
 /**
+ * Log an event to the database
+ */
+export const logEvent = async (
+  category: string,
+  action: string,
+  metadata?: Record<string, any>,
+  user_id?: string
+): Promise<void> => {
+  try {
+    await supabase.from('events').insert({
+      category,
+      action,
+      metadata,
+      user_id,
+      url: window.location.href
+    });
+  } catch (error) {
+    // Fallback to console if we can't log to the database
+    console.error('Failed to log event to database:', error);
+    console.info('Event details:', { category, action, metadata });
+  }
+};
+
+/**
  * Initialize performance monitoring
  */
 export const initPerformanceMonitoring = (): void => {

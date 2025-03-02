@@ -3,10 +3,16 @@ import { AlertCircle, WifiOff } from 'lucide-react';
 import { logEvent } from '@/lib/monitoring';
 
 const OfflineIndicator: React.FC = () => {
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(false); // Initialize as online by default
   const [showIndicator, setShowIndicator] = useState(false);
 
   useEffect(() => {
+    // Check initial online status after a small delay to ensure app loads properly
+    setTimeout(() => {
+      setIsOffline(!navigator.onLine);
+      setShowIndicator(!navigator.onLine); // Only show if offline
+    }, 2000);
+
     const handleOnline = () => {
       setIsOffline(false);
       
@@ -33,9 +39,6 @@ const OfflineIndicator: React.FC = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Initialize the indicator visibility
-    setShowIndicator(isOffline);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -47,21 +50,21 @@ const OfflineIndicator: React.FC = () => {
 
   return (
     <div 
-      className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full z-50 flex items-center gap-2 transition-all duration-300 ${
+      className={`fixed top-4 right-4 px-3 py-2 rounded-md z-40 flex items-center gap-2 transition-all duration-300 shadow-md text-sm ${
         isOffline 
-          ? 'bg-destructive text-destructive-foreground' 
-          : 'bg-green-500 text-white'
+          ? 'bg-destructive/90 text-destructive-foreground' 
+          : 'bg-green-500/90 text-white'
       }`}
     >
       {isOffline ? (
         <>
-          <WifiOff size={16} />
-          <span>You are offline. Some features may be limited.</span>
+          <WifiOff size={14} />
+          <span>Offline</span>
         </>
       ) : (
         <>
-          <AlertCircle size={16} />
-          <span>You are back online!</span>
+          <AlertCircle size={14} />
+          <span>Online</span>
         </>
       )}
     </div>
