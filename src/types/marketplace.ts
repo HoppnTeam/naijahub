@@ -1,10 +1,22 @@
 import { Database } from '@/integrations/supabase/types';
-import { BeautyProduct } from './beauty-product';
 
-export enum MarketplaceType {
-  TECH = 'tech',
-  AUTO = 'auto',
-  BEAUTY = 'beauty'
+export type MarketplaceType = 'tech' | 'auto' | 'beauty';
+
+export interface MarketplaceChat {
+  id: string;
+  created_at: string;
+  marketplace_messages?: MarketplaceMessage[];
+}
+
+export interface MarketplaceMessage {
+  id: string;
+  content: string;
+  created_at: string;
+  read_at: string | null;
+}
+
+export interface MarketplaceLike {
+  count: number;
 }
 
 export interface BaseMarketplaceListing {
@@ -13,89 +25,43 @@ export interface BaseMarketplaceListing {
   description: string;
   price: number;
   images: string[];
-  condition: string;
   seller_id: string;
-  location_id: string;
-  status: 'available' | 'sold' | 'reserved';
+  status: string | null;
   created_at: string;
-  seller?: {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-  };
-  location?: {
-    id: string;
-    latitude: number;
-    longitude: number;
-    city: string;
-    state: string;
-    country: string;
-  };
+  updated_at: string;
+  location: string;
+  condition: string;
+  category: string;
+  marketplace_chats?: MarketplaceChat[];
 }
 
 export interface TechMarketplaceListing extends BaseMarketplaceListing {
-  category: string;
-  brand: string;
-  model: string;
-  specifications: Record<string, string>;
+  tech_marketplace_likes?: MarketplaceLike[];
+  brand?: string;
+  model?: string;
+  specifications?: Record<string, string>;
 }
 
 export interface AutoMarketplaceListing extends BaseMarketplaceListing {
-  make: string;
-  model: string;
-  year: number;
-  mileage: number;
-  fuel_type: string;
-  transmission: string;
-  color: string;
-  features: string[];
+  auto_marketplace_likes?: MarketplaceLike[];
+  make?: string;
+  model?: string;
+  year?: number;
+  mileage?: number;
+  transmission?: string;
+  fuel_type?: string;
 }
 
 export interface BeautyMarketplaceListing extends BaseMarketplaceListing {
-  category: string;
-  brand: string;
-  quantity: number;
+  beauty_marketplace_likes?: MarketplaceLike[];
+  brand?: string;
+  ingredients?: string[];
 }
 
 export type MarketplaceListing = 
   | TechMarketplaceListing 
   | AutoMarketplaceListing 
   | BeautyMarketplaceListing;
-
-export interface MarketplaceChat {
-  id: string;
-  listing_id: string;
-  buyer_id: string;
-  seller_id: string;
-  created_at: string;
-  updated_at: string;
-  listing?: MarketplaceListing;
-  buyer?: {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-  };
-  seller?: {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-  };
-  last_message?: MarketplaceMessage;
-}
-
-export interface MarketplaceMessage {
-  id: string;
-  chat_id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-  read: boolean;
-  sender?: {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-  };
-}
 
 export interface CartItem {
   id: string;

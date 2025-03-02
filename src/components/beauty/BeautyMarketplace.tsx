@@ -5,8 +5,7 @@ import { Plus, Search, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { BeautyProduct, BeautyCategory } from '@/types/beauty-product';
-import { BeautyMarketplaceListing } from '@/types/marketplace';
+import { BeautyProduct } from '@/types/beauty-product';
 import { CreateBeautyListingModal } from './CreateBeautyListingModal';
 import { BeautyProductCard } from './BeautyProductCard';
 import { BeautyProductDetail } from './BeautyProductDetail';
@@ -14,7 +13,6 @@ import { Database } from '@/integrations/supabase/types';
 import { handleAsyncError, getSupabaseErrorMessage } from '@/lib/error-handling';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { ResponsiveContainer } from '@/components/ui/ResponsiveContainer';
 
 // Define a type for the raw database result
 type BeautyMarketplaceListingRaw = Database['public']['Tables']['beauty_marketplace_listings']['Row'] & {
@@ -25,61 +23,19 @@ type BeautyMarketplaceListingRaw = Database['public']['Tables']['beauty_marketpl
   } | null;
 };
 
-// Define a type for the transformed product data
-interface TransformedProduct {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  brand: string;
-  category: string;
-  condition: string;
-  seller: {
-    id: string;
-    username: string;
-    avatarUrl: string | null;
-  } | null;
-  createdAt: string;
-}
-
-// Define a mapping function to convert TransformedProduct to BeautyProduct
-const mapToBeautyProduct = (product: TransformedProduct): BeautyProduct => {
-  return {
-    id: product.id,
-    title: product.name,
-    description: product.description,
-    price: product.price,
-    category: product.category as BeautyCategory,
-    brand: product.brand,
-    quantity: 1,
-    images: [product.imageUrl],
-    seller_id: product.seller?.id || '',
-    location_id: '',
-    status: 'available',
-    created_at: product.createdAt,
-    seller: product.seller ? {
-      id: product.seller.id,
-      username: product.seller.username,
-      avatar_url: product.seller.avatarUrl
-    } : undefined,
-    condition: product.condition
-  };
-};
-
 export const BeautyMarketplace = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<TransformedProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<BeautyProduct | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
-  const { 
-    data: products, 
-    isLoading, 
+  const {
+    data: products,
+    isLoading,
     error,
     refetch
   } = useQuery({
-    queryKey: ['beauty-marketplace'],
+    queryKey: ['beauty-marketplace-listings'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
@@ -92,42 +48,62 @@ export const BeautyMarketplace = () => {
               avatar_url
             )
           `)
+          .eq('status', 'available')
           .order('created_at', { ascending: false });
 
-        if (error) {
-          throw new Error(getSupabaseErrorMessage(error));
-        }
+        if (error) throw error;
 
-        // Cast and transform the data
+        if (!data) return [] as BeautyProduct[];
+
+        // Transform the data to match our BeautyProduct type
         return (data as unknown as BeautyMarketplaceListingRaw[]).map(item => ({
           id: item.id,
-          name: item.title,
+          title: item.title,
           description: item.description,
           price: item.price,
-          imageUrl: item.images[0] || '',
-          brand: item.category,
-          category: item.category,
-          condition: item.condition,
+          category: item.category as BeautyProduct['category'],
+          brand: item.category, // Using category as brand since there's no brand field
+          quantity: 1, // Default quantity
+          images: item.images || [],
+          seller_id: item.seller_id,
+          location_id: item.location,
+          status: item.status as BeautyProduct['status'],
+          created_at: item.created_at,
           seller: item.seller ? {
             id: item.seller.id,
             username: item.seller.username,
-            avatarUrl: item.seller.avatar_url
-          } : null,
-          createdAt: item.created_at
-        }));
-      } catch (err) {
-        handleAsyncError(err, 'Failed to load beauty products');
-        throw err;
+            avatar_url: item.seller.avatar_url || undefined
+          } : undefined,
+          location: {
+            id: item.location,
+            city: item.location,
+            state: ''
+          }
+        })) as BeautyProduct[];
+      } catch (error) {
+        handleAsyncError(error, "Failed to load beauty products");
+        throw error;
       }
     },
-    retry: 2
+    retry: 1,
   });
 
+  const handleProductClick = (product: BeautyProduct) => {
+    setSelectedProduct(product);
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedProduct(null);
+  };
+
   const filteredProducts = products?.filter(product => {
+    if (!searchQuery.trim()) return true;
+    
     const query = searchQuery.toLowerCase();
     return (
-      product.name.toLowerCase().includes(query) ||
+      product.title.toLowerCase().includes(query) ||
       product.brand.toLowerCase().includes(query) ||
+      product.description.toLowerCase().includes(query) ||
       product.category.toLowerCase().includes(query)
     );
   });
@@ -140,93 +116,88 @@ export const BeautyMarketplace = () => {
     refetch();
   };
 
-  const handleCreateSuccess = () => {
-    setIsCreateModalOpen(false);
-    refetch();
-    toast({
-      title: "Success",
-      description: "Your product has been listed successfully."
-    });
-  };
-
   return (
-    <ResponsiveContainer>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-          <h2 className="text-xl sm:text-2xl font-semibold">Beauty Products Marketplace</h2>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">List Product</span>
-            <span className="sm:hidden">List</span>
-          </Button>
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-2 sm:mb-0">
+        <h2 className="text-xl sm:text-2xl font-semibold">Beauty Products Marketplace</h2>
+        <Button onClick={() => setIsCreateModalOpen(true)} className="w-full sm:w-auto">
+          <Plus className="w-4 h-4 mr-2" />
+          List Product
+        </Button>
+      </div>
 
-        {/* Search bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Search products..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+      {/* Search bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Input
+          placeholder="Search products by name, brand, or category..."
+          className="pl-10"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        {/* Product grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="space-y-2">
-                <Skeleton className="h-[200px] w-full rounded-md" />
-                <Skeleton className="h-4 w-3/4 rounded-md" />
-                <Skeleton className="h-4 w-1/2 rounded-md" />
-              </div>
-            ))}
-          </div>
-        ) : error ? (
-          <Alert variant="destructive" className="my-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription className="flex flex-col gap-2">
-              <p>{error instanceof Error ? error.message : 'Failed to load products'}</p>
-              <Button variant="outline" size="sm" className="w-fit" onClick={handleRetry}>
-                Try Again
-              </Button>
-            </AlertDescription>
-          </Alert>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts?.length === 0 ? (
-              <div className="col-span-full text-center py-8">
-                <p className="text-gray-500">No products found matching your search.</p>
-              </div>
-            ) : (
-              filteredProducts?.map((product) => (
+      {/* Product grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="space-y-2">
+              <Skeleton className="h-[200px] w-full rounded-md" />
+              <Skeleton className="h-4 w-3/4 rounded-md" />
+              <Skeleton className="h-4 w-1/2 rounded-md" />
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <Alert variant="destructive" className="my-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription className="flex flex-col gap-2">
+            <p>{error instanceof Error ? error.message : 'Failed to load products'}</p>
+            <Button variant="outline" size="sm" className="w-fit" onClick={handleRetry}>
+              Try Again
+            </Button>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <>
+          {filteredProducts && filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredProducts.map((product) => (
                 <BeautyProductCard
                   key={product.id}
-                  product={mapToBeautyProduct(product)}
-                  onClick={() => setSelectedProduct(product)}
+                  product={product}
+                  onClick={() => handleProductClick(product)}
                 />
-              ))
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-gray-500">
+                {searchQuery.trim() ? 'No products match your search.' : 'No products found.'}
+              </p>
+              <p className="text-gray-500">
+                {searchQuery.trim() ? 'Try a different search term.' : 'Be the first to list a product!'}
+              </p>
+            </div>
+          )}
+        </>
+      )}
 
-        {/* Create listing modal */}
-        <CreateBeautyListingModal
-          open={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
+      {/* Create listing modal */}
+      <CreateBeautyListingModal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      {/* Product detail modal */}
+      {selectedProduct && (
+        <BeautyProductDetail
+          product={selectedProduct}
+          open={!!selectedProduct}
+          onClose={handleCloseDetail}
         />
-
-        {/* Product detail modal */}
-        {selectedProduct && (
-          <BeautyProductDetail
-            product={mapToBeautyProduct(selectedProduct)}
-            open={!!selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
-      </div>
-    </ResponsiveContainer>
+      )}
+    </div>
   );
 };

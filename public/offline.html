@@ -1,98 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NaijaHub - Offline</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f8f9fa;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 2rem;
-        }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #32a852;
-        }
-        p {
-            font-size: 1.1rem;
-            line-height: 1.5;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-        .button {
-            background-color: #32a852;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .button:hover {
-            background-color: #2a8f45;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NaijaHub - You're Offline</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#008751">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --primary: #008751;
+      --primary-dark: #006b3e;
+      --background: #f9f9f9;
+      --text: #333333;
+      --gray-light: #e5e5e5;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 2rem;
+      background-color: var(--gray-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .offline-icon svg {
+      width: 60px;
+      height: 60px;
+      fill: var(--primary);
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+    
+    .button {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .cached-content {
+      margin-top: 2rem;
+      width: 100%;
+      border-top: 1px solid var(--gray-light);
+      padding-top: 2rem;
+    }
+    
+    .cached-content h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    
+    .cached-list {
+      list-style: none;
+      text-align: left;
+      margin-top: 1rem;
+    }
+    
+    .cached-list li {
+      padding: 0.8rem;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    
+    .cached-list a {
+      color: var(--primary);
+      text-decoration: none;
+      display: block;
+    }
+    
+    .cached-list a:hover {
+      text-decoration: underline;
+    }
+    
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      background-color: var(--gray-light);
+    }
+    
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+      
+      .offline-icon {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .offline-icon svg {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img src="/logo.png" alt="NaijaHub Logo" class="logo">
-        <h1>You're Offline</h1>
-        <p>
-            It seems you've lost your internet connection. Don't worry though - you can still access previously viewed content.
-            We'll automatically reconnect when your connection is restored.
-        </p>
-        <a href="/" class="button" id="retryButton">Try Again</a>
+  <header>
+    <div class="logo">NaijaHub</div>
+  </header>
+  
+  <main>
+    <div class="offline-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>
     </div>
-    <script>
-        // Check connection status periodically
-        setInterval(() => {
-            if (navigator.onLine) {
-                window.location.reload();
-            }
-        }, 5000);
-
-        // Listen for online event
-        window.addEventListener('online', () => {
-            window.location.reload();
+    
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Some features may be unavailable until you're back online.</p>
+    
+    <button class="button" id="refresh-btn">Try Again</button>
+    
+    <div class="cached-content">
+      <h2>Available Offline</h2>
+      <p>You can still access these previously visited pages:</p>
+      <ul class="cached-list" id="cached-pages">
+        <li>Loading cached pages...</li>
+      </ul>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2023 NaijaHub - Connecting Nigerians Worldwide</p>
+  </footer>
+  
+  <script>
+    // Refresh button functionality
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+      window.location.reload();
+    });
+    
+    // List cached pages if available
+    if ('caches' in window) {
+      caches.open('naijahub-v1').then(function(cache) {
+        cache.keys().then(function(requests) {
+          const cachedList = document.getElementById('cached-pages');
+          
+          if (requests.length === 0) {
+            cachedList.innerHTML = '<li>No cached pages available</li>';
+            return;
+          }
+          
+          // Filter out non-HTML resources and limit to 5 items
+          const htmlRequests = requests
+            .filter(request => {
+              const url = new URL(request.url);
+              return url.origin === location.origin && 
+                     !request.url.includes('.') && 
+                     !request.url.includes('offline');
+            })
+            .slice(0, 5);
+          
+          if (htmlRequests.length === 0) {
+            cachedList.innerHTML = '<li>No cached pages available</li>';
+            return;
+          }
+          
+          cachedList.innerHTML = '';
+          htmlRequests.forEach(function(request) {
+            const url = new URL(request.url);
+            const path = url.pathname;
+            const displayPath = path === '/' ? 'Home' : path.split('/').pop() || path;
+            
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = request.url;
+            link.textContent = displayPath.charAt(0).toUpperCase() + displayPath.slice(1);
+            listItem.appendChild(link);
+            cachedList.appendChild(listItem);
+          });
         });
-
-        // Handle retry button click
-        document.getElementById('retryButton').addEventListener('click', (e) => {
-            if (!navigator.onLine) {
-                e.preventDefault();
-                alert('Still offline. Please check your internet connection.');
-            }
-        });
-    </script>
+      });
+    } else {
+      document.getElementById('cached-pages').innerHTML = '<li>Caching not supported in your browser</li>';
+    }
+    
+    // Check if we're back online
+    window.addEventListener('online', function() {
+      const notification = document.createElement('div');
+      notification.style.position = 'fixed';
+      notification.style.bottom = '20px';
+      notification.style.left = '50%';
+      notification.style.transform = 'translateX(-50%)';
+      notification.style.backgroundColor = '#008751';
+      notification.style.color = 'white';
+      notification.style.padding = '10px 20px';
+      notification.style.borderRadius = '4px';
+      notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+      notification.textContent = 'You\'re back online! Redirecting...';
+      document.body.appendChild(notification);
+      
+      setTimeout(function() {
+        window.location.href = '/';
+      }, 2000);
+    });
+  </script>
 </body>
 </html>

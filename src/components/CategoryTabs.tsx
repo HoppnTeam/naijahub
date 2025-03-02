@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
+import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { LucideIcon } from "lucide-react";
@@ -24,6 +25,31 @@ const CategoryTabs = ({
   selectedCategory,
   onCategoryChange,
 }: CategoryTabsProps) => {
+  const navigate = useNavigate();
+
+  const categoryNames = [
+    "News & Politics",
+    "Entertainment",
+    "Technology",
+    "Sports",
+    "Business",
+    "Health",
+    "Agriculture",
+    "Travel",
+    "Culture & Personals",
+    "Automotive",
+    "Fashion & Beauty"
+  ];
+
+  const mainCategories = categories?.filter(category => {
+    if (!category || !category.name) {
+      return false;
+    }
+    
+    const trimmedName = category.name.trim();
+    return categoryNames.includes(trimmedName);
+  });
+
   const getCategoryIcon = (category: Category) => {
     if (!category.icon) return null;
     
@@ -38,8 +64,27 @@ const CategoryTabs = ({
     return IconComponent ? <IconComponent className="w-5 h-5 text-[#E2725B]" /> : null;
   };
 
-  const handleCategoryClick = (categoryId: string) => {
+  const getCategoryPath = (categoryName: string) => {
+    const paths: { [key: string]: string } = {
+      "News & Politics": "/categories/news-politics",
+      "Entertainment": "/categories/entertainment",
+      "Technology": "/categories/technology",
+      "Sports": "/categories/sports",
+      "Business": "/categories/business",
+      "Health": "/categories/health",
+      "Agriculture": "/categories/agriculture",
+      "Travel": "/categories/travel",
+      "Culture & Personals": "/categories/culture",
+      "Automotive": "/categories/automotive",
+      "Fashion & Beauty": "/categories/fashion-beauty"
+    };
+    return paths[categoryName] || "/";
+  };
+
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
     onCategoryChange(categoryId);
+    const path = getCategoryPath(categoryName);
+    navigate(path);
   };
 
   return (
@@ -54,11 +99,11 @@ const CategoryTabs = ({
             >
               All Posts
             </TabsTrigger>
-            {categories?.map((category) => (
+            {mainCategories?.map((category) => (
               <TabsTrigger
                 key={category.id}
                 value={category.id}
-                onClick={() => handleCategoryClick(category.id)}
+                onClick={() => handleCategoryClick(category.id, category.name)}
                 className="whitespace-nowrap flex items-center gap-1.5 md:gap-2.5 transition-colors text-white hover:bg-[#32a852]/20 text-sm md:text-base font-medium px-2 md:px-4"
               >
                 {getCategoryIcon(category)}

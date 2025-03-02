@@ -42,19 +42,39 @@ export const CheckoutModal = ({
           .from('beauty_marketplace_orders')
           .insert({
             buyer_id: user.id,
-            seller_id: cartItems[0]?.beauty_marketplace_listings?.seller_id || user.id, // Fallback to user.id if seller_id is not available
-            listing_id: cartItems[0]?.listing_id, // Using the first item's listing_id
-            amount: totalAmount,
-            delivery_method: 'standard',
-            payment_method: formData.paymentMethod,
-            payment_status: 'pending',
-            delivery_status: 'pending',
+            total_amount: totalAmount,
+            status: 'pending',
             shipping_address: `${formData.address}, ${formData.city}, ${formData.state}`,
+            payment_method: formData.paymentMethod,
+            contact_info: {
+              name: formData.fullName,
+              email: formData.email,
+              phone: formData.phone
+            },
+            payment_details: formData.paymentMethod === 'card' ? {
+              card_number: formData.cardNumber ? `xxxx-xxxx-xxxx-${formData.cardNumber.slice(-4)}` : null,
+            } : null,
+            delivery_notes: formData.deliveryNotes || null,
           })
           .select()
           .single();
 
         if (orderError) throw orderError;
+
+        // 2. Create order items
+        const orderItems = cartItems.map(item => ({
+          order_id: order.id,
+          listing_id: item.listing_id,
+          quantity: item.quantity,
+          price: item.beauty_marketplace_listings.price,
+        }));
+
+        const { error: itemsError } = await supabase
+          .from('beauty_marketplace_order_items')
+          .insert(orderItems)
+          .select();
+
+        if (itemsError) throw itemsError;
 
         // 3. Clear the cart
         const { error: clearCartError } = await supabase

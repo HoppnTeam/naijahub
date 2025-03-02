@@ -1,10 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   loading: boolean;
   isAdmin: boolean;
   checkAdminStatus: () => Promise<boolean>;
@@ -12,7 +11,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  session: null,
   loading: true,
   isAdmin: false,
   checkAdminStatus: async () => false,
@@ -20,7 +18,6 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -31,66 +28,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('role', 'admin');
       
       if (error) {
-        console.error('Error checking admin status:', error);
+        console.error("Error checking admin status:", error);
         return false;
       }
       
-      // Check if the user has an admin role
-      const isUserAdmin = data && data.length > 0 && data.some(role => role.role === 'admin');
-      setIsAdmin(isUserAdmin);
-      return isUserAdmin;
+      const hasAdminRole = data && data.length > 0;
+      setIsAdmin(hasAdminRole);
+      return hasAdminRole;
     } catch (error) {
-      console.error('Error checking admin status:', error);
+      console.error("Error in checkAdminStatus:", error);
       return false;
     }
   };
 
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        // Get the initial session
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        
-        if (initialSession) {
-          setSession(initialSession);
-          setUser(initialSession.user);
-          await checkAdminStatus();
-        }
-        
-        // Set up auth state change listener
-        const { data: { subscription } } = await supabase.auth.onAuthStateChange(
-          async (_event, newSession) => {
-            setSession(newSession);
-            setUser(newSession?.user || null);
-            
-            if (newSession?.user) {
-              await checkAdminStatus();
-            } else {
-              setIsAdmin(false);
-            }
-          }
-        );
-        
-        setLoading(false);
-        
-        // Clean up the subscription
-        return () => {
-          subscription.unsubscribe();
-        };
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setLoading(false);
+    // Check for existing session on mount
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Initial session check:", session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        await checkAdminStatus();
       }
+      
+      setLoading(false);
     };
-    
-    initAuth();
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("Auth state changed:", _event, session?.user);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        await checkAdminStatus();
+      } else {
+        setIsAdmin(false);
+      }
+      
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, checkAdminStatus }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, checkAdminStatus }}>
       {children}
     </AuthContext.Provider>
   );

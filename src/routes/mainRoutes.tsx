@@ -13,6 +13,7 @@ const Contact = lazy(() => import("@/pages/Contact"));
 const Advertise = lazy(() => import("@/pages/Advertise"));
 const ContentGuidelines = lazy(() => import("@/pages/ContentGuidelines"));
 const MarketplaceListings = lazy(() => import("@/components/marketplace/MarketplaceListings"));
+const AppIcons = lazy(() => import("@/pages/AppIcons"));
 
 export const mainRoutes = [
   {
@@ -100,6 +101,14 @@ export const mainRoutes = [
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <MarketplaceListings />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/app-icons",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <AppIcons />
       </Suspense>
     ),
   },

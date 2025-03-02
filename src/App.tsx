@@ -10,8 +10,6 @@ import { mainRoutes } from "@/routes/mainRoutes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { handleAsyncError } from "@/lib/error-handling";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
-import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 
 // Create a client with improved error handling
 const queryClient = new QueryClient({
@@ -77,8 +75,6 @@ function App() {
                 </main>
                 <Footer />
               </div>
-              <InstallPrompt />
-              <OfflineIndicator />
               <Toaster />
             </ErrorBoundary>
           </AuthProvider>

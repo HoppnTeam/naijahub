@@ -7,74 +7,64 @@ interface OptimizedImageProps {
   sizes?: string;
   priority?: boolean;
   objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
-  aspectRatio?: '1:1' | '16:9' | '4:3' | '3:2' | 'auto';
 }
 
-/**
- * A component for optimized image loading with lazy loading, error handling,
- * and responsive sizing support.
- */
 export const OptimizedImage = ({ 
   src, 
   alt, 
-  className = '',
-  sizes = '100vw',
+  className, 
+  sizes = '100vw', 
   priority = false,
-  objectFit = 'cover',
-  aspectRatio = 'auto'
+  objectFit = 'cover'
 }: OptimizedImageProps) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    // Reset states when src changes
     setLoaded(false);
     setError(false);
     
-    if (priority) {
-      // If priority is true, preload the image
-      const img = new Image();
-      img.src = src;
-      img.onload = () => setLoaded(true);
-      img.onerror = () => setError(true);
+    if (!src) {
+      setError(true);
+      return;
     }
+
+    const img = new Image();
+    img.src = src;
+    
+    if (priority) {
+      img.fetchPriority = 'high';
+    }
+    
+    img.onload = () => setLoaded(true);
+    img.onerror = () => setError(true);
+    
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
   }, [src, priority]);
-
-  const aspectRatioClass = {
-    '1:1': 'aspect-square',
-    '16:9': 'aspect-video',
-    '4:3': 'aspect-[4/3]',
-    '3:2': 'aspect-[3/2]',
-    'auto': ''
-  }[aspectRatio];
-
-  const objectFitClass = {
-    'contain': 'object-contain',
-    'cover': 'object-cover',
-    'fill': 'object-fill',
-    'none': 'object-none',
-    'scale-down': 'object-scale-down'
-  }[objectFit];
 
   if (error) {
     return (
-      <div className={`bg-gray-100 flex items-center justify-center text-gray-400 ${aspectRatioClass} ${className}`}>
-        <span className="text-sm">Image not available</span>
+      <div className={`bg-gray-200 rounded-md flex items-center justify-center ${className}`}>
+        <span className="text-gray-500 text-sm">Image not available</span>
       </div>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden ${aspectRatioClass} ${className}`}>
-      {!loaded && !priority && (
+    <div className="relative w-full h-full">
+      {!loaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-md" />
       )}
       <img
         src={src}
         alt={alt}
-        className={`w-full h-full ${objectFitClass} ${loaded || priority ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+        className={`${className} ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
         loading={priority ? 'eager' : 'lazy'}
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        style={{ objectFit }}
         sizes={sizes}
       />
     </div>

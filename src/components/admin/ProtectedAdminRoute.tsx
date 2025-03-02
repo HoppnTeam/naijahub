@@ -1,57 +1,65 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Spinner } from '@/components/ui/spinner';
-import { handleAsyncError } from '@/lib/error-handling';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedAdminRouteProps {
   children: React.ReactNode;
 }
 
 export const ProtectedAdminRoute = ({ children }: ProtectedAdminRouteProps) => {
-  const { user, isAdmin, checkAdminStatus } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [hasAccess, setHasAccess] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
+  const { user, checkAdminStatus } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    const checkAdminAccess = async () => {
+    const verifyAdminAccess = async () => {
       try {
-        setLoading(true);
-        
-        // First check if we already know the user is an admin from context
-        if (isAdmin) {
-          setHasAccess(true);
-          setLoading(false);
+        if (!user) {
+          // Only redirect to sign-in if there is no user at all
+          navigate('/auth');
           return;
         }
-        
-        // If not, check admin status directly
-        if (user) {
-          const isUserAdmin = await checkAdminStatus();
-          setHasAccess(isUserAdmin);
-        } else {
-          setHasAccess(false);
+
+        // Use the centralized admin checking function
+        const hasAdminRole = await checkAdminStatus();
+
+        if (!hasAdminRole) {
+          toast({
+            variant: "destructive",
+            title: "Unauthorized",
+            description: "You do not have admin privileges to access this page.",
+          });
+          navigate('/'); // Redirect to home instead of sign-in
+          return;
         }
-        
-        setLoading(false);
+
+        setAuthorized(true);
       } catch (error) {
-        handleAsyncError(error, 'Failed to verify admin access');
-        setHasAccess(false);
+        console.error("Admin access verification error:", error);
+        toast({
+          variant: "destructive",
+          title: "Authentication Error",
+          description: "There was a problem verifying your admin access.",
+        });
+        navigate('/');
+      } finally {
         setLoading(false);
       }
     };
 
-    checkAdminAccess();
-  }, [user, isAdmin, checkAdminStatus]);
+    verifyAdminAccess();
+  }, [user, navigate, toast, checkAdminStatus]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner size="lg" />
-        <span className="ml-2">Verifying admin access...</span>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
       </div>
     );
   }
 
-  return hasAccess ? <>{children}</> : <Navigate to="/signin" replace />;
+  return authorized ? <>{children}</> : null;
 };
