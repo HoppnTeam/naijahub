@@ -5,57 +5,85 @@ import { Plus, Search, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { BeautyProduct, BeautyCategory } from '@/types/beauty-product';
-import { BeautyMarketplaceListing } from '@/types/marketplace';
-import { CreateBeautyListingModal } from './CreateBeautyListingModal';
-import { BeautyProductCard } from './BeautyProductCard';
-import { BeautyProductDetail } from './BeautyProductDetail';
+import { AutoMarketplaceListing } from '@/types/marketplace';
+import { CreateAutoListingModal } from './CreateAutoListingModal';
+import { AutoProductCard } from './AutoProductCard';
+import { AutoProductDetail } from './AutoProductDetail';
 import { Database } from '@/integrations/supabase/types';
 import { handleAsyncError, getSupabaseErrorMessage } from '@/lib/error-handling';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
 import { ResponsiveContainer } from '@/components/ui/ResponsiveContainer';
+import { useLocation } from '@/hooks/use-location';
 
 // Define a type for the raw database result
-type BeautyMarketplaceListingRaw = Database['public']['Tables']['beauty_marketplace_listings']['Row'] & {
+type AutoMarketplaceListingRaw = Database['public']['Tables']['auto_marketplace_listings']['Row'] & {
   seller: {
     id: string;
     username: string;
     avatar_url: string | null;
   } | null;
+  location: {
+    id: string;
+    latitude: number;
+    longitude: number;
+    city: string;
+    state: string;
+    country: string;
+  } | null;
 };
 
 // Define a type for the transformed product data
-interface TransformedProduct {
+interface TransformedAutoProduct {
   id: string;
-  name: string;
+  title: string;
   description: string;
   price: number;
-  imageUrl: string;
-  brand: string;
-  category: string;
+  images: string[];
+  make: string;
+  model: string;
+  year: number;
+  mileage: number;
+  fuelType: string;
+  transmission: string;
+  color: string;
+  features: string[];
   condition: string;
   seller: {
     id: string;
     username: string;
     avatarUrl: string | null;
   } | null;
+  location: {
+    id: string;
+    latitude: number;
+    longitude: number;
+    city: string;
+    state: string;
+    country: string;
+  } | null;
   createdAt: string;
 }
 
-// Define a mapping function to convert TransformedProduct to BeautyProduct
-const mapToBeautyProduct = (product: TransformedProduct): BeautyProduct => {
+// Define a mapping function to convert TransformedAutoProduct to AutoMarketplaceListing
+const mapToAutoListing = (product: TransformedAutoProduct): AutoMarketplaceListing => {
   return {
     id: product.id,
-    title: product.name,
+    title: product.title,
     description: product.description,
     price: product.price,
-    category: product.category as BeautyCategory,
-    brand: product.brand,
-    quantity: 1,
-    images: [product.imageUrl],
+    images: product.images,
+    make: product.make,
+    model: product.model,
+    year: product.year,
+    mileage: product.mileage,
+    fuel_type: product.fuelType,
+    transmission: product.transmission,
+    color: product.color,
+    features: product.features,
+    condition: product.condition,
     seller_id: product.seller?.id || '',
-    location_id: '',
+    location_id: product.location?.id || '',
     status: 'available',
     created_at: product.createdAt,
     seller: product.seller ? {
@@ -63,15 +91,23 @@ const mapToBeautyProduct = (product: TransformedProduct): BeautyProduct => {
       username: product.seller.username,
       avatar_url: product.seller.avatarUrl
     } : undefined,
-    condition: product.condition
+    location: product.location ? {
+      id: product.location.id,
+      latitude: product.location.latitude,
+      longitude: product.location.longitude,
+      city: product.location.city,
+      state: product.location.state,
+      country: product.location.country
+    } : undefined
   };
 };
 
-export const BeautyMarketplace = () => {
+export const AutomotiveMarketplace = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<TransformedProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<TransformedAutoProduct | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
+  const { userLocation, getCurrentLocation, isLoading: isLocationLoading } = useLocation();
 
   const { 
     data: products, 
@@ -79,17 +115,25 @@ export const BeautyMarketplace = () => {
     error,
     refetch
   } = useQuery({
-    queryKey: ['beauty-marketplace'],
+    queryKey: ['auto-marketplace'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('beauty_marketplace_listings')
+          .from('auto_marketplace_listings')
           .select(`
             *,
             seller:profiles (
               id,
               username,
               avatar_url
+            ),
+            location:locations (
+              id,
+              latitude,
+              longitude,
+              city,
+              state,
+              country
             )
           `)
           .order('created_at', { ascending: false });
@@ -99,24 +143,38 @@ export const BeautyMarketplace = () => {
         }
 
         // Cast and transform the data
-        return (data as unknown as BeautyMarketplaceListingRaw[]).map(item => ({
+        return (data as unknown as AutoMarketplaceListingRaw[]).map(item => ({
           id: item.id,
-          name: item.title,
+          title: item.title,
           description: item.description,
           price: item.price,
-          imageUrl: item.images[0] || '',
-          brand: item.category,
-          category: item.category,
+          images: item.images || [],
+          make: item.make,
+          model: item.model,
+          year: item.year,
+          mileage: item.mileage,
+          fuelType: item.fuel_type,
+          transmission: item.transmission,
+          color: item.color,
+          features: item.features || [],
           condition: item.condition,
           seller: item.seller ? {
             id: item.seller.id,
             username: item.seller.username,
             avatarUrl: item.seller.avatar_url
           } : null,
+          location: item.location ? {
+            id: item.location.id,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+            city: item.location.city,
+            state: item.location.state,
+            country: item.location.country
+          } : null,
           createdAt: item.created_at
         }));
       } catch (err) {
-        handleAsyncError(err, 'Failed to load beauty products');
+        handleAsyncError(err, 'Failed to load automotive listings');
         throw err;
       }
     },
@@ -126,16 +184,17 @@ export const BeautyMarketplace = () => {
   const filteredProducts = products?.filter(product => {
     const query = searchQuery.toLowerCase();
     return (
-      product.name.toLowerCase().includes(query) ||
-      product.brand.toLowerCase().includes(query) ||
-      product.category.toLowerCase().includes(query)
+      product.title.toLowerCase().includes(query) ||
+      product.make.toLowerCase().includes(query) ||
+      product.model.toLowerCase().includes(query) ||
+      product.description.toLowerCase().includes(query)
     );
   });
 
   const handleRetry = () => {
     toast({
       title: "Retrying",
-      description: "Attempting to reload beauty products..."
+      description: "Attempting to reload automotive listings..."
     });
     refetch();
   };
@@ -145,7 +204,7 @@ export const BeautyMarketplace = () => {
     refetch();
     toast({
       title: "Success",
-      description: "Your product has been listed successfully."
+      description: "Your vehicle has been listed successfully."
     });
   };
 
@@ -153,10 +212,10 @@ export const BeautyMarketplace = () => {
     <ResponsiveContainer>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-          <h2 className="text-xl sm:text-2xl font-semibold">Beauty Products Marketplace</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold">Automotive Marketplace</h2>
           <Button onClick={() => setIsCreateModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">List Product</span>
+            <span className="hidden sm:inline">List Vehicle</span>
             <span className="sm:hidden">List</span>
           </Button>
         </div>
@@ -165,7 +224,7 @@ export const BeautyMarketplace = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Search products..."
+            placeholder="Search vehicles..."
             className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -174,8 +233,8 @@ export const BeautyMarketplace = () => {
 
         {/* Product grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="space-y-2">
                 <Skeleton className="h-[200px] w-full rounded-md" />
                 <Skeleton className="h-4 w-3/4 rounded-md" />
@@ -188,23 +247,23 @@ export const BeautyMarketplace = () => {
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription className="flex flex-col gap-2">
-              <p>{error instanceof Error ? error.message : 'Failed to load products'}</p>
+              <p>{error instanceof Error ? error.message : 'Failed to load vehicles'}</p>
               <Button variant="outline" size="sm" className="w-fit" onClick={handleRetry}>
                 Try Again
               </Button>
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {filteredProducts?.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <p className="text-gray-500">No products found matching your search.</p>
+                <p className="text-gray-500">No vehicles found matching your search.</p>
               </div>
             ) : (
               filteredProducts?.map((product) => (
-                <BeautyProductCard
+                <AutoProductCard
                   key={product.id}
-                  product={mapToBeautyProduct(product)}
+                  product={product}
                   onClick={() => setSelectedProduct(product)}
                 />
               ))
@@ -213,15 +272,19 @@ export const BeautyMarketplace = () => {
         )}
 
         {/* Create listing modal */}
-        <CreateBeautyListingModal
+        <CreateAutoListingModal
           open={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={handleCreateSuccess}
+          userLocation={userLocation}
+          onRequestLocation={getCurrentLocation}
+          isLocationLoading={isLocationLoading}
         />
 
         {/* Product detail modal */}
         {selectedProduct && (
-          <BeautyProductDetail
-            product={mapToBeautyProduct(selectedProduct)}
+          <AutoProductDetail
+            listing={mapToAutoListing(selectedProduct)}
             open={!!selectedProduct}
             onClose={() => setSelectedProduct(null)}
           />

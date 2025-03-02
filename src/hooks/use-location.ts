@@ -5,6 +5,7 @@ import type { PostgrestResponse } from '@supabase/supabase-js';
 
 export const useLocation = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<Location | null>(null);
 
   const getCurrentLocation = async (): Promise<Location | null> => {
     try {
@@ -26,6 +27,12 @@ export const useLocation = () => {
         }) as PostgrestResponse<Location>;
 
       if (error) throw error;
+      
+      // Store the location in state
+      if (data) {
+        setUserLocation(data);
+      }
+      
       return data;
     } catch (error) {
       console.error('Error getting location:', error);
@@ -37,6 +44,7 @@ export const useLocation = () => {
 
   return {
     getCurrentLocation,
+    userLocation,
     isLoading
   };
 };

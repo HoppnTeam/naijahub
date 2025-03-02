@@ -22,6 +22,7 @@ export interface BeautyProduct {
   location_id: string;
   status: 'available' | 'sold' | 'unavailable';
   created_at: string;
+  condition: string;
   seller?: {
     id: string;
     username: string;
