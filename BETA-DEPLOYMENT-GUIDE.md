@@ -44,8 +44,6 @@ supabase db push
 | `VITE_APP_ENV` | `production` |
 | `VITE_ENABLE_ANALYTICS` | `true` |
 | `VITE_ENABLE_ERROR_REPORTING` | `true` |
-| `BETA_USERNAME` | `naijahub` (or your preferred username) |
-| `BETA_PASSWORD` | `betaaccess2025` (or your preferred password) |
 
 6. Click "Deploy"
 
@@ -72,7 +70,19 @@ cp .env.production.example .env.production
 vercel --prod
 ```
 
-## Step 4: Verify Your Deployment
+## Step 4: Set Up Password Protection for Beta
+
+After your initial deployment is complete:
+
+1. Go to your project in the Vercel dashboard
+2. Navigate to Settings > Password Protection
+3. Enable password protection
+4. Set your desired username and password
+5. Save the settings
+
+This will add password protection to your beta site without requiring any code changes.
+
+## Step 5: Verify Your Deployment
 
 1. Once deployment is complete, Vercel will provide a URL
 2. Visit the URL and verify that:
@@ -81,7 +91,7 @@ vercel --prod
    - The beta banner appears
    - The feedback form is accessible
 
-## Step 5: Invite Beta Testers
+## Step 6: Invite Beta Testers
 
 1. Create an email template to invite beta testers with:
    - The beta URL
@@ -91,7 +101,7 @@ vercel --prod
 
 2. Send invitations to your selected beta testers
 
-## Step 6: Monitor Feedback and Usage
+## Step 7: Monitor Feedback and Usage
 
 1. Check the Supabase dashboard for new feedback submissions
 2. Monitor Vercel analytics for usage patterns

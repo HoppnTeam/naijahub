@@ -34,10 +34,5 @@
   ],
   "github": {
     "silent": true
-  },
-  "protection": {
-    "enabled": true,
-    "username": "${BETA_USERNAME}",
-    "password": "${BETA_PASSWORD}"
   }
 }

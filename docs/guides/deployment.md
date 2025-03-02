@@ -84,22 +84,16 @@ You'll need to set up the following environment variables in Vercel:
 
 ### 1. Password Protection
 
-For closed beta testing, we're using Vercel's built-in password protection:
+For closed beta testing, we're using Vercel's built-in password protection feature:
 
-1. The password protection is configured in `vercel.json`:
-   ```json
-   "protection": {
-     "enabled": true,
-     "username": "${BETA_USERNAME}",
-     "password": "${BETA_PASSWORD}"
-   }
-   ```
+1. After deploying your project to Vercel:
+   - Go to your project in the Vercel dashboard
+   - Navigate to Settings > Password Protection
+   - Enable password protection
+   - Set your desired username and password
+   - Save the settings
 
-2. Set the following environment variables in your Vercel project:
-   - `BETA_USERNAME`: The username for beta access (e.g., `naijahub`)
-   - `BETA_PASSWORD`: The password for beta access (e.g., `betaaccess2025`)
-
-3. Share these credentials with your beta testers
+2. Share these credentials with your beta testers
 
 ### 2. Setting Up Beta Testing Domains
 
