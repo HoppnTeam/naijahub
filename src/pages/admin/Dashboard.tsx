@@ -5,7 +5,7 @@ import { ChartBar, Users, FileText, Flag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Dashboard = () => {
+const Dashboard = () => {
   const { data: metrics } = useQuery({
     queryKey: ["admin-metrics"],
     queryFn: async () => {
@@ -75,3 +75,5 @@ export const Dashboard = () => {
     </AdminLayout>
   );
 };
+
+export default Dashboard;

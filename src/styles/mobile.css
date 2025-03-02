@@ -1,0 +1,102 @@
+/**
+ * Mobile-specific styles for NaijaHub PWA
+ */
+
+/* Improve tap targets for mobile */
+@media (max-width: 768px) {
+  /* Increase tap target size for interactive elements */
+  button, 
+  a, 
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  .interactive {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Add more space between interactive elements */
+  .mobile-spacing > * + * {
+    margin-top: 1rem;
+  }
+
+  /* Ensure form elements are large enough */
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+
+  /* Improve scrolling */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Fix for position: fixed elements on iOS */
+  .ios-fixed {
+    position: fixed;
+    width: 100%;
+    transform: translateZ(0);
+  }
+
+  /* Prevent text selection on UI elements */
+  .no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Hide scrollbars but keep functionality */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Bottom navigation adjustments */
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Top navigation adjustments */
+  .top-nav {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for viewport height issues on iOS */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+
+  /* Fix for bottom safe area on iOS */
+  .ios-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* PWA specific styles */
+@media (display-mode: standalone) {
+  /* Styles for when the app is installed as a PWA */
+  body {
+    overscroll-behavior-y: none; /* Prevents pull-to-refresh */
+  }
+
+  /* Hide browser UI elements that might still be visible */
+  .browser-ui-hidden {
+    display: none !important;
+  }
+}
+
+/* Dark mode adjustments for OLED screens */
+@media (prefers-color-scheme: dark) {
+  .oled-black {
+    background-color: #000;
+  }
+}

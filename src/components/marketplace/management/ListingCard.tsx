@@ -3,12 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { PostActions } from "@/components/PostActions";
 import { ListingActions } from "./ListingActions";
+import { MarketplaceType, MarketplaceListing } from "@/types/marketplace";
 
 interface ListingCardProps {
-  listing: any;
-  marketplace: "tech" | "auto" | "beauty";
-  onEdit: (listing: any) => void;
-  onDelete: (id: string, marketplace: "tech" | "auto" | "beauty") => void;
+  listing: MarketplaceListing;
+  marketplace: MarketplaceType;
+  onEdit: (listing: MarketplaceListing) => void;
+  onDelete: (id: string, marketplace: MarketplaceType) => void;
   onChatOpen: (listingId: string) => void;
   unreadMessages: number;
   likesCount: number;

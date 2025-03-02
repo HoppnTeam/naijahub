@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { MarketplaceType, MarketplaceListing } from "@/types/marketplace";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +15,10 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface ListingActionsProps {
-  listing: any;
-  marketplace: "tech" | "auto" | "beauty";
-  onEdit: (listing: any) => void;
-  onDelete: (id: string, marketplace: "tech" | "auto" | "beauty") => void;
+  listing: MarketplaceListing;
+  marketplace: MarketplaceType;
+  onEdit: (listing: MarketplaceListing) => void;
+  onDelete: (id: string, marketplace: MarketplaceType) => void;
   onChatOpen: (listingId: string) => void;
   unreadMessages: number;
 }
@@ -34,7 +35,7 @@ export const ListingActions = ({
     <div className="flex gap-2 mt-4">
       <Button
         variant="outline"
-        onClick={() => onEdit({ ...listing, marketplace })}
+        onClick={() => onEdit(listing)}
       >
         Edit
       </Button>

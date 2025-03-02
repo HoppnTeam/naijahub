@@ -26,13 +26,12 @@ const BEAUTY_CATEGORIES: BeautyCategory[] = [
 ];
 
 const createListingSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
-  price: z.number().min(0, 'Price must be positive'),
-  category: z.string().min(1, 'Category is required'),
+  title: z.string().min(3, 'Title must be at least 3 characters'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
+  price: z.coerce.number().min(0, 'Price must be a positive number'),
   brand: z.string().min(1, 'Brand is required'),
-  ingredients: z.string().optional(),
-  quantity: z.number().min(1, 'Quantity must be at least 1'),
+  category: z.enum(['Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Bath & Body', 'Tools & Accessories']),
+  quantity: z.coerce.number().int().min(1, 'Quantity must be at least 1'),
 });
 
 type CreateListingForm = z.infer<typeof createListingSchema>;
@@ -44,284 +43,233 @@ interface CreateBeautyListingModalProps {
 
 export const CreateBeautyListingModal = ({ open, onClose }: CreateBeautyListingModalProps) => {
   const { user } = useAuth();
-  const { getCurrentLocation } = useLocation();
-  const queryClient = useQueryClient();
-  const [images, setImages] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
-  const [isMounted, setIsMounted] = useState(false);
+  const queryClient = useQueryClient();
+  const { userLocation } = useLocation();
+  const [images, setImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CreateListingForm>({
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<CreateListingForm>({
     resolver: zodResolver(createListingSchema),
     defaultValues: {
+      title: '',
+      description: '',
       price: 0,
+      brand: '',
+      category: 'Skincare',
       quantity: 1,
-      category: '',
     }
   });
 
-  // Function to upload images to Supabase Storage
-  const uploadImages = async (imageDataUrls: string[]) => {
-    if (!user) throw new Error('Must be logged in');
-    
-    const uploadedUrls: string[] = [];
-    setIsUploading(true);
-    
+  useEffect(() => {
+    if (!open) {
+      reset();
+      setImages([]);
+    }
+  }, [open, reset]);
+
+  const createListing = useMutation({
+    mutationFn: async (data: CreateListingForm) => {
+      if (!user) throw new Error('You must be logged in to create a listing');
+      if (!userLocation) throw new Error('Location is required');
+      if (images.length === 0) throw new Error('At least one image is required');
+
+      const listingId = uuidv4();
+
+      const { error } = await supabase
+        .from('beauty_marketplace_listings')
+        .insert({
+          id: listingId,
+          title: data.title,
+          description: data.description,
+          price: data.price,
+          brand: data.brand,
+          category: data.category,
+          quantity: data.quantity,
+          images: images,
+          seller_id: user.id,
+          location_id: userLocation.id,
+          status: 'available',
+        });
+
+      if (error) throw error;
+
+      return listingId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['beauty-marketplace'] });
+      toast({
+        title: 'Success',
+        description: 'Your beauty product has been listed successfully.',
+      });
+      onClose();
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to create listing',
+      });
+    },
+  });
+
+  const onSubmit = async (data: CreateListingForm) => {
     try {
-      // Check if bucket exists by trying to list files
-      const { data: bucketList, error: bucketError } = await supabase.storage.listBuckets();
-      
-      // Default bucket to use
-      let bucketName = 'avatars'; // Use an existing bucket as fallback
-      
-      // Check if our preferred bucket exists
-      const productBucket = bucketList?.find(bucket => bucket.name === 'product-images');
-      if (productBucket) {
-        bucketName = 'product-images';
-      }
-      
-      for (const dataUrl of imageDataUrls) {
-        // Convert data URL to blob
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        
-        // Generate a unique filename
-        const fileExt = blob.type.split('/')[1] || 'png';
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const filePath = `beauty-products/${user.id}/${fileName}`;
-        
-        // Upload to Supabase Storage
-        const { error: uploadError, data } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, blob, {
-            contentType: blob.type,
-            upsert: true
-          });
-          
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw new Error(`Failed to upload image: ${uploadError.message}`);
-        }
-        
-        // Get public URL
-        const { data: urlData } = supabase.storage
-          .from(bucketName)
-          .getPublicUrl(filePath);
-          
-        uploadedUrls.push(urlData.publicUrl);
-      }
-      
-      return uploadedUrls;
+      await createListing.mutateAsync(data);
     } catch (error) {
-      console.error('Error in uploadImages:', error);
-      throw error;
+      console.error('Error creating listing:', error);
+    }
+  };
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'You must be logged in to upload images',
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const newImages = [...images];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const filePath = `beauty-listings/${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('marketplace-images')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data } = supabase.storage
+          .from('marketplace-images')
+          .getPublicUrl(filePath);
+
+        newImages.push(data.publicUrl);
+      }
+
+      setImages(newImages);
+      toast({
+        title: 'Success',
+        description: 'Images uploaded successfully',
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to upload images',
+      });
+      console.error('Error uploading images:', error);
     } finally {
       setIsUploading(false);
     }
   };
 
-  const createListing = useMutation({
-    mutationFn: async (data: CreateListingForm) => {
-      if (!user) throw new Error('Must be logged in');
-      if (images.length === 0) throw new Error('At least one image is required');
-      if (!selectedCategory) throw new Error('Category is required');
-
-      const location = await getCurrentLocation();
-      if (!location) throw new Error('Location is required');
-      
-      // Upload images first
-      const imageUrls = await uploadImages(images);
-      
-      const { data: listing, error } = await supabase
-        .from('beauty_products')
-        .insert({
-          ...data,
-          category: selectedCategory,
-          seller_id: user.id,
-          images: imageUrls,
-          location_id: location.id,
-          status: 'available',
-          ingredients: data.ingredients?.split(',').map(i => i.trim()) || [],
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return listing;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['beauty-products'] });
-      toast({
-        title: "Success",
-        description: "Product listed successfully"
-      });
-      reset();
-      setImages([]);
-      setSelectedCategory("");
-      onClose();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    },
-  });
-
-  const onSubmit = (data: CreateListingForm) => {
-    createListing.mutate(data);
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
   };
-
-  const handleImageChange = (newImages: string[]) => {
-    // Limit to 4 images
-    setImages(newImages.slice(0, 4));
-  };
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle>Create Beauty Product Listing</DialogTitle>
+          <DialogTitle>Create Beauty Listing</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Product Title</Label>
-              <Input
-                id="title"
-                {...register('title')}
-                className={errors.title ? 'border-red-500' : ''}
-              />
-              {errors.title && (
-                <p className="text-sm text-red-500">{errors.title.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" {...register('title')} />
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" {...register('description')} />
+            {errors.description && (
+              <p className="text-sm text-red-500">{errors.description.message}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="price">Price (₦)</Label>
+              <Input id="price" type="number" {...register('price')} />
+              {errors.price && (
+                <p className="text-sm text-red-500">{errors.price.message}</p>
               )}
             </div>
 
-            <div>
-              <Label htmlFor="brand">Brand</Label>
-              <Input
-                id="brand"
-                {...register('brand')}
-                className={errors.brand ? 'border-red-500' : ''}
-              />
-              {errors.brand && (
-                <p className="text-sm text-red-500">{errors.brand.message}</p>
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Quantity</Label>
+              <Input id="quantity" type="number" {...register('quantity')} />
+              {errors.quantity && (
+                <p className="text-sm text-red-500">{errors.quantity.message}</p>
               )}
-            </div>
-
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <select 
-                className="w-full p-2 border rounded-md"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">Select a category</option>
-                {BEAUTY_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              {!selectedCategory && (
-                <p className="text-sm text-red-500">Category is required</p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...register('description')}
-                className={errors.description ? 'border-red-500' : ''}
-              />
-              {errors.description && (
-                <p className="text-sm text-red-500">{errors.description.message}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price">Price (₦)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  {...register('price', { valueAsNumber: true })}
-                  className={errors.price ? 'border-red-500' : ''}
-                />
-                {errors.price && (
-                  <p className="text-sm text-red-500">{errors.price.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  {...register('quantity', { valueAsNumber: true })}
-                  className={errors.quantity ? 'border-red-500' : ''}
-                />
-                {errors.quantity && (
-                  <p className="text-sm text-red-500">{errors.quantity.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="ingredients">Ingredients (comma separated)</Label>
-              <Textarea
-                id="ingredients"
-                {...register('ingredients')}
-              />
-            </div>
-
-            <div>
-              <Label>Product Images (Up to 4)</Label>
-              <div className="mt-2">
-                <ImageUpload
-                  value={images}
-                  onChange={handleImageChange}
-                  disabled={isUploading || createListing.isPending}
-                  maxFiles={4}
-                />
-                {images.length === 0 && (
-                  <p className="text-sm text-red-500 mt-1">At least one image is required</p>
-                )}
-                {images.length > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {images.length} of 4 images selected
-                  </p>
-                )}
-              </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="brand">Brand</Label>
+            <Input id="brand" {...register('brand')} />
+            {errors.brand && (
+              <p className="text-sm text-red-500">{errors.brand.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <select
+              id="category"
+              {...register('category')}
+              className="w-full p-2 border rounded-md"
+            >
+              {BEAUTY_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Images</Label>
+            <ImageUpload
+              onUpload={handleImageUpload}
+              images={images}
+              onRemove={removeImage}
+              isUploading={isUploading}
+              maxImages={5}
+            />
+            {images.length === 0 && (
+              <p className="text-sm text-red-500">At least one image is required</p>
+            )}
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isUploading || createListing.isPending || images.length === 0 || !selectedCategory}
+            <Button
+              type="submit"
+              disabled={createListing.isPending || isUploading || images.length === 0}
             >
-              {isUploading ? 'Uploading Images...' : 
-               createListing.isPending ? 'Creating Listing...' : 'Create Listing'}
+              {createListing.isPending ? 'Creating...' : 'Create Listing'}
             </Button>
           </div>
         </form>

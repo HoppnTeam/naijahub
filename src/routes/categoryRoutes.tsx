@@ -1,50 +1,123 @@
+import { lazy, Suspense } from "react";
 import { RouteObject } from "react-router-dom";
-import NewsAndPolitics from "@/pages/categories/NewsAndPolitics";
-import Entertainment from "@/pages/categories/Entertainment";
-import Technology from "@/pages/categories/Technology";
-import Sports from "@/pages/categories/Sports";
-import Business from "@/pages/categories/Business";
-import Health from "@/pages/categories/Health";
-import Agriculture from "@/pages/categories/Agriculture";
-import Travel from "@/pages/categories/Travel";
-import Culture from "@/pages/categories/Culture";
-import Automotive from "@/pages/categories/Automotive";
-import FashionAndBeauty from "@/pages/categories/fashion-beauty/FashionAndBeauty";
-import BeautyBusinessHub from "@/pages/categories/fashion-beauty/business-hub/BeautyBusinessHub";
-import { AutomotiveCreatePost } from "@/components/posts/automotive/AutomotiveCreatePost";
-import { EntertainmentCreatePost } from "@/components/posts/entertainment/EntertainmentCreatePost";
-import { FashionAndBeautyCreatePost } from "@/components/posts/fashion-beauty/FashionAndBeautyCreatePost";
-import { TravelCreatePost } from "@/components/posts/travel/TravelCreatePost";
-import DesignerDirectory from "@/pages/categories/fashion-beauty/DesignerDirectory";
-import DesignerRegistration from "@/pages/categories/fashion-beauty/DesignerRegistration";
-import DesignerProfile from "@/pages/categories/fashion-beauty/DesignerProfile";
-import BeautyProfessionalsDirectory from "@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalsDirectory";
-import BeautyProfessionalRegistration from "@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalRegistration";
-import BeautyProfessionalProfile from "@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalProfile";
-import BeautyBusinessDashboard from "@/pages/categories/fashion-beauty/business-hub/BeautyBusinessDashboard";
+import { LoadingFallback } from "@/components/ui/LoadingFallback";
+
+// Lazy load all components
+const NewsAndPolitics = lazy(() => import("@/pages/categories/NewsAndPolitics"));
+const Entertainment = lazy(() => import("@/pages/categories/Entertainment"));
+const Technology = lazy(() => import("@/pages/categories/Technology"));
+const Sports = lazy(() => import("@/pages/categories/Sports"));
+const Business = lazy(() => import("@/pages/categories/Business"));
+const Health = lazy(() => import("@/pages/categories/Health"));
+const Agriculture = lazy(() => import("@/pages/categories/Agriculture"));
+const Travel = lazy(() => import("@/pages/categories/Travel"));
+const Culture = lazy(() => import("@/pages/categories/Culture"));
+const Automotive = lazy(() => import("@/pages/categories/Automotive"));
+const FashionAndBeauty = lazy(() => import("@/pages/categories/fashion-beauty/FashionAndBeauty"));
+const BeautyBusinessHub = lazy(() => import("@/pages/categories/fashion-beauty/business-hub/BeautyBusinessHub"));
+const AutomotiveCreatePost = lazy(() => import("@/components/posts/automotive/AutomotiveCreatePost"));
+const EntertainmentCreatePost = lazy(() => import("@/components/posts/entertainment/EntertainmentCreatePost"));
+const FashionAndBeautyCreatePost = lazy(() => import("@/components/posts/fashion-beauty/FashionAndBeautyCreatePost"));
+const TravelCreatePost = lazy(() => import("@/components/posts/travel/TravelCreatePost"));
+const DesignerDirectory = lazy(() => import("@/pages/categories/fashion-beauty/DesignerDirectory"));
+const DesignerRegistration = lazy(() => import("@/pages/categories/fashion-beauty/DesignerRegistration"));
+const DesignerProfile = lazy(() => import("@/pages/categories/fashion-beauty/DesignerProfile"));
+const BeautyProfessionalsDirectory = lazy(() => import("@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalsDirectory"));
+const BeautyProfessionalRegistration = lazy(() => import("@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalRegistration"));
+const BeautyProfessionalProfile = lazy(() => import("@/pages/categories/fashion-beauty/business-hub/BeautyProfessionalProfile"));
+const BeautyBusinessDashboard = lazy(() => import("@/pages/categories/fashion-beauty/business-hub/BeautyBusinessDashboard"));
 
 export const categoryRoutes: RouteObject[] = [
-  { path: "/categories/news-politics", element: <NewsAndPolitics /> },
-  { path: "/categories/entertainment", element: <Entertainment /> },
-  { path: "/categories/entertainment/create", element: <EntertainmentCreatePost /> },
-  { path: "/categories/technology", element: <Technology /> },
-  { path: "/categories/sports", element: <Sports /> },
-  { path: "/categories/business", element: <Business /> },
-  { path: "/categories/health", element: <Health /> },
-  { path: "/categories/agriculture", element: <Agriculture /> },
-  { path: "/categories/travel", element: <Travel /> },
-  { path: "/categories/travel/create", element: <TravelCreatePost /> },
-  { path: "/categories/culture", element: <Culture /> },
-  { path: "/categories/automotive", element: <Automotive /> },
-  { path: "/categories/automotive/create", element: <AutomotiveCreatePost /> },
-  { path: "/categories/fashion-beauty", element: <FashionAndBeauty /> },
-  { path: "/categories/fashion-beauty/create", element: <FashionAndBeautyCreatePost /> },
-  { path: "/categories/fashion-beauty/business-hub", element: <BeautyBusinessHub /> },
-  { path: "/categories/fashion-beauty/business-hub/dashboard", element: <BeautyBusinessDashboard /> },
-  { path: "/categories/fashion-beauty/designer-directory", element: <DesignerDirectory /> },
-  { path: "/categories/fashion-beauty/designer-register", element: <DesignerRegistration /> },
-  { path: "/categories/fashion-beauty/designers/:id", element: <DesignerProfile /> },
-  { path: "/categories/fashion-beauty/business-hub/professionals", element: <BeautyProfessionalsDirectory /> },
-  { path: "/categories/fashion-beauty/business-hub/professionals/register", element: <BeautyProfessionalRegistration /> },
-  { path: "/categories/fashion-beauty/business-hub/professionals/:id", element: <BeautyProfessionalProfile /> },
+  { 
+    path: "/categories/news-politics", 
+    element: <Suspense fallback={<LoadingFallback />}><NewsAndPolitics /></Suspense> 
+  },
+  { 
+    path: "/categories/entertainment", 
+    element: <Suspense fallback={<LoadingFallback />}><Entertainment /></Suspense> 
+  },
+  { 
+    path: "/categories/entertainment/create", 
+    element: <Suspense fallback={<LoadingFallback />}><EntertainmentCreatePost /></Suspense> 
+  },
+  { 
+    path: "/categories/technology", 
+    element: <Suspense fallback={<LoadingFallback />}><Technology /></Suspense> 
+  },
+  { 
+    path: "/categories/sports", 
+    element: <Suspense fallback={<LoadingFallback />}><Sports /></Suspense> 
+  },
+  { 
+    path: "/categories/business", 
+    element: <Suspense fallback={<LoadingFallback />}><Business /></Suspense> 
+  },
+  { 
+    path: "/categories/health", 
+    element: <Suspense fallback={<LoadingFallback />}><Health /></Suspense> 
+  },
+  { 
+    path: "/categories/agriculture", 
+    element: <Suspense fallback={<LoadingFallback />}><Agriculture /></Suspense> 
+  },
+  { 
+    path: "/categories/travel", 
+    element: <Suspense fallback={<LoadingFallback />}><Travel /></Suspense> 
+  },
+  { 
+    path: "/categories/travel/create", 
+    element: <Suspense fallback={<LoadingFallback />}><TravelCreatePost /></Suspense> 
+  },
+  { 
+    path: "/categories/culture", 
+    element: <Suspense fallback={<LoadingFallback />}><Culture /></Suspense> 
+  },
+  { 
+    path: "/categories/automotive", 
+    element: <Suspense fallback={<LoadingFallback />}><Automotive /></Suspense> 
+  },
+  { 
+    path: "/categories/automotive/create", 
+    element: <Suspense fallback={<LoadingFallback />}><AutomotiveCreatePost /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty", 
+    element: <Suspense fallback={<LoadingFallback />}><FashionAndBeauty /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/create", 
+    element: <Suspense fallback={<LoadingFallback />}><FashionAndBeautyCreatePost /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/business-hub", 
+    element: <Suspense fallback={<LoadingFallback />}><BeautyBusinessHub /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/business-hub/dashboard", 
+    element: <Suspense fallback={<LoadingFallback />}><BeautyBusinessDashboard /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/designer-directory", 
+    element: <Suspense fallback={<LoadingFallback />}><DesignerDirectory /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/designer-register", 
+    element: <Suspense fallback={<LoadingFallback />}><DesignerRegistration /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/designers/:id", 
+    element: <Suspense fallback={<LoadingFallback />}><DesignerProfile /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/business-hub/professionals", 
+    element: <Suspense fallback={<LoadingFallback />}><BeautyProfessionalsDirectory /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/business-hub/professionals/register", 
+    element: <Suspense fallback={<LoadingFallback />}><BeautyProfessionalRegistration /></Suspense> 
+  },
+  { 
+    path: "/categories/fashion-beauty/business-hub/professionals/:id", 
+    element: <Suspense fallback={<LoadingFallback />}><BeautyProfessionalProfile /></Suspense> 
+  },
 ];

@@ -7,7 +7,7 @@ import { ListingEditDialog } from "@/components/marketplace/management";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useMarketplaceManagement } from "@/hooks/use-marketplace-management";
 
-export const MarketplaceManagement = () => {
+const MarketplaceManagement = () => {
   const {
     filters,
     setFilters,
@@ -24,30 +24,24 @@ export const MarketplaceManagement = () => {
     handleEdit,
     handleDelete,
     handleUpdate,
+    handleChatOpen,
+    stats
   } = useMarketplaceManagement();
 
-  const handleChatOpen = (listingId: string) => {
-    console.log("Opening chat for listing:", listingId);
-  };
-
-  if (techLoading || autoLoading) {
-    return (
-      <AdminLayout>
-        <div className="p-6">
-          <LoadingState />
-        </div>
-      </AdminLayout>
-    );
-  }
+  const isLoading = techLoading || autoLoading;
 
   return (
     <AdminLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Marketplace Management</h1>
-        
-        <ErrorBoundary>
-          <MarketplaceMetrics />
-        </ErrorBoundary>
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Marketplace Management</h1>
+        </div>
+
+        {isLoading ? (
+          <LoadingState />
+        ) : (
+          <MarketplaceMetrics stats={stats} />
+        )}
 
         <MarketplaceFilters 
           filters={filters}
@@ -76,3 +70,5 @@ export const MarketplaceManagement = () => {
     </AdminLayout>
   );
 };
+
+export default MarketplaceManagement;

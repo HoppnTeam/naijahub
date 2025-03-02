@@ -1,151 +1,82 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+import { handleAsyncError, getSupabaseErrorMessage } from '@/lib/error-handling';
 
 const AdminSignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { checkAdminStatus } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log("Current session:", session);
-
-      if (session?.user) {
-        const { data: roleData, error: roleError } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .eq('role', 'admin')
-          .single();
-
-        console.log("Role check result:", { roleData, roleError });
-
-        if (!roleError && roleData?.role === 'admin') {
-          navigate('/admin/dashboard');
-        } else {
-          // If not admin, sign them out
-          await supabase.auth.signOut();
-        }
-      }
-    };
-
-    checkSession();
-  }, [navigate]);
-
-  const getErrorMessage = (error: AuthError) => {
-    if (error instanceof AuthApiError) {
-      switch (error.message) {
-        case "Invalid login credentials":
-          return "Invalid email or password. Please check your credentials and try again.";
-        case "Email not confirmed":
-          return "Please verify your email address before signing in.";
-        default:
-          return error.message;
-      }
-    }
-    return "An unexpected error occurred. Please try again.";
-  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    console.log("Attempting admin sign in with email:", email);
-
+    
     try {
-      const trimmedEmail = email.trim().toLowerCase();
+      setLoading(true);
       
-      // First attempt to sign in
-      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: trimmedEmail,
+      // Sign in with email and password
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
         password,
       });
-
-      if (signInError) {
-        console.error("Sign in error:", signInError);
-        throw signInError;
+      
+      if (error) {
+        throw new Error(getSupabaseErrorMessage(error));
       }
-
-      console.log("Auth successful:", authData);
-
-      if (!authData?.session?.user) {
-        throw new Error('No user found in session');
+      
+      if (!data.user) {
+        throw new Error('No user returned from sign in');
       }
-
-      // Then check if they have admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', authData.session.user.id)
-        .eq('role', 'admin')
-        .single();
-
-      console.log("Role check result:", { roleData, roleError });
-
-      if (roleError) {
-        console.error("Role check error:", roleError);
+      
+      // Check if the user has admin role
+      const isAdmin = await checkAdminStatus();
+      
+      if (!isAdmin) {
+        // Sign out if not admin
         await supabase.auth.signOut();
-        throw new Error('Error verifying admin privileges');
+        
+        toast({
+          variant: 'destructive',
+          title: 'Access Denied',
+          description: 'You do not have admin privileges to access this area.',
+        });
+        
+        return;
       }
-
-      if (!roleData || roleData.role !== 'admin') {
-        // If not admin, sign them out and show error
-        await supabase.auth.signOut();
-        throw new Error('Unauthorized access: Admin privileges required');
-      }
-
-      // Log successful admin sign in
-      await supabase.from('admin_activity_logs').insert({
-        admin_id: authData.session.user.id,
-        action: 'SIGN_IN',
-        details: { timestamp: new Date().toISOString() }
-      });
-
+      
       toast({
-        title: "Success",
-        description: "Welcome back, admin!",
+        title: 'Welcome',
+        description: 'You have successfully signed in as an administrator.',
       });
-
-      navigate('/admin/dashboard');
+      
+      navigate('/admin');
     } catch (error) {
-      console.error("Sign in error:", error);
-      
-      let message = "An unexpected error occurred";
-      
-      if (error instanceof Error) {
-        message = getErrorMessage(error as AuthError);
-      }
-
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: message,
-      });
+      handleAsyncError(error, 'Sign in failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+        <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Admin Sign In</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access the admin dashboard
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSignIn} className="space-y-4">
+        <form onSubmit={handleSignIn}>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -170,15 +101,13 @@ const AdminSignIn = () => {
                 className="w-full"
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full bg-[#32a852] hover:bg-[#2a8f45]"
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign In"}
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full bg-[#32a852] hover:bg-[#2a8f45]" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
-          </form>
-        </CardContent>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

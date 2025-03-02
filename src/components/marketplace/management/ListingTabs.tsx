@@ -1,12 +1,19 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ListingCard } from "./ListingCard";
+import { 
+  MarketplaceType, 
+  TechMarketplaceListing, 
+  AutoMarketplaceListing, 
+  BeautyMarketplaceListing, 
+  MarketplaceListing 
+} from "@/types/marketplace";
 
 interface ListingTabsProps {
-  techListings: any[];
-  autoListings: any[];
-  beautyListings: any[];
-  onEdit: (listing: any) => void;
-  onDelete: (id: string, marketplace: "tech" | "auto" | "beauty") => void;
+  techListings: TechMarketplaceListing[];
+  autoListings: AutoMarketplaceListing[];
+  beautyListings: BeautyMarketplaceListing[];
+  onEdit: (listing: MarketplaceListing) => void;
+  onDelete: (id: string, marketplace: MarketplaceType) => void;
   onChatOpen: (listingId: string) => void;
 }
 
@@ -40,12 +47,12 @@ export const ListingTabs = ({
               onEdit={onEdit}
               onDelete={onDelete}
               onChatOpen={onChatOpen}
-              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat: any) => {
+              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat) => {
                 const unreadCount = chat.marketplace_messages?.filter(
-                  (msg: any) => !msg.read_at
-                ).length;
-                return acc + (unreadCount || 0);
-              }, 0)}
+                  (msg) => !msg.read_at
+                ).length || 0;
+                return acc + unreadCount;
+              }, 0) || 0}
               likesCount={listing.tech_marketplace_likes?.[0]?.count || 0}
             />
           ))
@@ -66,12 +73,12 @@ export const ListingTabs = ({
               onEdit={onEdit}
               onDelete={onDelete}
               onChatOpen={onChatOpen}
-              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat: any) => {
+              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat) => {
                 const unreadCount = chat.marketplace_messages?.filter(
-                  (msg: any) => !msg.read_at
-                ).length;
-                return acc + (unreadCount || 0);
-              }, 0)}
+                  (msg) => !msg.read_at
+                ).length || 0;
+                return acc + unreadCount;
+              }, 0) || 0}
               likesCount={listing.auto_marketplace_likes?.[0]?.count || 0}
             />
           ))
@@ -92,12 +99,12 @@ export const ListingTabs = ({
               onEdit={onEdit}
               onDelete={onDelete}
               onChatOpen={onChatOpen}
-              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat: any) => {
+              unreadMessages={listing.marketplace_chats?.reduce((acc: number, chat) => {
                 const unreadCount = chat.marketplace_messages?.filter(
-                  (msg: any) => !msg.read_at
-                ).length;
-                return acc + (unreadCount || 0);
-              }, 0)}
+                  (msg) => !msg.read_at
+                ).length || 0;
+                return acc + unreadCount;
+              }, 0) || 0}
               likesCount={listing.beauty_marketplace_likes?.[0]?.count || 0}
             />
           ))

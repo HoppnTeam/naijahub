@@ -9,19 +9,23 @@ import { categoryRoutes } from "@/routes/categoryRoutes";
 import { mainRoutes } from "@/routes/mainRoutes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { handleAsyncError } from "@/lib/error-handling";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 
+// Create a client with improved error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 30 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 30 * 60 * 1000, // 30 minutes
       refetchInterval: false,
       networkMode: 'offlineFirst',
       meta: {
         errorHandler: (error: Error) => {
-          console.error("Query error:", error);
+          handleAsyncError(error, "Failed to fetch data");
         }
       }
     },
@@ -30,7 +34,7 @@ const queryClient = new QueryClient({
       networkMode: 'offlineFirst',
       meta: {
         errorHandler: (error: Error) => {
-          console.error("Mutation error:", error);
+          handleAsyncError(error, "Failed to update data");
         }
       }
     },
@@ -73,6 +77,8 @@ function App() {
                 </main>
                 <Footer />
               </div>
+              <InstallPrompt />
+              <OfflineIndicator />
               <Toaster />
             </ErrorBoundary>
           </AuthProvider>

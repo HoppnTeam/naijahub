@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostCard } from "./PostCard";
 import { useNavigate } from "react-router-dom";
@@ -42,24 +41,14 @@ const CategoryTabs = ({
     "Fashion & Beauty"
   ];
 
-  console.log("CategoryTabs Debug:");
-  console.log("1. Raw categories prop:", categories);
-  console.log("2. Expected category names:", categoryNames);
-
   const mainCategories = categories?.filter(category => {
     if (!category || !category.name) {
-      console.log("Invalid category object:", category);
       return false;
     }
     
     const trimmedName = category.name.trim();
-    const isIncluded = categoryNames.includes(trimmedName);
-    
-    console.log(`Category "${trimmedName}": ${isIncluded ? 'included' : 'excluded'}`);
-    return isIncluded;
+    return categoryNames.includes(trimmedName);
   });
-
-  console.log("3. Filtered categories:", mainCategories);
 
   const getCategoryIcon = (category: Category) => {
     if (!category.icon) return null;
@@ -93,7 +82,6 @@ const CategoryTabs = ({
   };
 
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    console.log("Category clicked:", { id: categoryId, name: categoryName });
     onCategoryChange(categoryId);
     const path = getCategoryPath(categoryName);
     navigate(path);
