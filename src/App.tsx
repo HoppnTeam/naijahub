@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { handleAsyncError } from "@/lib/error-handling";
 import { Suspense, lazy } from "react";
+import { BetaBanner } from "@/components/beta/BetaBanner";
 
 // Lazy load PWA components to prevent them from blocking the main app
 const InstallPrompt = lazy(() => import("@/components/pwa/InstallPrompt"));
@@ -53,6 +54,7 @@ function App() {
             <ErrorBoundary>
               <div className="min-h-screen flex flex-col">
                 <Navigation />
+                <BetaBanner />
                 <main className="flex-grow">
                   <Routes>
                     {mainRoutes.map((route) => (

@@ -14,6 +14,7 @@ const Advertise = lazy(() => import("@/pages/Advertise"));
 const ContentGuidelines = lazy(() => import("@/pages/ContentGuidelines"));
 const MarketplaceListings = lazy(() => import("@/components/marketplace/MarketplaceListings"));
 const AppIcons = lazy(() => import("@/pages/AppIcons"));
+const FeedbackPage = lazy(() => import("@/pages/FeedbackPage"));
 
 export const mainRoutes = [
   {
@@ -109,6 +110,14 @@ export const mainRoutes = [
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <AppIcons />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/feedback",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <FeedbackPage />
       </Suspense>
     ),
   },
