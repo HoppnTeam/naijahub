@@ -22,6 +22,7 @@ export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = isMobileDevice();
 
+  // Keep the menu items for mobile menu but don't display in top navigation
   const menuItems = [
     { name: "News & Politics", path: "/categories/news-politics" },
     { name: "Entertainment", path: "/categories/entertainment" },
@@ -51,21 +52,6 @@ export const Navigation = () => {
             >
               NaijaHub
             </h1>
-            
-            {/* Desktop Navigation Links - hidden on mobile */}
-            <nav className="ml-8 hidden lg:flex items-center space-x-4">
-              {menuItems.slice(0, 6).map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="text-sm font-medium transition-colors hover:text-primary"
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              {/* More dropdown could be added here for remaining items */}
-            </nav>
           </div>
           
           <div className="flex items-center space-x-2">
